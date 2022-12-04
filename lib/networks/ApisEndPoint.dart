@@ -1,0 +1,42 @@
+class Apis {
+  static const String api = "https://site.fananelrashaka.net";
+  static const String loginEndPoint = "${api}/api/cpanel/login/";
+  static const String userProfileEndPoint = "${api}/api/cpanel/profile/";
+  static const String changeUserPasswordEndPoint = "${api}/api/cpanel/change_profile_user_password/";
+  static const String deleteEmailEndPoint = "${api}/api/cpanel/profile/";
+  static const String deletePatientEndPoint = "${api}/api/cpanel/patients/";
+  static const String dashboardEndPoint = "${api}/api/cpanel/dashboard/";
+  static const String getAllPatients = "${api}/api/cpanel/patients/";
+  static const String getDrPatients = "${api}/api/cpanel/doctor_patients/";
+  static const String getAllUsers = "${api}/api/cpanel/system_users/";
+  static const String updatePatientPassword = "${api}/api/cpanel/change_patient_password/";
+  static const String addPatient = "${api}/api/cpanel/patients/";
+  static const String addDrPatient = "${api}/api/cpanel/doctor_patients/";
+  static const String connect_patient = "${api}/api/cpanel/connect_patient/";
+  static const String clinic_availability = "${api}/api/cpanel/clinic_availability/";
+  static const String system_users = "${api}/api/cpanel/system_users/";
+  static const String change_system_user_password = "${api}/api/cpanel/change_system_user_password/";
+  static const String services = "${api}/api/cpanel/services/";
+  static const String packages = "${api}/api/cpanel/packages/";
+  static const String promocodes = "${api}/api/cpanel/promocodes/";
+  static const String finance = "${api}/api/cpanel/finance/";
+  static const String finance_categories = "${api}/api/cpanel/finance_categories/";
+  static const String finance_full_report = "${api}/api/cpanel/finance_full_report/";
+  static const String finance_comparison_report = "${api}/api/cpanel/finance_comparison_report/";
+  static const String finance_service_report = "${api}/api/cpanel/finance_service_report/";
+  static const String finance_statistics = "${api}/api/cpanel/finance_statistics/";
+  static const String bookings = "${api}/api/cpanel/bookings/";
+  static const String reschedule_booking = "${api}/api/cpanel/reschedule_booking/";
+  static const String buy_new_package = "${api}/api/cpanel/buy_new_package/";
+  static const String new_bookings = "${api}/api/cpanel/new_bookings/";
+  static const String patient_details = "${api}/api/patient_management/patient_details/";
+  static const String change_IsConnected_status = "${api}/api/patient_management/change_IsConnected_status/";
+  static const String change_IsPenalized_status = "${api}/api/patient_management/change_IsPenalized_status/";
+  static const String upload_diet_image = "${api}/api/patient_management/upload_diet_image/";
+  static const String upload_application_image = "${api}/api/patient_management/upload_application_image/";
+  static const String change_pay_in_cash_status = "${api}/api/patient_management/change_pay_in_cash_status/";
+  static const String patient_purchases = "${api}/api/patient_management/patient_purchases/";
+  static const String visitation_notes = "${api}/api/patient_management/visitation_notes/";
+  static const String measurements = "${api}/api/patient_management/measurements/";
+
+}

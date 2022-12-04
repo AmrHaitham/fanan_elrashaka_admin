@@ -1,0 +1,21 @@
+{
+  "Login": "تسجيل الدخول",
+  "Login_to_your_account": "سجل دخول الي حسابك",
+  "hello_there_sign_in_to_account": "اهلا بك سجل دخول الي حسابك للأستكمال",
+  "Email": "الحساب",
+  "Password": "كلمه السر",
+  "Enter_your_password": "ادخل كلمه السر الخاصه بك",
+  "Enter_your_email": "ادخل الحساب الخاص بك",
+  "Please_Enter_your_email": "رجاءا أدخل بريدك الإلكتروني",
+  "PleaseEnteraValidEmail": "يرجى إدخال البريد الإلكتروني الصحيح",
+  "PleaseEnteryourpassword": "من فضلك أدخل رقمك السري",
+  "Passwordistooshort": "كلمة المرور قصيرة جدا",
+  "Passwordsdontmatch": "كلمات المرور لا تتطابق",
+  "More": "المزيد",
+  "ClinicsPackages": "باقات العيادات",
+  "ClinicsSchedule": "جداول العيادات",
+  "PromoCodes": "الكوبونات",
+  "AllPatients": "كل المرضى",
+  "Users": "المستخدمون",
+  "Logout": "تسجيل الخروج"
+}

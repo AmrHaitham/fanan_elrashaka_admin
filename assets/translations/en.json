@@ -1,0 +1,21 @@
+{
+  "Login": "Login",
+  "Login_to_your_account": "Login to your account",
+  "hello_there_sign_in_to_account": "hello there sign in to account",
+  "Email": "Email",
+  "Password": "Password",
+  "Enter_your_password": "Enter your password",
+  "Enter_your_email": "Enter your email",
+  "Please_Enter_your_email": "Please Enter your email",
+  "PleaseEnteraValidEmail": "Please Enter a Valid Email",
+  "PleaseEnteryourpassword": "Please Enter your password",
+  "Passwordistooshort": "Password is too short",
+  "Passwordsdontmatch": "Passwords don't match",
+  "More": "More",
+  "ClinicsPackages": "Clinics Packages",
+  "ClinicsSchedule": "Clinics Schedules",
+  "PromoCodes": "Promo Codes",
+  "AllPatients": "All Patients",
+  "Users": "Users",
+  "Logout": "Logout"
+}
