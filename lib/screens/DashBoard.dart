@@ -34,7 +34,7 @@ class DashBoard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Hi Dr. ${context.read<UserData>().name}",style: TextStyle(
+                      Text("Hi ${context.read<UserData>().name}",style: TextStyle(
                         fontSize: 22.0,
                         color: Constants.secondColor,
                         fontWeight: FontWeight.normal,

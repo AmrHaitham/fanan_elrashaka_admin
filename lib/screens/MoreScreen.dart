@@ -4,6 +4,7 @@ import 'package:fanan_elrashaka_admin/helper/actions.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
 import 'package:fanan_elrashaka_admin/screens/AllPationts.dart';
 import 'package:fanan_elrashaka_admin/screens/AllUsersScreen.dart';
+import 'package:fanan_elrashaka_admin/screens/EditSystemUser.dart';
 import 'package:fanan_elrashaka_admin/screens/Finance.dart';
 import 'package:fanan_elrashaka_admin/screens/ListAllClinicsSchedule.dart';
 import 'package:fanan_elrashaka_admin/screens/ListAllPackages.dart';
@@ -34,23 +35,30 @@ class MoreScreen extends StatelessWidget {
             ],
           ),
           child: ListTile(
+            onTap: (){
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => EditUser(
+                      id :context.read<UserData>().email
+                  ))
+              );
+            },
             leading: SizedBox(
                 width: 50,
                 height: 50,
-                child: Image.asset("assets/dr_image.png")
+                child: Image.asset("assets/logo.png")
             ),
-            title: Text("Dr.Mohamed Ibrahim"),
+            title: Text(context.read<UserData>().name.toString()),
             subtitle: Text("System Admin"),
-            // trailing: Container(
-            //   padding: EdgeInsets.all(5),
-            //   width: 35,
-            //   height: 35,
-            //   decoration:const BoxDecoration(
-            //     borderRadius: BorderRadius.all(Radius.circular(5)),
-            //     color: Color(0xffe9e5ff)
-            //   ),
-            //   child: Image.asset("assets/right-arrow_gray.png",color: Constants.secondColor,),
-            // ),
+            trailing: Container(
+              padding: EdgeInsets.all(5),
+              width: 35,
+              height: 35,
+              decoration:const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+                color: Color(0xffe9e5ff)
+              ),
+              child: Image.asset("assets/right-arrow_gray.png",color: Constants.secondColor,),
+            ),
           ),
         ),
         topRightaction: InkWell(
