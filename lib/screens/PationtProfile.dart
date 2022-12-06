@@ -6,6 +6,7 @@ import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/PatientDetails.dart';
 import 'package:fanan_elrashaka_admin/screens/EditDrPationt.dart';
+import 'package:fanan_elrashaka_admin/screens/FoodAgendaScreen.dart';
 import 'package:fanan_elrashaka_admin/screens/ImageScreen.dart';
 import 'package:fanan_elrashaka_admin/screens/MeasurementsScreen.dart';
 import 'package:fanan_elrashaka_admin/screens/PatientProfileTab.dart';
@@ -384,8 +385,13 @@ class _PationtProfileState extends State<PationtProfile> {
                                 children: [
                                   PatientProfileTab(
                                     color: Color(0xfffff2d0),
-                                    name: "Food Agenda[Soon]",
+                                    name: "Food Agenda",
                                     image: "food_agenda.png",
+                                    onTap: (){
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(builder: (context) => FoodAgendaScreen(pid: widget.pid,))
+                                      );
+                                    },
                                   ),
                                   const SizedBox(width: 5,),
                                   PatientProfileTab(

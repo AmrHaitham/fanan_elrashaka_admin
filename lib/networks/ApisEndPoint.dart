@@ -38,5 +38,6 @@ class Apis {
   static const String patient_purchases = "${api}/api/patient_management/patient_purchases/";
   static const String visitation_notes = "${api}/api/patient_management/visitation_notes/";
   static const String measurements = "${api}/api/patient_management/measurements/";
+  static const String food_agenda = "${api}/api/patient_management/food_agenda/";
 
 }

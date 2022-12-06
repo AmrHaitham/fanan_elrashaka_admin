@@ -205,6 +205,13 @@ class PatientDetails{
     var response =await http.get(Uri.parse("${Apis.measurements}?pid=$id"),headers: headers);
     return jsonDecode(utf8.decode(response.bodyBytes));
   }
+  getAllFoodAgendas(token,id,date)async{
+    var headers ={
+      'Authorization': 'Token ${token}'
+    };
+    var response =await http.get(Uri.parse("${Apis.food_agenda}?pid=$id&multiple=0&date=$date"),headers: headers);
+    return jsonDecode(utf8.decode(response.bodyBytes));
+  }
 
   addMeasurement(token,pid,data)async{
     var headers = {
