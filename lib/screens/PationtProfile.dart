@@ -390,12 +390,12 @@ class _PationtProfileState extends State<PationtProfile> {
                                   const SizedBox(width: 5,),
                                   PatientProfileTab(
                                     color: Color(0xffb4f2ff),
-                                    name: "Measurements[Soon]",
+                                    name: "Measurements",
                                     image: "measures.png",
                                     onTap: (){
-                                      // Navigator.of(context).push(
-                                      //     MaterialPageRoute(builder: (context) => MeasurementsScreen(pid: widget.pid,))
-                                      // );
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(builder: (context) => MeasurementsScreen(pid: widget.pid,))
+                                      );
                                     },
                                   ),
                                 ],

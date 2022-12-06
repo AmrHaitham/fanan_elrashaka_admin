@@ -206,4 +206,71 @@ class PatientDetails{
     return jsonDecode(utf8.decode(response.bodyBytes));
   }
 
+  addMeasurement(token,pid,data)async{
+    var headers = {
+      'Authorization': 'Token ${token}'
+    };
+
+    var request = http.MultipartRequest('POST', Uri.parse(Apis.measurements));
+    request.fields.addAll({
+      'pid': '1',
+      'weight': data[0],
+      'arms': data[1],
+      'chest': data[2],
+      'waist': data[3],
+      'high_hip': data[4],
+      'calves': data[5],
+      'thigh': data[6],
+      'note': data[7]
+    });
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    return response;
+
+  }
+  updateMeasurement(token,pid,data)async{
+    var headers = {
+      'Authorization': 'Token ${token}'
+    };
+
+    var request = http.MultipartRequest('PUT', Uri.parse(Apis.measurements));
+    request.fields.addAll({
+      'id': '1',
+      'weight': data[0],
+      'arms': data[1],
+      'chest': data[2],
+      'waist': data[3],
+      'high_hip': data[4],
+      'calves': data[5],
+      'thigh': data[6],
+      'note': data[7]
+    });
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    return response;
+
+  }
+
+  deleteMeasurement(token,pid)async{
+    var headers = {
+      'Authorization': 'Token ${token}'
+    };
+
+    var request = http.MultipartRequest('DELETE', Uri.parse(Apis.measurements));
+    request.fields.addAll({
+      'id': pid,
+    });
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    return response;
+
+  }
 }
