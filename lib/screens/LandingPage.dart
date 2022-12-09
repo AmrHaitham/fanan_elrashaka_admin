@@ -103,13 +103,18 @@ class _LandingPageState extends State<LandingPage> {
       try{
         await saveUserInfo();
         await getClinicsData();
-      }catch(v){
-          print(v);
-      }finally{
         Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => MainScreen())
-             );
+            MaterialPageRoute(builder: (context) => MainScreen())
+        );
+      }catch(v){
+          print("error :- ${v}");
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => LandingPage())
+          );
       }
+      // finally{
+      //
+      // }
       // Navigator.of(context).pushReplacement(
       //     MaterialPageRoute(builder: (context) => MainScreen())
       // );

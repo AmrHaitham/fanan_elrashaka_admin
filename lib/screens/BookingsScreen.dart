@@ -36,12 +36,12 @@ class _BookingsScreenState extends State<BookingsScreen> {
   BottomSheetWidget _bottomSheetWidget = BottomSheetWidget();
   TextEditingController textController = TextEditingController();
   bool openSearch = false;
-  String? _searchValue;
+  String? _searchValue ;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // _clinics = context.read<ClinisData>().clinicsName;
+    clinic = context.read<ClinisData>().clinicsName.first.id;
 
   }
   getClinic(){
@@ -421,7 +421,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                   thickness: 0.2,
                 ),
                 FutureBuilder(
-                    future: (_searchValue == "")?_bookings.getBooks(context.read<UserData>().token, _selectedDay.toString().split(" ")[0],clinic):_bookings.getBooksSearch(context.read<UserData>().token, _selectedDay.toString().split(" ")[0],clinic,_searchValue),
+                    future: (_searchValue == null)?_bookings.getBooks(context.read<UserData>().token, _selectedDay.toString().split(" ")[0],clinic):_bookings.getBooksSearch(context.read<UserData>().token, _selectedDay.toString().split(" ")[0],clinic,_searchValue),
                     builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(child: CustomLoading());

@@ -65,7 +65,8 @@ class _EditUserState extends State<EditUser> {
 
   bool _isLoading = false;
 
-  initClinics(initClinics){
+  initClinicsData(initClinics){
+    List<MultiSelectItem<Object?>> _items = [];
     List<Clinic> clinicsName = [];
     for(var clinic in initClinics){
       Clinic clinicModel =Clinic();
@@ -73,7 +74,10 @@ class _EditUserState extends State<EditUser> {
       clinicModel.name=clinic["clinic_en"];
       clinicsName.add(clinicModel);
     }
-    return clinicsName;
+    _items = _clinics
+        .map((clinic) => MultiSelectItem<Clinic>(clinic, clinic.name!))
+        .toList();
+    return _items;
   }
   @override
   void initState() {
@@ -97,6 +101,7 @@ class _EditUserState extends State<EditUser> {
               print(snapshot.error.toString());
               return  Container();
             } else if (snapshot.hasData) {
+              print(snapshot.data);
               return EditScreenContainer(
                   name: "Edit System User",
                   topLeftAction: BackIcon(),
@@ -136,7 +141,7 @@ class _EditUserState extends State<EditUser> {
                     ),
                   ),
                   topCenterAction: ProfilePic(
-                    profile: snapshot.data[0]['image'],
+                    profile: snapshot.data[0]['image'].toString(),
                     uploadImage: () async{
                       EasyLoading.show(status: "Updating Patient Image");
                       var imagePicker;
@@ -178,7 +183,8 @@ class _EditUserState extends State<EditUser> {
                             const SizedBox(height: 20),
                             buildPhoneNumberFormField(snapshot.data[0]["phone"]),
                             const SizedBox(height: 20),
-                            buildMultiSelect(initClinics(snapshot.data[0]["clinics"])),
+                            buildMultiSelect(),
+                            // buildNewMuiltiSelectClinic(),
                             const SizedBox(height: 10),
                             buildIsUserActive(snapshot.data[0]["is_active"]),
                             const SizedBox(height: 10),
@@ -269,9 +275,8 @@ class _EditUserState extends State<EditUser> {
       ],
     );
   }
-  buildMultiSelect(initClinics){
+  buildMultiSelect(){
     return MultiSelectBottomSheetField(
-      // initialValue: initClinics,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(
@@ -307,19 +312,18 @@ class _EditUserState extends State<EditUser> {
         textStyle:const TextStyle(
             color: Color(0xfff8755ea)
         ),
-        icon:const Icon(Icons.cancel_outlined,color: Color(0xfff8755ea),),
-        onTap: (value) {
-          setState(() {
-            _selectedClinics.remove(value);
-            String holder = "";
-            _selectedClinics.forEach((element) {
-              holder +=  element.id;
-            });
-            clinics = holder.split("").join(",");
-            print(clinics);
-          });
-        },
-
+        // icon:const Icon(Icons.cancel_outlined,color: Color(0xfff8755ea),),
+        // onTap: (value) {
+        //   setState(() {
+        //     _selectedClinics.remove(value);
+        //     String holder = "";
+        //     _selectedClinics.forEach((element) {
+        //       holder +=  element.id;
+        //     });
+        //     clinics = holder.split("").join(",");
+        //     print(clinics);
+        //   });
+        // },
       ),
     );
   }
@@ -586,4 +590,55 @@ class _EditUserState extends State<EditUser> {
       },
     );
   }
+
+  //----------------------
+  // buildNewMuiltiSelectClinic(){
+  //   return TextField(
+  //     decoration: InputDecoration(
+  //       suffixIcon:const SizedBox(
+  //         width: 10,
+  //         height: 10,
+  //         child: Icon(Icons.arrow_forward_ios),
+  //       ),
+  //       border: OutlineInputBorder(
+  //         borderRadius:
+  //         BorderRadius.circular(5.0),
+  //       ),
+  //       hintText: "Active Clinics",
+  //       floatingLabelBehavior:
+  //       FloatingLabelBehavior.auto,
+  //     ),
+  //     readOnly: true,
+  //     onTap: () {
+  //       showModalBottomSheet(
+  //           isScrollControlled: true,
+  //           context: context,
+  //           backgroundColor:
+  //           Colors.white,
+  //           builder:
+  //               (BuildContext context) {
+  //             return Container(
+  //               height: 400,
+  //               width: double.infinity,
+  //               decoration:const BoxDecoration(
+  //                 borderRadius: BorderRadius.all(Radius.circular(15))
+  //               ),
+  //               child: MultiSelectContainer(
+  //                   items: [
+  //                 MultiSelectCard(value: 'Dart', label: 'Dart'),
+  //                 MultiSelectCard(value: 'Python', label: 'Python'),
+  //                 MultiSelectCard(value: 'JavaScript', label: 'JavaScript'),
+  //                 MultiSelectCard(value: 'Java', label: 'Java'),
+  //                 MultiSelectCard(value: 'C#', label: 'C#'),
+  //                 MultiSelectCard(value: 'C++', label: 'C++'),
+  //                 MultiSelectCard(value: 'Go Lang', label: 'Go Lang'),
+  //                 MultiSelectCard(value: 'Swift', label: 'Swift'),
+  //                 MultiSelectCard(value: 'PHP', label: 'PHP'),
+  //                 MultiSelectCard(value: 'Kotlin', label: 'Kotlin')
+  //               ], onChange: (allSelectedItems, selectedItem) {}),
+  //             );
+  //           });
+  //     },
+  //   );
+  // }
 }

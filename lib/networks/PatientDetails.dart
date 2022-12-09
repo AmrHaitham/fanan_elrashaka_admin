@@ -78,7 +78,7 @@ class PatientDetails{
       'pid': pid,
     });
 
-    request.files.add(await http.MultipartFile.fromPath('diet_image', image));
+    request.files.add(await http.MultipartFile.fromPath('application_image', image));
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
@@ -161,14 +161,13 @@ class PatientDetails{
 
   }
 
-  updateVisitation_note(token,pid,note)async{
+  updateVisitation_note(token,id,note)async{
     var headers = {
       'Authorization': 'Token ${token}'
     };
-
     var request = http.MultipartRequest('PUT', Uri.parse(Apis.visitation_notes));
     request.fields.addAll({
-      'id': pid,
+      'id': id,
       'note': note,
     });
 
@@ -180,14 +179,14 @@ class PatientDetails{
 
   }
 
-  deleteVisitation_note(token,pid)async{
+  deleteVisitation_note(token,id)async{
     var headers = {
       'Authorization': 'Token ${token}'
     };
 
     var request = http.MultipartRequest('DELETE', Uri.parse(Apis.visitation_notes));
     request.fields.addAll({
-      'id': pid,
+      'id': id,
     });
 
     request.headers.addAll(headers);
@@ -209,7 +208,7 @@ class PatientDetails{
     var headers ={
       'Authorization': 'Token ${token}'
     };
-    var response =await http.get(Uri.parse("${Apis.food_agenda}?pid=$id&multiple=0&date=$date"),headers: headers);
+    var response =await http.get(Uri.parse("${Apis.food_agenda}?pid=$id&multiple=1&date=$date"),headers: headers);
     return jsonDecode(utf8.decode(response.bodyBytes));
   }
 
@@ -220,7 +219,7 @@ class PatientDetails{
 
     var request = http.MultipartRequest('POST', Uri.parse(Apis.measurements));
     request.fields.addAll({
-      'pid': '1',
+      'pid': pid,
       'weight': data[0],
       'arms': data[1],
       'chest': data[2],
@@ -238,14 +237,14 @@ class PatientDetails{
     return response;
 
   }
-  updateMeasurement(token,pid,data)async{
+  updateMeasurement(token,id,data)async{
     var headers = {
       'Authorization': 'Token ${token}'
     };
-
+    print("updateMeasurement for \n token :- $token \n pid = $id \n data = $data");
     var request = http.MultipartRequest('PUT', Uri.parse(Apis.measurements));
     request.fields.addAll({
-      'id': '1',
+      'id': id,
       'weight': data[0],
       'arms': data[1],
       'chest': data[2],
@@ -264,14 +263,14 @@ class PatientDetails{
 
   }
 
-  deleteMeasurement(token,pid)async{
+  deleteMeasurement(token,id)async{
     var headers = {
       'Authorization': 'Token ${token}'
     };
-
+    print("deleteMeasurement for \n token :- $token \n id = $id");
     var request = http.MultipartRequest('DELETE', Uri.parse(Apis.measurements));
     request.fields.addAll({
-      'id': pid,
+      'id': id,
     });
     request.headers.addAll(headers);
 

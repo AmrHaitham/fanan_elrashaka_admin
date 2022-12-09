@@ -31,6 +31,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
   Dialogs _dialogs = Dialogs();
   @override
   Widget build(BuildContext context) {
+    print("pid is :- ${widget.pid}");
     return FutureBuilder(
         future: _patientDetails.getAllMeasurements(context.read<UserData>().token, widget.pid),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -260,14 +261,13 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                                       try{
                                                         var changeProfileResponse = await _patientDetails.updateMeasurement(
                                                             context.read<UserData>().token,
-                                                            widget.pid.toString(),
+                                                            snapshot.data[index]['id'].toString(),
                                                             data
                                                         );
                                                         if (await changeProfileResponse.statusCode == 200) {
                                                           _dialogs.doneDialog(context,"You_are_successfully_updated_new_Measurement","ok",(){
-                                                            setState(() {
-                                                              _formKey.currentState!.reset();
-                                                            });
+                                                            Navigator.pop(context);
+                                                            setState(() {});
                                                           });
                                                         }else{
                                                           var response = jsonDecode(await changeProfileResponse.stream.bytesToString());
@@ -293,13 +293,12 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                             EasyLoading.show(status: "Delete Measurement");
                                             var response = await _patientDetails.deleteMeasurement(
                                               context.read<UserData>().token,
-                                              widget.pid,
+                                              snapshot.data[index]['id'].toString(),
                                             );
                                             var data = jsonDecode(await response.stream.bytesToString());
                                             if (await response.statusCode == 200) {
                                               print(data);
                                               EasyLoading.showSuccess("Done Deleting Measurement");
-                                              Navigator.pop(context);
                                               setState(() {});
                                             }else{
                                               print(data);

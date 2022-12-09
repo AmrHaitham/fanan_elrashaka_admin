@@ -178,8 +178,8 @@ class _FinanceStatsState extends State<FinanceStats> {
       readOnly: true,
       onTap: () {
         BottomPicker.range(
-          initialFirstDate: DateTime.now(),
-          minSecondDate:  DateTime.now().subtract(const  Duration(days:  365)),
+          initialFirstDate: DateTime.now().subtract(const  Duration(days:700)),
+          minSecondDate:  DateTime.now().subtract(const  Duration(days:356)),
           title: "Date Range",
           dateOrder: DatePickerDateOrder.dmy,
           pickerTextStyle:const TextStyle(

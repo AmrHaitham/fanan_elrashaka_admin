@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 class AgendaContainer extends StatelessWidget {
   final Agenda agenda;
-  AgendaContainer({Key? key,required this.agenda}) : super(key: key);
+  final String selectedDay;
+  AgendaContainer({Key? key,required this.agenda,required this.selectedDay}) : super(key: key);
   final GlobalKey<ExpansionTileCardState> cardA = new GlobalKey();
   final ButtonStyle flatButtonStyle = TextButton.styleFrom(
     shape: const RoundedRectangleBorder(
@@ -14,7 +15,9 @@ class AgendaContainer extends StatelessWidget {
   );
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return
+      (DateFormat("yyyy-MM-dd").format(DateTime.parse(agenda.time.toString())).toString() == DateFormat("yyyy-MM-dd").format(DateTime.parse(selectedDay)).toString())?
+      Padding(
       padding: const EdgeInsets.all(8.0),
       child: ExpansionTileCard(
         subtitle: Text(DateFormat('jm').format(DateTime.parse(agenda.time!)),),
@@ -92,6 +95,6 @@ class AgendaContainer extends StatelessWidget {
         ],
 
       ),
-    );
+    ):Container();
   }
 }

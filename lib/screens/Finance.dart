@@ -33,6 +33,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:http/http.dart' as http;
+import 'package:open_file/open_file.dart';
 class Finance extends StatefulWidget {
   final token ;
 
@@ -106,10 +107,12 @@ class _FinanceState extends State<Finance> {
         try{
           print("save file to -> $path");
           File(path).writeAsBytesSync(bytes);
+          EasyLoading.showSuccess("Done Downloading Report");
+          OpenFile.open(path);
         }catch(v){
           print(v);
+          EasyLoading.showError("Error while downloading file");
         }finally{
-          EasyLoading.showSuccess("Done Downloading Report");
           Navigator.pop(context);
           EasyLoading.dismiss();
         }
@@ -508,8 +511,8 @@ class _FinanceState extends State<Finance> {
       readOnly: true,
       onTap: () {
         BottomPicker.range(
-          initialFirstDate: DateTime.now(),
-          minSecondDate:  DateTime.now().subtract(const  Duration(days:  365)),
+          initialFirstDate: DateTime.now().subtract(const  Duration(days:700)),
+          minSecondDate:  DateTime.now().subtract(const  Duration(days:356)),
           title: "Date Range",
           dateOrder: DatePickerDateOrder.dmy,
           pickerTextStyle:const TextStyle(

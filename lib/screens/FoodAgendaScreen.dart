@@ -37,34 +37,49 @@ class _FoodAgendaScreenState extends State<FoodAgendaScreen> {
   //   return DateTime.parse(datetime).millisecondsSinceEpoch.toString();//add(Duration(hours: 2)).
   // }
   getData() async {
-    setState(() => _isLoading = true);
-    print(_selectedDay);
-    var response =await _patientDetails.getAllFoodAgendas(
-        context.read<UserData>().token,
-        widget.pid,
-        DateFormat("yyyy-MM-dd").format(DateTime.parse(_selectedDay.toString())).toString()
-    );
-    data.clear();
-    for(var row in response){
-      data.add(
-          Agenda(
-            id: row['id'],
-            name: row['name'],
-            amount: row['amount'],
-            note: row['notes'],
-            mealData: row['meal_details'],
-            time: row['timestamp'],
-            type: int.parse(row['agenda_type'])
-        ));
+    bool getting = true;
+    for(var row in data){
+      if(DateFormat("yyyy-MM-dd").format(DateTime.parse(row.time!)).toString() == DateFormat("yyyy-MM-dd").format(DateTime.parse(_selectedDay.toString())).toString()){
+        getting = false;
+      }else{
+        getting = true;
+      }
     }
-    setState(() => _isLoading = false);
+    if(getting){
+      setState(() => _isLoading = true);
+      var response =await _patientDetails.getAllFoodAgendas(
+          context.read<UserData>().token,
+          widget.pid,
+          DateFormat("yyyy-MM-dd").format(DateTime.parse(_selectedDay.toString())).toString()
+      );
+      data.clear();
+      for(var row in response){
+        print(DateFormat("yyyy-MM-dd").format(DateTime.parse(row['timestamp'])).toString());
+        data.add(
+            Agenda(
+                id: row['id'],
+                name: row['name'],
+                amount: row['amount'],
+                note: row['notes'],
+                mealData: row['meal_details'],
+                time: row['timestamp'],
+                type: int.parse(row['agenda_type'])
+            ));
+      }
+      setState(() => _isLoading = false);
+    }
   }
 
   getMealNumber(data) {
     int num = 0;
     for (Agenda agenda in data) {
-      if (agenda.type == 1) {
-        num++;
+      if (DateFormat("yyyy-MM-dd")
+          .format(DateTime.parse(agenda.time!))
+          .toString() == DateFormat("yyyy-MM-dd").format(
+          DateTime.parse(_selectedDay.toString())).toString()) {
+        if (agenda.type == 1) {
+          num++;
+        }
       }
     }
     return num;
@@ -73,10 +88,15 @@ class _FoodAgendaScreenState extends State<FoodAgendaScreen> {
   getAmount(int type, data) {
     num number = 0;
     for (Agenda agenda in data) {
+      if (DateFormat("yyyy-MM-dd")
+          .format(DateTime.parse(agenda.time!))
+          .toString() == DateFormat("yyyy-MM-dd").format(
+          DateTime.parse(_selectedDay.toString())).toString()) {
       if (agenda.type == type) {
         number += agenda.amount!;
       }
     }
+  }
     return number.toInt();
   }
 
@@ -299,6 +319,7 @@ class _FoodAgendaScreenState extends State<FoodAgendaScreen> {
                   for (int i = 0; i < data.length; i++)
                     AgendaContainer(
                       agenda: data[i],
+                      selectedDay: _selectedDay.toString(),
                     )
                 else
                   Padding(

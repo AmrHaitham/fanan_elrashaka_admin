@@ -147,7 +147,7 @@ class _VisitationNoteScreenState extends State<VisitationNoteScreen> {
                                                       EasyLoading.show(status: "Edit Visitation Note");
                                                       var response = await _patientDetails.updateVisitation_note(
                                                           context.read<UserData>().token,
-                                                          widget.pid,
+                                                          snapshot.data[index]['id'].toString(),
                                                           note
                                                       );
                                                       var data = jsonDecode(await response.stream.bytesToString());
@@ -176,7 +176,7 @@ class _VisitationNoteScreenState extends State<VisitationNoteScreen> {
                                           EasyLoading.show(status: "Delete Visitation Note");
                                           var response = await _patientDetails.deleteVisitation_note(
                                               context.read<UserData>().token,
-                                              widget.pid,
+                                              snapshot.data[index]['id'].toString(),
                                           );
                                           var data = jsonDecode(await response.stream.bytesToString());
                                           if (await response.statusCode == 200) {

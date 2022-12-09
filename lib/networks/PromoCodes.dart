@@ -29,6 +29,7 @@ class PromoCodes {
     var response = await http.get(
         Uri.parse("${Apis.promocodes}?edit=$promocode_name"),
         headers: headers);
+    print(response.body);
     return jsonDecode(utf8.decode(response.bodyBytes));
   }
 

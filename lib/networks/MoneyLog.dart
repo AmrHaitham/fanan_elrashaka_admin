@@ -8,14 +8,16 @@ class MoneyLog{
     var headers ={
       'Authorization': 'Token ${token}'
     };
-    var response =await http.get(Uri.parse("${Apis.finance}$date/"),headers: headers);
+    var response =await http.get(Uri.parse("${Apis.finance}?date=$date"),headers: headers);
+    print('token is = ${token}, date is = ${date}');
+    print("mony logs = ${response.body}");
     return jsonDecode(utf8.decode(response.bodyBytes));
   }
-  getMoneyLog(token,date)async{
+  getMoneyLog(token,id)async{
     var headers ={
       'Authorization': 'Token ${token}'
     };
-    var response =await http.get(Uri.parse("${Apis.finance}$date/"),headers: headers);
+    var response =await http.get(Uri.parse("${Apis.finance}?id=$id"),headers: headers);
     return jsonDecode(utf8.decode(response.bodyBytes));
   }
   addMoneyLog(token,name, category_id, amount, log_type, notes, clinic_id)async{
@@ -23,7 +25,7 @@ class MoneyLog{
     var headers = {
       'Authorization': 'Token ${token}'
     };
-    var request = http.MultipartRequest('POST', Uri.parse("${Apis.finance}$time/"));
+    var request = http.MultipartRequest('POST', Uri.parse("${Apis.finance}"));
     request.fields.addAll({
       'name': name,
       'category_id':category_id,
@@ -42,7 +44,7 @@ class MoneyLog{
     var headers = {
       'Authorization': 'Token ${token}'
     };
-    var request = http.MultipartRequest('PUT', Uri.parse("${Apis.finance}$date/"));
+    var request = http.MultipartRequest('PUT', Uri.parse("${Apis.finance}"));
     request.fields.addAll({
       id:"id", name:"name", category_id:"category_id", amount:"amount", log_type:"log_type", notes:"notes", clinic_id:"clinic_id"
     });

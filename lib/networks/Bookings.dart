@@ -8,8 +8,9 @@ class Bookings{
     var headers ={
       'Authorization': 'Token ${token}'
     };
-    var response =await http.get(Uri.parse("${Apis.bookings}$date/$clinic_id/"),headers: headers);
-    print(response.body);
+    var response =await http.get(Uri.parse("${Apis.bookings}$date/$clinic_id"),headers: headers);
+    print("token:-${token} , date:- ${date} , clinic_id :- ${clinic_id}");
+    print("bookings = ${response.body}");
     return jsonDecode(utf8.decode(response.bodyBytes));
   }
 
@@ -18,6 +19,7 @@ class Bookings{
       'Authorization': 'Token ${token}'
     };
     var response =await http.get(Uri.parse("${Apis.bookings}$date/$clinic_id/?search=$search_data"),headers: headers);
+    print("bookings search = ${response.body}");
     return jsonDecode(utf8.decode(response.bodyBytes));
   }
 
