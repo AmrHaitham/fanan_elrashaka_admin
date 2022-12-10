@@ -6,6 +6,7 @@ import 'package:fanan_elrashaka_admin/models/Clinic.dart';
 import 'package:fanan_elrashaka_admin/networks/Users.dart';
 import 'package:fanan_elrashaka_admin/providers/ClinicsData.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/widgets/ActiveContainer.dart';
 import 'package:fanan_elrashaka_admin/widgets/AddProfilePhoto.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/DefaultButton.dart';
@@ -19,6 +20,7 @@ import 'package:multi_select_flutter/bottom_sheet/multi_select_bottom_sheet_fiel
 import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
+import 'package:multiple_search_selection/multiple_search_selection.dart';
 import 'package:provider/provider.dart';
 class EditUser extends StatefulWidget {
   final id ;
@@ -66,18 +68,39 @@ class _EditUserState extends State<EditUser> {
   bool _isLoading = false;
 
   initClinicsData(initClinics){
-    List<MultiSelectItem<Object?>> _items = [];
     List<Clinic> clinicsName = [];
     for(var clinic in initClinics){
       Clinic clinicModel =Clinic();
       clinicModel.id=clinic["id"].toString();
-      clinicModel.name=clinic["clinic_en"];
+      clinicModel.name=clinic["name_en"];
       clinicsName.add(clinicModel);
     }
-    _items = _clinics
-        .map((clinic) => MultiSelectItem<Clinic>(clinic, clinic.name!))
-        .toList();
-    return _items;
+    return clinicsName;
+  }
+  allItems(allClinics , initClinics){
+    List<Clinic> data = allClinics;
+    initClinics.forEach((element) {
+      if(!allClinics.contains(element)){
+        data.removeWhere((e) => e.id == element.id);
+      }
+    });
+    return data;
+  }
+  getDefaultClinics(initClinics){
+    List<Clinic> clinicsName = [];
+    for(var clinic in initClinics){
+      Clinic clinicModel =Clinic();
+      clinicModel.id=clinic["id"].toString();
+      clinicModel.name=clinic["name_en"];
+      clinicsName.add(clinicModel);
+    }
+    _selectedClinics = clinicsName;
+    String holder = "";
+    _selectedClinics.forEach((element) {
+      holder +=  element.id;
+    });
+    clinics = holder.split("").join(",");
+    return clinics;
   }
   @override
   void initState() {
@@ -116,7 +139,7 @@ class _EditUserState extends State<EditUser> {
                             fullName,
                             phoneNumber,
                             imageLocation??"",
-                            clinics??"",
+                            clinics??getDefaultClinics(snapshot.data[0]["clinics"]),
                             _switchValue
                         );
                         if (await responseData.statusCode == 200) {
@@ -183,10 +206,16 @@ class _EditUserState extends State<EditUser> {
                             const SizedBox(height: 20),
                             buildPhoneNumberFormField(snapshot.data[0]["phone"]),
                             const SizedBox(height: 20),
-                            buildMultiSelect(),
-                            // buildNewMuiltiSelectClinic(),
+                            // buildMultiSelect(),
+                            buildNewMuiltiSelectClinic(snapshot.data[0]["clinics"]),
                             const SizedBox(height: 10),
-                            buildIsUserActive(snapshot.data[0]["is_active"]),
+                            ActiveContainer(
+                                initValue: snapshot.data[0]["is_active"],
+                                onChange: (value){
+                                  _switchValue = value;
+                                  print(_switchValue);
+                                }
+                            ),
                             const SizedBox(height: 10),
                             const Divider(height: 5,color: Colors.black,thickness: 0.8,),
                             const SizedBox(height: 20),
@@ -246,33 +275,6 @@ class _EditUserState extends State<EditUser> {
             return Container();
           }
         }
-    );
-  }
-  buildIsUserActive(initIsActive){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Padding(
-          padding:  EdgeInsets.all(8.0),
-          child:  Text("Is User Active:",
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold
-              )
-          ),
-        ),
-        CupertinoSwitch(
-          trackColor: Colors.grey,
-          activeColor: Constants.secondColor,
-          value: _switchValue??initIsActive,
-          onChanged: (value) {
-            setState(() {
-              _switchValue = value;
-            });
-          },
-        ),
-      ],
     );
   }
   buildMultiSelect(){
@@ -592,53 +594,85 @@ class _EditUserState extends State<EditUser> {
   }
 
   //----------------------
-  // buildNewMuiltiSelectClinic(){
-  //   return TextField(
-  //     decoration: InputDecoration(
-  //       suffixIcon:const SizedBox(
-  //         width: 10,
-  //         height: 10,
-  //         child: Icon(Icons.arrow_forward_ios),
-  //       ),
-  //       border: OutlineInputBorder(
-  //         borderRadius:
-  //         BorderRadius.circular(5.0),
-  //       ),
-  //       hintText: "Active Clinics",
-  //       floatingLabelBehavior:
-  //       FloatingLabelBehavior.auto,
-  //     ),
-  //     readOnly: true,
-  //     onTap: () {
-  //       showModalBottomSheet(
-  //           isScrollControlled: true,
-  //           context: context,
-  //           backgroundColor:
-  //           Colors.white,
-  //           builder:
-  //               (BuildContext context) {
-  //             return Container(
-  //               height: 400,
-  //               width: double.infinity,
-  //               decoration:const BoxDecoration(
-  //                 borderRadius: BorderRadius.all(Radius.circular(15))
-  //               ),
-  //               child: MultiSelectContainer(
-  //                   items: [
-  //                 MultiSelectCard(value: 'Dart', label: 'Dart'),
-  //                 MultiSelectCard(value: 'Python', label: 'Python'),
-  //                 MultiSelectCard(value: 'JavaScript', label: 'JavaScript'),
-  //                 MultiSelectCard(value: 'Java', label: 'Java'),
-  //                 MultiSelectCard(value: 'C#', label: 'C#'),
-  //                 MultiSelectCard(value: 'C++', label: 'C++'),
-  //                 MultiSelectCard(value: 'Go Lang', label: 'Go Lang'),
-  //                 MultiSelectCard(value: 'Swift', label: 'Swift'),
-  //                 MultiSelectCard(value: 'PHP', label: 'PHP'),
-  //                 MultiSelectCard(value: 'Kotlin', label: 'Kotlin')
-  //               ], onChange: (allSelectedItems, selectedItem) {}),
-  //             );
-  //           });
-  //     },
-  //   );
-  // }
+  buildNewMuiltiSelectClinic(initData){
+   return  MultipleSearchSelection<Clinic>(
+      initialPickedItems: initClinicsData(initData),
+      items: allItems(context.read<ClinisData>().clinicsName,initClinicsData(initData)), // List<Clinics>
+      fieldToCheck: (c) {
+        return c.name.toString(); // String
+      },
+      pickedItemsBoxDecoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(5)),
+        border: Border.all(color: Colors.grey[400]!),
+      ),
+      showItemsButton: Text("Show Items"),
+      selectAllButton: Text("Select all"),
+      showClearAllButton: false,
+      showedItemContainerPadding: EdgeInsets.all(20),
+      itemBuilder: (value) {
+        return Padding(
+          padding: const EdgeInsets.all(6.0),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Colors.white,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 20.0,
+                horizontal: 12,
+              ),
+              child: Text(value.name.toString()),
+            ),
+          ),
+        );
+      },
+      pickedItemBuilder: (value) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Color(0xfffe9dfff),
+            // border: Border.all(color: Colors.grey[400]!),
+            borderRadius: BorderRadius.all(Radius.circular(15))
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Text("${value.name}"),
+          ),
+        );
+      },
+      onTapShowedItem: () {},
+      onPickedChange: (items) {
+        _selectedClinics = items;
+        String holder = "";
+        _selectedClinics.forEach((element) {
+          holder +=  element.id;
+        });
+        clinics = holder.split("").join(",");
+        print(clinics);
+      },
+      onItemAdded: (item) {
+      },
+      onItemRemoved: (item) {
+        //   setState(() {
+            _selectedClinics.remove(item);
+            String holder = "";
+            _selectedClinics.forEach((element) {
+              holder +=  element.id;
+            });
+            clinics = holder.split("").join(",");
+            print(clinics);
+        //   });
+      },
+      sortShowedItems: true,
+      sortPickedItems: true,
+      fuzzySearch: FuzzySearch.jaro,
+      itemsVisibility: ShowedItemsVisibility.toggle,
+      title: Text(
+        'Active Clinics',
+      ),
+      showSelectAllButton: true,
+      // searchItemTextContentPadding: const EdgeInsets.symmetric(horizontal: 10),
+      maximumShowItemsHeight: 200,
+    );
+  }
 }
