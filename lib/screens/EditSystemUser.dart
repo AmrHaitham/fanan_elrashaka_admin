@@ -140,7 +140,7 @@ class _EditUserState extends State<EditUser> {
                             phoneNumber,
                             imageLocation??"",
                             clinics??getDefaultClinics(snapshot.data[0]["clinics"]),
-                            _switchValue
+                            _switchValue??snapshot.data[0]["is_active"]
                         );
                         if (await responseData.statusCode == 200) {
                           _dialogs.doneDialog(context,"You_are_successfully_update_user","ok",(){
@@ -177,7 +177,7 @@ class _EditUserState extends State<EditUser> {
                           snapshot.data[0]["phone"],
                           imageLocation,
                           snapshot.data[0]["clinics"],
-                          _switchValue
+                          _switchValue??snapshot.data[0]["is_active"]
                       );
                       if (await picResponse.statusCode == 200) {
                         _dialogs.doneDialog(context,"You_are_successfully_change_your_profile_picture","ok",(){});
