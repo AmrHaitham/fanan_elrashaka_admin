@@ -55,10 +55,6 @@ class _EditUserState extends State<EditUser> {
 
   final ImagePicker _picker = ImagePicker();
 
-  static List<Clinic> _clinics = [];
-
-  List<MultiSelectItem<Object?>> _items = [];
-
   List<dynamic?> _selectedClinics = [];
 
   bool? _switchValue ;
@@ -78,10 +74,12 @@ class _EditUserState extends State<EditUser> {
     return clinicsName;
   }
   allItems(allClinics , initClinics){
-    List<Clinic> data = allClinics;
+    List<Clinic> data = [...allClinics];
     initClinics.forEach((element) {
       if(!allClinics.contains(element)){
         data.removeWhere((e) => e.id == element.id);
+      }else{
+        print(element.name);
       }
     });
     return data;
@@ -106,10 +104,11 @@ class _EditUserState extends State<EditUser> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _clinics = context.read<ClinisData>().clinicsName;
-    _items = _clinics
-        .map((clinic) => MultiSelectItem<Clinic>(clinic, clinic.name!))
-        .toList();
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
   @override
   Widget build(BuildContext context) {
@@ -275,58 +274,6 @@ class _EditUserState extends State<EditUser> {
             return Container();
           }
         }
-    );
-  }
-  buildMultiSelect(){
-    return MultiSelectBottomSheetField(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(5)),
-        border: Border.all(
-          color: Colors.grey,
-          width: 1,
-        ),
-      ),
-      initialChildSize: 0.4,
-      listType: MultiSelectListType.CHIP,
-      searchable: true,
-      buttonText: const Text("Active Clinics",),
-      title:const Text("Clinics",style: TextStyle(
-          fontSize: 30
-      ),),
-      items: _items,
-      onConfirm: (values){
-        _selectedClinics = values;
-        String holder = "";
-        _selectedClinics.forEach((element) {
-          holder +=  element.id;
-        });
-        clinics = holder.split("").join(",");
-        print(clinics);
-      },
-      selectedItemsTextStyle:const TextStyle(
-          color:  Color(0xfff8755ea)
-      ),
-      cancelText:const Text("Cancel"),
-      confirmText:const Text("Select"),
-      selectedColor:const Color(0xfffe9dfff) ,
-      chipDisplay: MultiSelectChipDisplay(
-        chipColor:const Color(0xfffe9dfff),
-        textStyle:const TextStyle(
-            color: Color(0xfff8755ea)
-        ),
-        // icon:const Icon(Icons.cancel_outlined,color: Color(0xfff8755ea),),
-        // onTap: (value) {
-        //   setState(() {
-        //     _selectedClinics.remove(value);
-        //     String holder = "";
-        //     _selectedClinics.forEach((element) {
-        //       holder +=  element.id;
-        //     });
-        //     clinics = holder.split("").join(",");
-        //     print(clinics);
-        //   });
-        // },
-      ),
     );
   }
   TextFormField buildEmailFormField(initEmail) {
@@ -640,7 +587,9 @@ class _EditUserState extends State<EditUser> {
           ),
         );
       },
-      onTapShowedItem: () {},
+      onTapShowedItem: () {
+        allItems(context.read<ClinisData>().clinicsName,initClinicsData(initData));
+      },
       onPickedChange: (items) {
         _selectedClinics = items;
         String holder = "";
