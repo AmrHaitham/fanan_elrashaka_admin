@@ -71,6 +71,7 @@ class _LandingPageState extends State<LandingPage> {
           context.read<UserData>().email,
           context.read<UserData>().token);
       if(response!=null ){
+        print("saveUserInfo response:- ${response}");
         if(response["detail"]=="Invalid token."||response["detail"]=="Not found."){
           _dialog.warningDialog(context, "Pleace_login_again",(){
             AdminActions.logout(context);

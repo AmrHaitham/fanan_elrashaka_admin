@@ -5,6 +5,7 @@ import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/helper/keyboard.dart';
 import 'package:fanan_elrashaka_admin/networks/UserAuth.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/screens/LandingPage.dart';
 import 'package:fanan_elrashaka_admin/screens/MainScreen.dart';
 import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/DefaultButton.dart';
@@ -95,7 +96,7 @@ class _SignFormState extends State<SignForm> {
                         context.read<UserData>().setUserEmail(email!);
                         context.read<UserData>().setUserToken(jsonDecode(data)['token']);
                         Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) => MainScreen())
+                            MaterialPageRoute(builder: (context) => LandingPage())
                         );
                       }else {
                         print(jsonDecode(data)['error']);
