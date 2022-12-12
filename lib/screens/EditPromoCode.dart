@@ -77,7 +77,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
                         EasyLoading.show(status: "Edit Promo Code");
                         var responseData = await _promoCodes.updatePromoCode(
                           context.read<UserData>().token,
-                          snapshot.data[0]['code'],
+                          snapshot.data['code'],
                             fromDate,
                             toDate,
                             clinic,
@@ -117,17 +117,17 @@ class _EditPromoCodeState extends State<EditPromoCode> {
                         child: Column(
                           children: [
                             const SizedBox(height: 40,),
-                            buildCodeFormField(snapshot.data[0]['code']),
+                            buildCodeFormField(snapshot.data['code']),
                             const SizedBox(height: 20,),
-                            buildMaxFormField(snapshot.data[0]['max_number']),
+                            buildMaxFormField(snapshot.data['max_number']),
                             const SizedBox(height: 20,),
-                            buildSelect(snapshot.data[0]['clinic_service_id']),
+                            buildSelect(snapshot.data['clinic_service_id']),
                             const SizedBox(height: 20,),
-                            buildFromDateFormField(context,snapshot.data[0]['from_date']),
+                            buildFromDateFormField(context,snapshot.data['from_date']),
                             const SizedBox(height: 20,),
-                            buildToDateFormField(context,snapshot.data[0]['to_date']),
+                            buildToDateFormField(context,snapshot.data['to_date']),
                             const SizedBox(height: 20,),
-                            buildFeeAfterCodeFormField(snapshot.data[0]['fee_after_code']),
+                            buildFeeAfterCodeFormField(snapshot.data['fee_after_code']),
                             const SizedBox(height: 20),
                             const Divider(height: 5,color: Colors.black,thickness: 0.8,),
                             const SizedBox(height: 10),
@@ -157,7 +157,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
                                         "Are you sure you want to delete this promo code",
                                       ),),
                                       btnOkOnPress: () async{
-                                        var response = await _promoCodes.deletePromoCode(context.read<UserData>().token, snapshot.data[0]['code']);
+                                        var response = await _promoCodes.deletePromoCode(context.read<UserData>().token, snapshot.data['code']);
                                         if (await response.statusCode == 200) {
                                           print(await response.stream.bytesToString());
                                           Navigator.pop(context);

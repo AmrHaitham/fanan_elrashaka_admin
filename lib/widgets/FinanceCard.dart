@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
+import 'package:fanan_elrashaka_admin/screens/EditMoneyLog.dart';
 import 'package:flutter/material.dart';
 class FinanceCard extends StatelessWidget {
   final snapshot;
@@ -75,7 +76,9 @@ class FinanceCard extends StatelessWidget {
           children: [
             InkWell(
               onTap: (){
-
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => EditMoneyLog(id: snapshot['id'].toString()))
+                );
               },
               child: Container(
                 margin:const EdgeInsets.only(left: 10,right: 10),

@@ -17,7 +17,7 @@ class MoneyLog{
     var headers ={
       'Authorization': 'Token ${token}'
     };
-    var response =await http.get(Uri.parse("${Apis.finance}?id=$id"),headers: headers);
+    var response =await http.get(Uri.parse("${Apis.finance}?edit=$id"),headers: headers);
     return jsonDecode(utf8.decode(response.bodyBytes));
   }
   addMoneyLog(token,name, category_id, amount, log_type, notes, clinic_id)async{
@@ -40,13 +40,14 @@ class MoneyLog{
 
     return response;
   }
-  editMoneyLog(token,date,id, name, category_id, amount, log_type, notes, clinic_id)async{
+  editMoneyLog(token,id, name, category_id, amount, log_type, notes, clinic_id)async{
     var headers = {
       'Authorization': 'Token ${token}'
     };
     var request = http.MultipartRequest('PUT', Uri.parse("${Apis.finance}"));
     request.fields.addAll({
-      id:"id", name:"name", category_id:"category_id", amount:"amount", log_type:"log_type", notes:"notes", clinic_id:"clinic_id"
+      "id":id, "name":name, "category_id":category_id,
+      "amount":amount, "log_type":log_type, "notes":notes, "clinic_id":clinic_id
     });
 
     request.headers.addAll(headers);
@@ -55,11 +56,14 @@ class MoneyLog{
 
     return response;
   }
-  deleteMoneyLog(token,date)async{
+  deleteMoneyLog(token,id)async{
     var headers = {
       'Authorization': 'Token ${token}'
     };
-    var request = http.MultipartRequest('DELETE', Uri.parse("${Apis.finance}$date/"));
+    var request = http.MultipartRequest('DELETE', Uri.parse("${Apis.finance}"));
+    request.fields.addAll({
+      "id":id,
+    });
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();

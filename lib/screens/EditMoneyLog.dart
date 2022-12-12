@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
@@ -6,17 +7,21 @@ import 'package:fanan_elrashaka_admin/networks/MoneyLog.dart';
 import 'package:fanan_elrashaka_admin/providers/ClinicsData.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/EditScreenContainer.dart';
+import 'package:fanan_elrashaka_admin/widgets/Loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 import 'package:select_form_field/select_form_field.dart';
 import '../providers/UserData.dart';
-class AddMoneyLog extends StatefulWidget {
+class EditMoneyLog extends StatefulWidget {
+  final id ;
+
+  const EditMoneyLog({Key? key,required this.id}) : super(key: key);
   @override
-  State<AddMoneyLog> createState() => _AddMoneyLogState();
+  State<EditMoneyLog> createState() => _EditMoneyLogState();
 }
 
-class _AddMoneyLogState extends State<AddMoneyLog> {
+class _EditMoneyLogState extends State<EditMoneyLog> {
   final Dialogs _dialogs = Dialogs();
 
   final _formKey = GlobalKey<FormState>();
@@ -53,31 +58,31 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
   @override
   Widget build(BuildContext context) {
     return EditScreenContainer(
-        name: "Add Money Log",
+        name: "Edit Money Log",
         topLeftAction: BackIcon(),
         topRightaction: InkWell(
           onTap: ()async{
             if (_formKey.currentState!.validate()) {
-              // _formKey.currentState!.save();
-              // EasyLoading.show(status: "Edit Money Log");
-              // var responseData = await _moneyLog.editMoneyLog(
-              //     context.read<UserData>().token,
-              //     "",
-              //     "id",
-              //     name, category_id, amount, log_type, notes, clinic_id
-              // );
-              // if (await responseData.statusCode == 200) {
-              //   _dialogs.doneDialog(context,"You_are_successfully_Edit_Money_Log","ok",(){
-              //     setState(() {
-              //       _formKey.currentState!.reset();
-              //     });
-              //   });
-              // }else{
-              //   var response = jsonDecode(await responseData.stream.bytesToString());
-              //   print(response);
-              //   _dialogs.errorDialog(context, "Error_while_Edit_money_log_please_check_your_internet_connection");
-              // }
-              // EasyLoading.dismiss();
+              _formKey.currentState!.save();
+              EasyLoading.show(status: "Edit Money Log");
+              //token,date,id, name, category_id, amount, log_type, notes, clinic_id
+              print("${context.read<UserData>().token},${widget.id.toString()}, $name, $category_id, $amount, $log_type, $notes, $clinic_id");
+              var responseData = await _moneyLog.editMoneyLog(
+                  context.read<UserData>().token,
+                  widget.id.toString(), name, category_id, amount, log_type, notes, clinic_id
+              );
+              if (await responseData.statusCode == 200) {
+                _dialogs.doneDialog(context,"You_are_successfully_Edit_Money_Log","ok",(){
+                  setState(() {
+                    _formKey.currentState!.reset();
+                  });
+                });
+              }else{
+                var response = jsonDecode(await responseData.stream.bytesToString());
+                print(response);
+                _dialogs.errorDialog(context, "Error_while_Edit_money_log_please_check_your_internet_connection");
+              }
+              EasyLoading.dismiss();
             }
           },
           child: Container(
@@ -88,10 +93,13 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
           ),
         ),
         child: FutureBuilder(
-            future: _moneyLog.getAllMoneyLogs("",""),
+            future: _moneyLog.getMoneyLog(context.read<UserData>().token,widget.id),
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return Padding(
+                  padding: const EdgeInsets.only(top: 30.0),
+                  child: Center(child: CustomLoading()),
+                );
               } else if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasError) {
                   // error in data
@@ -101,24 +109,24 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
                   return Container(
                     width: double.infinity,
                     height: MediaQuery.of(context).size.height*0.83,
-                    padding: const EdgeInsets.only(right: 15,left: 15,top: 25),
+                    padding: const EdgeInsets.only(right: 15,left: 15,top: 30),
                     child: SingleChildScrollView(
                       child: Form(
                         key: _formKey,
                         child: Column(
                           children: [
                             const SizedBox(height: 10,),
-                            buildLogTypeField(""),
+                            buildLogTypeField(snapshot.data['log_type']),
                             const SizedBox(height: 20,),
-                            buildNameFormField(""),
+                            buildNameFormField(snapshot.data['name']),
                             const SizedBox(height: 20,),
-                            buildClinicSelect(""),
+                            buildClinicSelect(snapshot.data['clinic_id'].toString()),
                             const SizedBox(height: 20,),
-                            buildCategorySelect(""),
+                            buildCategorySelect(snapshot.data['category_id'].toString()),
                             const SizedBox(height: 20,),
-                            buildAmountFormField(""),
+                            buildAmountFormField(snapshot.data['amount'].toString()),
                             const SizedBox(height: 20,),
-                            buildNoteFormField(""),
+                            buildNoteFormField(snapshot.data['notes']),
                             const SizedBox(height: 20),
                             const Divider(height: 5,color: Colors.black,thickness: 0.8,),
                             const SizedBox(height: 10),
@@ -148,11 +156,11 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
                                         "Are you sure you want to delete this money log",
                                       ),),
                                       btnOkOnPress: () async{
-                                        // var response = await _moneyLog.deleteMoneyLog(context.read<UserData>().token, "");
-                                        // if (await response.statusCode == 200) {
-                                        //   print(await response.stream.bytesToString());
-                                        //   Navigator.pop(context);
-                                        // }
+                                        var response = await _moneyLog.deleteMoneyLog(context.read<UserData>().token, widget.id);
+                                        if (await response.statusCode == 200) {
+                                          print(await response.stream.bytesToString());
+                                          Navigator.pop(context);
+                                        }
                                       },
                                       btnCancelOnPress: (){},
                                       btnCancelText:"Cancel",
