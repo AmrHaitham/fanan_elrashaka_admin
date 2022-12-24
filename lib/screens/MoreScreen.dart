@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/helper/actions.dart';
+import 'package:fanan_elrashaka_admin/networks/UserProfile.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
 import 'package:fanan_elrashaka_admin/screens/AllPationts.dart';
 import 'package:fanan_elrashaka_admin/screens/AllUsersScreen.dart';
@@ -10,6 +11,7 @@ import 'package:fanan_elrashaka_admin/screens/ListAllClinicsSchedule.dart';
 import 'package:fanan_elrashaka_admin/screens/ListAllPackages.dart';
 import 'package:fanan_elrashaka_admin/screens/ListAllPromoCodes.dart';
 import 'package:fanan_elrashaka_admin/screens/ListAllServices.dart';
+import 'package:fanan_elrashaka_admin/screens/UserProfile.dart';
 import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/MoreCard.dart';
 import 'package:fanan_elrashaka_admin/widgets/ScreenContainer.dart';
@@ -37,8 +39,8 @@ class MoreScreen extends StatelessWidget {
           child: ListTile(
             onTap: (){
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => EditUser(
-                      id :context.read<UserData>().email
+                  MaterialPageRoute(builder: (context) => UserProfileScreen(
+                      email :context.read<UserData>().email
                   ))
               );
             },
@@ -57,7 +59,10 @@ class MoreScreen extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(5)),
                 color: Color(0xffe9e5ff)
               ),
-              child: Image.asset("assets/right-arrow_gray.png",color: Constants.secondColor,),
+              child: Transform.scale(
+                  scaleX: (context.locale.toString()=="en")?1:-1,
+                  child: Image.asset("assets/right-arrow_gray.png",color: Constants.secondColor,)
+              ),
             ),
           ),
         ),
@@ -87,83 +92,83 @@ class MoreScreen extends StatelessWidget {
             ),
           ),
         ),
-        child: Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height*0.65,
-          padding:const EdgeInsets.only(top: 10),
-          child: ListView(
-              children: [
-                MoreCard(title: "Services",
-                    image: "assets/services.png",
-                    onTap: (){
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) =>ListAllServices())
-                      );
-                    }),
-                MoreCard(title: LocaleKeys.ClinicsSchedule.tr(),
-                    image: "assets/schedule.png",
-                    onTap: (){
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) =>ListAllSchedule())
-                      );
-                    }),
-                MoreCard(title: LocaleKeys.ClinicsPackages.tr(),
-                    image: "assets/package.png",
-                    onTap: (){
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) =>ListAllPackages())
-                      );
-                    }),
-                MoreCard(title: LocaleKeys.PromoCodes.tr(),
-                    image: "assets/promo_codes.png",
-                    onTap: (){
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) =>ListAllPromoCodes())
-                      );
-                    }),
-                MoreCard(title: "Financial",
-                    image: "assets/financial.png",
-                    onTap: (){
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => Finance(token: context.read<UserData>().token,))
-                      );
-                    }),
-                MoreCard(title: LocaleKeys.AllPatients.tr(),
-                    image: "assets/patient.png",
-                    onTap: (){
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => ListAllPatients())
-                      );
-                    }),
-                MoreCard(title: LocaleKeys.Users.tr(),
-                    image: "assets/users.png",
-                    onTap: (){
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => ListAllUsers())
-                      );
-                    }),
-            InkWell(
-              onTap: (){
-                AdminActions.logout(context);
-              },
-              child: ListTile(
-                leading: SizedBox(
-                    width: 30,
-                    height: 30,
-                    child: Image.asset("assets/logout.png",color: Colors.red,)
-                ),
-                title: Text(
-                  LocaleKeys.Logout.tr(),
-                  style:const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red
+        child: Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: ListView(
+                children: [
+                  MoreCard(title: "Services".tr(),
+                      image: "assets/services.png",
+                      onTap: (){
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) =>ListAllServices())
+                        );
+                      }),
+                  MoreCard(title: LocaleKeys.ClinicsSchedule.tr(),
+                      image: "assets/schedule.png",
+                      onTap: (){
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) =>ListAllSchedule())
+                        );
+                      }),
+                  MoreCard(title: LocaleKeys.ClinicsPackages.tr(),
+                      image: "assets/package.png",
+                      onTap: (){
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) =>ListAllPackages())
+                        );
+                      }),
+                  MoreCard(title: LocaleKeys.PromoCodes.tr(),
+                      image: "assets/promo_codes.png",
+                      onTap: (){
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) =>ListAllPromoCodes())
+                        );
+                      }),
+                  MoreCard(title: "Financial".tr(),
+                      image: "assets/financial.png",
+                      onTap: (){
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => Finance(token: context.read<UserData>().token,))
+                        );
+                      }),
+                  MoreCard(title: LocaleKeys.AllPatients.tr(),
+                      image: "assets/patient.png",
+                      onTap: (){
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => ListAllPatients())
+                        );
+                      }),
+                  MoreCard(title: LocaleKeys.Users.tr(),
+                      image: "assets/users.png",
+                      onTap: (){
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => ListAllUsers())
+                        );
+                      }),
+              InkWell(
+                onTap: (){
+                  AdminActions.logout(context);
+                },
+                child: ListTile(
+                  leading: SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: Image.asset("assets/logout.png",color: Colors.red,)
+                  ),
+                  title: Text(
+                    LocaleKeys.Logout.tr(),
+                    style:const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red
+                    ),
                   ),
                 ),
+              )
+                ],
               ),
-            )
-              ],
-            ),
+          ),
           ),
     );
   }

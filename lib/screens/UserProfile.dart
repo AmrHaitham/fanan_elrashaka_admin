@@ -1,134 +1,95 @@
 import 'dart:convert';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
-import 'package:fanan_elrashaka_admin/models/Clinic.dart';
-import 'package:fanan_elrashaka_admin/networks/Users.dart';
-import 'package:fanan_elrashaka_admin/providers/ClinicsData.dart';
+import 'package:fanan_elrashaka_admin/networks/Patients.dart';
+import 'package:fanan_elrashaka_admin/networks/UserProfile.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
-import 'package:fanan_elrashaka_admin/screens/AllUsersScreen.dart';
+import 'package:fanan_elrashaka_admin/screens/AllPationts.dart';
 import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
-import 'package:fanan_elrashaka_admin/widgets/ActiveContainer.dart';
-import 'package:fanan_elrashaka_admin/widgets/AddProfilePhoto.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/DefaultButton.dart';
 import 'package:fanan_elrashaka_admin/widgets/EditScreenContainer.dart';
 import 'package:fanan_elrashaka_admin/widgets/Loading.dart';
 import 'package:fanan_elrashaka_admin/widgets/ProfilePic.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:multi_select_flutter/bottom_sheet/multi_select_bottom_sheet_field.dart';
-import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
-import 'package:multi_select_flutter/util/multi_select_item.dart';
-import 'package:multi_select_flutter/util/multi_select_list_type.dart';
-import 'package:multiple_search_selection/multiple_search_selection.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
-class EditUser extends StatefulWidget {
-  final id ;
+import 'package:select_form_field/select_form_field.dart';
+import 'package:intl_phone_field/countries.dart' as c;
+class UserProfileScreen extends StatefulWidget {
+  final email ;
+  UserProfileScreen({Key? key,required this.email}) : super(key: key);
 
-  const EditUser({Key? key, this.id}) : super(key: key);
   @override
-  State<EditUser> createState() => _EditUserState();
+  State<UserProfileScreen> createState() => _UserProfileScreenState();
 }
 
-class _EditUserState extends State<EditUser> {
+class _UserProfileScreenState extends State<UserProfileScreen> {
   final Dialogs _dialogs = Dialogs();
 
-  final Users _users = Users();
+  final UserProfile _userProfile = UserProfile();
 
   final _formKey = GlobalKey<FormState>();
 
+  final _passwordFormKey = GlobalKey<FormState>();
+
   String? email;
+
+  String? password,old_password;
 
   String? oldPassword;
 
-  String? password;
-
   String? conform_password;
 
-  String? fullName;
+  String? firstName;
+
+  String? lastName;
 
   String? phoneNumber;
 
-  String? imageLocation ;
+  String? gender;
 
-  String? clinics;
+  String? birthday;
 
-  final ImagePicker _picker = ImagePicker();
+  String? address;
 
-  List<dynamic?> _selectedClinics = [];
-
-  bool? _switchValue ;
-
-  final _passwordFormKey = GlobalKey<FormState>();
+  String? country_code;
 
   bool _isLoading = false;
 
-  initClinicsData(initClinics){
-    List<Clinic> clinicsName = [];
-    for(var clinic in initClinics){
-      Clinic clinicModel =Clinic();
-      clinicModel.id=clinic["id"].toString();
-      clinicModel.name=clinic["name_en"];
-      clinicsName.add(clinicModel);
+  final ImagePicker _picker = ImagePicker();
+
+  formatedDate(date){
+    final components = date!.split("-");
+    birthday = "${components[2]}/${components[1]}/${components[0]}";
+    return birthday;
+  }
+  getCountryCode(cCode){
+    try{
+      var cCodes =c.countries.singleWhere((element) => element.dialCode==cCode.split("+")[1]).code;
+      return cCodes;
+    }catch(e){
+      return "EG";
     }
-    return clinicsName;
   }
-  allItems(allClinics , initClinics){
-    List<Clinic> data = [...allClinics];
-    initClinics.forEach((element) {
-      if(!allClinics.contains(element)){
-        data.removeWhere((e) => e.id == element.id);
-      }else{
-        print(element.name);
-      }
-    });
-    return data;
-  }
-  getDefaultClinics(initClinics){
-    List<Clinic> clinicsName = [];
-    for(var clinic in initClinics){
-      Clinic clinicModel =Clinic();
-      clinicModel.id=clinic["id"].toString();
-      clinicModel.name=clinic["name_en"];
-      clinicsName.add(clinicModel);
-    }
-    _selectedClinics = clinicsName;
-    String holder = "";
-    _selectedClinics.forEach((element) {
-      holder +=  element.id;
-    });
-    clinics = holder.split("").join(",");
-    return clinics;
-  }
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: ()async{
-        Navigator.pop(context);
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) =>ListAllUsers())
-        );
-        return false;
+          return true;
       },
       child: FutureBuilder(
-          future: _users.getSearchAllUsers(context.read<UserData>().token, widget.id),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          future: _userProfile.getUserProfileData(widget.email,context.read<UserData>().token),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return  Center(child: CustomLoading());
+              return Scaffold(body: Center(child: CustomLoading()));
             } else if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasError) {
                 // error in data
@@ -137,41 +98,28 @@ class _EditUserState extends State<EditUser> {
               } else if (snapshot.hasData) {
                 print(snapshot.data);
                 return EditScreenContainer(
-                    name: "EditSystemUser".tr(),
-                    topLeftAction: BackIcon(
-                      overBack: (){
-                        Navigator.pop(context);
-                        Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) =>ListAllUsers())
-                        );
-                      },
-                    ),
+                    name: "Profile".tr(),
+                    topLeftAction: BackIcon(),
                     topRightaction: InkWell(
                       onTap: ()async{
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
-                          EasyLoading.show(status:  "EditSystemUser".tr());
-                          var responseData = await _users.updateSystemUser(
-                              context.read<UserData>().token,
-                              email,
-                              fullName,
-                              phoneNumber,
-                              imageLocation??"",
-                              clinics??getDefaultClinics(snapshot.data[0]["clinics"]),
-                              _switchValue??snapshot.data[0]["is_active"]
+                          // save data
+                          EasyLoading.show(status: "UpdatingProfileData".tr());
+                          var changeProfileResponse = await _userProfile.updateUserProfile(
+                            email,
+                            context.read<UserData>().token,
+                            firstName,
+                            phoneNumber,
                           );
-                          if (await responseData.statusCode == 200) {
-                            _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){
-                              setState(() {
-                                _formKey.currentState!.reset();
-                              });
-                            });
+                          if (await changeProfileResponse.statusCode == 200) {
+                            _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information,"Ok".tr(),(){});
                           }else{
-                            var response = jsonDecode(await responseData.stream.bytesToString());
-                            print(response);
+                            print(await changeProfileResponse.stream.bytesToString());
                             _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
                           }
                           EasyLoading.dismiss();
+                          setState(() {});
                         }
                       },
                       child: Container(
@@ -182,25 +130,23 @@ class _EditUserState extends State<EditUser> {
                       ),
                     ),
                     topCenterAction: ProfilePic(
-                      profile: snapshot.data[0]['image'],
+                      profile: snapshot.data['image'],
                       uploadImage: () async{
-                        EasyLoading.show(status: "UpdatingSystemUserImage".tr());
                         var imagePicker;
                         imagePicker = await _picker.pickImage(source: ImageSource.gallery,imageQuality: 20);
                         String imageLocation = imagePicker.path.toString();
-                        var picResponse =await _users.updateSystemUserImage(
-                            context.read<UserData>().token,
-                            snapshot.data[0]["email"],
-                            snapshot.data[0]["name"],
-                            snapshot.data[0]["phone"],
-                            imageLocation,
-                            getDefaultClinics(snapshot.data[0]["clinics"]),
-                            _switchValue??snapshot.data[0]["is_active"]
+                        EasyLoading.show(status: LocaleKeys.UpdatingProfileData.tr());
+                        var changeProfileResponse = await _userProfile.updateUserProfileImage(
+                          widget.email,
+                          context.read<UserData>().token,
+                            snapshot.data['name'],
+                            snapshot.data['phone'],
+                            imageLocation
                         );
-                        if (await picResponse.statusCode == 200) {
+                        if (await changeProfileResponse.statusCode == 200) {
                           _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){});
                         }else{
-                          print(await picResponse.stream.bytesToString());
+                          print(await changeProfileResponse.stream.bytesToString());
                           _dialogs.errorDialog(context,LocaleKeys.Error__please_check_your_internet_connection.tr());
                         }
                         EasyLoading.dismiss();
@@ -210,32 +156,19 @@ class _EditUserState extends State<EditUser> {
                     ),
                     child: Expanded(
                       child: Padding(
-                        padding:EdgeInsets.only(right: 15,left: 15),
+                        padding:EdgeInsets.only(right: 15,left: 15,bottom: MediaQuery.of(context).viewInsets.bottom),
                         child: Form(
                           key: _formKey,
                           child: ListView(
                             children: [
                               const SizedBox(height: 20),
-                              buildFirstNameFormField(snapshot.data[0]["name"]),
+                              buildEmailFormField(snapshot.data['email']),
                               const SizedBox(height: 20),
-                              buildEmailFormField(snapshot.data[0]["email"]),
+                              buildFirstNameFormField(snapshot.data['name']),
                               const SizedBox(height: 20),
-                              buildPhoneNumberFormField(snapshot.data[0]["phone"]),
+                              buildPhoneNumberFormField(snapshot.data['phone']),
                               const SizedBox(height: 20),
-                              // buildMultiSelect(),
-                              buildNewMuiltiSelectClinic(snapshot.data[0]["clinics"]),
-                              const SizedBox(height: 10),
-                              ActiveContainer(
-                                  initValue: snapshot.data[0]["is_active"],
-                                  onChange: (value){
-                                    _switchValue = value;
-                                    print(_switchValue);
-                                  }
-                              ),
-                              const SizedBox(height: 10),
-                              const Divider(height: 5,color: Colors.black,thickness: 0.8,),
-                              const SizedBox(height: 20),
-                              changePassword(context,snapshot.data[0]['email']),
+                              changePassword(context,snapshot.data['email']),
                               const SizedBox(height: 20),
                               Card(
                                 color:const Color(0xffff5d63),
@@ -263,16 +196,13 @@ class _EditUserState extends State<EditUser> {
                                         animType: AnimType.SCALE,
                                         dialogType: DialogType.WARNING,
                                         body: Center(child: Text(
-                                          LocaleKeys.AreYouSureYouWantToDeleteThisAccount.tr(),
+                                          "AreYouSureYouWantToDeleteThisAccount".tr(),
                                         ),),
                                         btnOkOnPress: () async{
-                                          var response = await _users.deleteSystemUser(context.read<UserData>().token, snapshot.data[0]['email']);
+                                          var response = await _userProfile.deleteProfile(context.read<UserData>().token, snapshot.data['email']);
                                           if (await response.statusCode == 200) {
                                             print(await response.stream.bytesToString());
                                             Navigator.pop(context);
-                                            Navigator.of(context).pushReplacement(
-                                                MaterialPageRoute(builder: (context) =>ListAllUsers())
-                                            );
                                           }
                                         },
                                         btnCancelOnPress: (){},
@@ -300,10 +230,11 @@ class _EditUserState extends State<EditUser> {
       ),
     );
   }
-  TextFormField buildEmailFormField(initEmail) {
+
+  TextFormField buildEmailFormField(initemail) {
     return TextFormField(
-      readOnly: true,
-      initialValue: initEmail,
+      enabled: false,
+      initialValue: initemail,
       keyboardType: TextInputType.emailAddress,
       onSaved: (newValue) => email = newValue,
       onChanged: (value) {
@@ -335,13 +266,13 @@ class _EditUserState extends State<EditUser> {
     );
   }
 
-  TextFormField buildFirstNameFormField(initFullName) {
+  TextFormField buildFirstNameFormField(name) {
     return TextFormField(
-      initialValue: initFullName,
-      onSaved: (newValue) => fullName = newValue,
+      initialValue: name,
+      onSaved: (newValue) => firstName = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
-          fullName = value;
+          firstName = value;
         }
         return null;
       },
@@ -355,8 +286,8 @@ class _EditUserState extends State<EditUser> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "FullName".tr(),
-        // hintText: "Enter_your_full_name",
+        labelText: "Name".tr(),
+        // hintText: "Enter_your_name",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -372,7 +303,7 @@ class _EditUserState extends State<EditUser> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "${"PhoneNumber".tr()}*",
+        labelText: "PhoneNumber".tr(),
         // hintText:"Enter_your_phone_number",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
@@ -394,6 +325,39 @@ class _EditUserState extends State<EditUser> {
     );
   }
 
+  TextFormField buildOldPasswordFormField() {
+    return TextFormField(
+      obscureText: true,
+      onSaved: (newValue) => old_password = newValue,
+      onChanged: (value) {
+        if (value.isNotEmpty) {
+          old_password = value;
+        } else if (value.length >= 8) {
+          old_password = value;
+        }
+        old_password = value;
+      },
+      validator: (value) {
+        if (value!.isEmpty) {
+          return Constants.kPassNullError;
+        } else if (value.length < 8) {
+          return Constants.kShortPassError;
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+        labelText: "OldPassword".tr(),
+        // hintText: "Enter_your_old_password",
+        // If  you are using latest version of flutter then lable text and hint text shown like this
+        // if you r using flutter less then 1.20.* then maybe this is not working properly
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+      ),
+    );
+  }
+
   TextFormField buildPasswordFormField() {
     return TextFormField(
       obscureText: true,
@@ -408,7 +372,7 @@ class _EditUserState extends State<EditUser> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return Constants.kPassNullError;
+          return LocaleKeys.ThisFieldIsRequired.tr();
         } else if (value.length < 8) {
           return Constants.kShortPassError;
         }
@@ -418,8 +382,8 @@ class _EditUserState extends State<EditUser> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "${"NewPassword".tr()}*",
-        hintText: "Enter_your_password",
+        labelText: "NewPassword".tr(),
+        // hintText: "Enter_your_password",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -440,7 +404,7 @@ class _EditUserState extends State<EditUser> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return Constants.kPassNullError;
+          return LocaleKeys.ThisFieldIsRequired.tr();
         } else if ((password != value)) {
           return Constants.kMatchPassError;
         }
@@ -450,7 +414,7 @@ class _EditUserState extends State<EditUser> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
-        labelText: "${"ConfirmNewPassword".tr()}*",
+        labelText: "ConfirmNewPassword".tr(),
         // hintText: "Re_enter_your_password",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
@@ -458,6 +422,7 @@ class _EditUserState extends State<EditUser> {
       ),
     );
   }
+
   TextField changePassword(context,account){
     return TextField(
       decoration: InputDecoration(
@@ -501,7 +466,7 @@ class _EditUserState extends State<EditUser> {
                           context)
                           .size
                           .height *
-                          0.4,
+                          0.54,
                       decoration: const BoxDecoration(
                           color:
                           Colors.white,
@@ -517,11 +482,12 @@ class _EditUserState extends State<EditUser> {
                           Expanded(
                             child: Column(
                               children: [
-                                // buildOldPasswordFormField(),
-                                // const SizedBox(height: 20),
+                                buildOldPasswordFormField(),
+                                const SizedBox(height: 20),
                                 buildPasswordFormField(),
                                 const SizedBox(height: 20),
                                 buildConformPassFormField(),
+                                const SizedBox(height: 20),
                               ],
                             ),
                           ),
@@ -534,14 +500,15 @@ class _EditUserState extends State<EditUser> {
                                 setState(() {
                                   _isLoading = true;
                                 });
-                                var changeResponse = await _users.updateSystemUserPassword(
-                                    context.read<UserData>().token,
+                                var changeResponse = await _userProfile.updateUserPassword(
                                     account,
+                                    context.read<UserData>().token,
+                                    old_password,
                                     password
                                 );
                                 if (await changeResponse.statusCode == 200) {
                                   print(await changeResponse.stream.bytesToString());
-                                  _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){
+                                  _dialogs.doneDialog(context,"You_are_successfully_change_your_password".tr(),"Ok".tr(),(){
                                     Navigator.pop(context);
                                   });
                                 }else{
@@ -562,91 +529,6 @@ class _EditUserState extends State<EditUser> {
               );
             });
       },
-    );
-  }
-
-  //----------------------
-  buildNewMuiltiSelectClinic(initData){
-   return  MultipleSearchSelection<Clinic>(
-      initialPickedItems: initClinicsData(initData),
-      items: allItems(context.read<ClinisData>().clinicsName,initClinicsData(initData)), // List<Clinics>
-      fieldToCheck: (c) {
-        return c.name.toString(); // String
-      },
-      pickedItemsBoxDecoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(5)),
-        border: Border.all(color: Colors.grey[400]!),
-      ),
-      showItemsButton: Text("ShowItems".tr()),
-      selectAllButton: Text("SelectAll".tr()),
-      showClearAllButton: false,
-      showedItemContainerPadding: EdgeInsets.all(20),
-      itemBuilder: (value) {
-        return Padding(
-          padding: const EdgeInsets.all(6.0),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              color: Colors.white,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 20.0,
-                horizontal: 12,
-              ),
-              child: Text(value.name.toString()),
-            ),
-          ),
-        );
-      },
-      pickedItemBuilder: (value) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Color(0xfffe9dfff),
-            // border: Border.all(color: Colors.grey[400]!),
-            borderRadius: BorderRadius.all(Radius.circular(15))
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Text("${value.name}"),
-          ),
-        );
-      },
-      onTapShowedItem: () {
-        allItems(context.read<ClinisData>().clinicsName,initClinicsData(initData));
-      },
-      onPickedChange: (items) {
-        _selectedClinics = items;
-        String holder = "";
-        _selectedClinics.forEach((element) {
-          holder +=  element.id;
-        });
-        clinics = holder.split("").join(",");
-        print(clinics);
-      },
-      onItemAdded: (item) {
-      },
-      onItemRemoved: (item) {
-        //   setState(() {
-            _selectedClinics.remove(item);
-            String holder = "";
-            _selectedClinics.forEach((element) {
-              holder +=  element.id;
-            });
-            clinics = holder.split("").join(",");
-            print(clinics);
-        //   });
-      },
-      sortShowedItems: true,
-      sortPickedItems: true,
-      fuzzySearch: FuzzySearch.jaro,
-      itemsVisibility: ShowedItemsVisibility.toggle,
-      title: Text(
-        'ActiveClinics'.tr(),
-      ),
-      showSelectAllButton: true,
-      // searchItemTextContentPadding: const EdgeInsets.symmetric(horizontal: 10),
-      maximumShowItemsHeight: 200,
     );
   }
 }

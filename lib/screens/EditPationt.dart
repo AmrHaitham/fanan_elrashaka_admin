@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/Patients.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/screens/AllPationts.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/DefaultButton.dart';
 import 'package:fanan_elrashaka_admin/widgets/EditScreenContainer.dart';
@@ -20,7 +23,8 @@ import 'package:select_form_field/select_form_field.dart';
 import 'package:intl_phone_field/countries.dart' as c;
 class EditPationt extends StatefulWidget {
   final id ;
-  EditPationt({Key? key,required this.id}) : super(key: key);
+  final bool refreshOnBack;
+  EditPationt({Key? key,required this.id,required this.refreshOnBack}) : super(key: key);
 
   @override
   State<EditPationt> createState() => _EditPationtState();
@@ -77,167 +81,196 @@ class _EditPationtState extends State<EditPationt> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: _patients.getPatient(context.read<UserData>().token, widget.id),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CustomLoading());
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError) {
-              // error in data
-              print(snapshot.error.toString());
-              return  Container();
-            } else if (snapshot.hasData) {
-              print(snapshot.data);
-              return EditScreenContainer(
-                  name: "Edit Patient",
-                  topLeftAction: BackIcon(),
-                  topRightaction: InkWell(
-                    onTap: ()async{
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        // save data
-                        EasyLoading.show(status: "Updating Patient Data");
-                        var changeProfileResponse = await _patients.updatePatient(
-                            context.read<UserData>().token,
-                            email,
-                            firstName,
-                            lastName,
-                            country_code,
-                            phoneNumber,
-                            gender,
-                            birthday,
-                            address,
-                        );
-                        if (await changeProfileResponse.statusCode == 200) {
-                          _dialogs.doneDialog(context,"You_are_successfully_change_your_profile_data","ok",(){});
+    return WillPopScope(
+      onWillPop: ()async{
+        if(widget.refreshOnBack == true){
+          Navigator.pop(context);
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) =>ListAllPatients())
+          );
+          return false;
+        }
+        else{
+          return true;
+        }
+      },
+      child: FutureBuilder(
+          future: _patients.getPatient(context.read<UserData>().token, widget.id),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CustomLoading());
+            } else if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError) {
+                // error in data
+                print(snapshot.error.toString());
+                return  Container();
+              } else if (snapshot.hasData) {
+                print(snapshot.data);
+                return EditScreenContainer(
+                    name: "EditPatient".tr(),
+                    topLeftAction: BackIcon(
+                      overBack: (){
+                        if(widget.refreshOnBack == true){
+                          Navigator.pop(context);
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context) =>ListAllPatients())
+                          );
                         }else{
-                          print(await changeProfileResponse.stream.bytesToString());
-                          _dialogs.errorDialog(context, "Error_while_updating_profile_data_check_your_internet_connection");
+                          Navigator.pop(context);
                         }
-                        EasyLoading.dismiss();
-                        setState(() {});
-                      }
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(right: 10),
-                      width: 25,
-                      height: 25,
-                      child: Image.asset("assets/Save-512.png"),
+                      },
                     ),
-                  ),
-                  topCenterAction: ProfilePic(
-                    profile: snapshot.data['image'],
-                    uploadImage: () async{
-                      EasyLoading.show(status: "Updating Patient Image");
-                      var imagePicker;
-                      imagePicker = await _picker.pickImage(source: ImageSource.gallery,imageQuality: 20);
-                      String imageLocation = imagePicker.path.toString();
-                      var picResponse =await _patients.updatePatientImage(
-                        context.read<UserData>().token,
-                          snapshot.data['email'],
-                          snapshot.data['first_name'],
-                          snapshot.data['last_name'],
-                          snapshot.data['phone_country_code'],
-                          snapshot.data['phone'],
-                          snapshot.data['gender'],
-                          snapshot.data['birthday'],
-                          snapshot.data['address'],
-                        imageLocation
-                      );
-                      if (await picResponse.statusCode == 200) {
-                        _dialogs.doneDialog(context,"You_are_successfully_change_your_profile_picture","ok",(){});
-                      }else{
-                        print(await picResponse.stream.bytesToString());
-                        _dialogs.errorDialog(context,"Error_while_updating_picture_profile_data_check_your_interne_connection");
-                      }
-                      EasyLoading.dismiss();
-                      setState(() {
-                      });
-                    },
-                  ),
-                  child: Container(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height*0.7,
-                    padding: const EdgeInsets.only(top: 8.0,right: 15,left: 15),
-                    child: SingleChildScrollView(
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 20),
-                            buildEmailFormField(snapshot.data['email']),
-                            const SizedBox(height: 20),
-                            buildFirstNameFormField(snapshot.data['first_name']),
-                            const SizedBox(height: 20),
-                            buildLastNameFormField(snapshot.data['last_name']),
-                            const SizedBox(height: 20),
-                            buildPhoneNumberFormField(snapshot.data['phone'],getCountryCode(snapshot.data['phone_country_code'].toString())),
-                            const SizedBox(height: 20),
-                            buildGenderFormField(snapshot.data['gender']),
-                            const SizedBox(height: 20),
-                            buildBirthdayFormField(snapshot.data['birthday']),
-                            const SizedBox(height: 20),
-                            buildAddressFormField(snapshot.data['address']),
-                            const SizedBox(height: 20),
-                            const Divider(height: 5,color: Colors.black,thickness: 0.8,),
-                            const SizedBox(height: 20),
-                            changePassword(context,snapshot.data['email']),
-                            const SizedBox(height: 20),
-                            Card(
-                              color:const Color(0xffff5d63),
-                              child: ListTile(
-                                leading: SizedBox(
-                                  width: 25,
-                                  height: 25,
-                                  child: Image.asset("assets/delete.png"),
-                                ),
-                                title: Text("Delete Account",style: TextStyle(
-                                    color: Constants.mainColor,
-                                    fontWeight: FontWeight.bold
-                                ),),
-                                trailing: SizedBox(
-                                  width: 10,
-                                  height: 10,
-                                  child: Image.asset("assets/right-arrow_gray.png",color: Colors.white,),
-                                ),
-                                onTap: (){
-                                  AwesomeDialog(
-                                      context: context,
-                                      animType: AnimType.SCALE,
-                                      dialogType: DialogType.WARNING,
-                                      body:const Center(child: Text(
-                                        "Are you sure you want to delete this account",
-                                      ),),
-                                      btnOkOnPress: () async{
-                                        var response = await _patients.deletePatient(context.read<UserData>().token, snapshot.data['email']);
-                                        if (await response.statusCode == 200) {
-                                          print(await response.stream.bytesToString());
-                                          Navigator.pop(context);
-                                        }
-                                      },
-                                      btnCancelOnPress: (){},
-                                      btnCancelText:"Cancel",
-                                      btnOkText:"Delete"
-                                  ).show();
-                                },
-                              ),
-                            )
-                          ],
-                        ),
+                    topRightaction: InkWell(
+                      onTap: ()async{
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+                          // save data
+                          EasyLoading.show(status: "EditPatient".tr());
+                          var changeProfileResponse = await _patients.updatePatient(
+                              context.read<UserData>().token,
+                              email,
+                              firstName,
+                              lastName,
+                              country_code,
+                              phoneNumber,
+                              gender,
+                              birthday,
+                              address,
+                          );
+                          if (await changeProfileResponse.statusCode == 200) {
+                            _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){});
+                          }else{
+                            print(await changeProfileResponse.stream.bytesToString());
+                            _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                          }
+                          EasyLoading.dismiss();
+                          setState(() {});
+                        }
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: 10),
+                        width: 25,
+                        height: 25,
+                        child: Image.asset("assets/Save-512.png"),
                       ),
                     ),
-                  )
-              );
+                    topCenterAction: ProfilePic(
+                      profile: snapshot.data['image'],
+                      uploadImage: () async{
+                        EasyLoading.show(status: "UpdatingPatientImage".tr());
+                        var imagePicker;
+                        imagePicker = await _picker.pickImage(source: ImageSource.gallery,imageQuality: 20);
+                        String imageLocation = imagePicker.path.toString();
+                        var picResponse =await _patients.updatePatientImage(
+                          context.read<UserData>().token,
+                            snapshot.data['email'],
+                            snapshot.data['first_name'],
+                            snapshot.data['last_name'],
+                            snapshot.data['phone_country_code'],
+                            snapshot.data['phone'],
+                            snapshot.data['gender'],
+                            snapshot.data['birthday'],
+                            snapshot.data['address'],
+                          imageLocation
+                        );
+                        if (await picResponse.statusCode == 200) {
+                          _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){});
+                        }else{
+                          print(await picResponse.stream.bytesToString());
+                          _dialogs.errorDialog(context,LocaleKeys.Error__please_check_your_internet_connection.tr());
+                        }
+                        EasyLoading.dismiss();
+                        setState(() {
+                        });
+                      },
+                    ),
+                    child: Expanded(
+                      child: Padding(
+                        padding:EdgeInsets.only(right: 15,left: 15),
+                        child: Form(
+                          key: _formKey,
+                          child: ListView(
+                            children: [
+                              const SizedBox(height: 20),
+                              buildEmailFormField(snapshot.data['email']),
+                              const SizedBox(height: 20),
+                              buildFirstNameFormField(snapshot.data['first_name']),
+                              const SizedBox(height: 20),
+                              buildLastNameFormField(snapshot.data['last_name']),
+                              const SizedBox(height: 20),
+                              buildPhoneNumberFormField(snapshot.data['phone'],getCountryCode(snapshot.data['phone_country_code'].toString())),
+                              const SizedBox(height: 20),
+                              buildGenderFormField(snapshot.data['gender']),
+                              const SizedBox(height: 20),
+                              buildBirthdayFormField(snapshot.data['birthday']),
+                              const SizedBox(height: 20),
+                              buildAddressFormField(snapshot.data['address']),
+                              const SizedBox(height: 20),
+                              const Divider(height: 5,color: Colors.black,thickness: 0.8,),
+                              const SizedBox(height: 20),
+                              changePassword(context,snapshot.data['email']),
+                              const SizedBox(height: 20),
+                              Card(
+                                color:const Color(0xffff5d63),
+                                child: ListTile(
+                                  leading: SizedBox(
+                                    width: 25,
+                                    height: 25,
+                                    child: Image.asset("assets/delete.png"),
+                                  ),
+                                  title: Text("DeleteAccount".tr(),style: TextStyle(
+                                      color: Constants.mainColor,
+                                      fontWeight: FontWeight.bold
+                                  ),),
+                                  trailing: Transform.scale(
+                                    scaleX: (context.locale.toString()=="en")?1:-1,
+                                    child: SizedBox(
+                                      width: 10,
+                                      height: 10,
+                                      child: Image.asset("assets/right-arrow_gray.png",color: Colors.white,),
+                                    ),
+                                  ),
+                                  onTap: (){
+                                    AwesomeDialog(
+                                        context: context,
+                                        animType: AnimType.SCALE,
+                                        dialogType: DialogType.WARNING,
+                                        body: Center(child: Text(
+                                          "DeleteAccount".tr(),
+                                        ),),
+                                        btnOkOnPress: () async{
+                                          var response = await _patients.deletePatient(context.read<UserData>().token, snapshot.data['email']);
+                                          if (await response.statusCode == 200) {
+                                            print(await response.stream.bytesToString());
+                                            Navigator.pop(context);
+                                            Navigator.of(context).pushReplacement(
+                                                MaterialPageRoute(builder: (context) =>ListAllPatients())
+                                            );
+                                          }
+                                        },
+                                        btnCancelOnPress: (){},
+                                        btnCancelText:"Cancel".tr(),
+                                        btnOkText:"Delete".tr()
+                                    ).show();
+                                  },
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                );
+              }else{
+                //no data
+                return Container();
+              }
             }else{
-              //no data
+              //error in connection
               return Container();
             }
-          }else{
-            //error in connection
-            return Container();
           }
-        }
+      ),
     );
   }
 
@@ -267,8 +300,8 @@ class _EditPationtState extends State<EditPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Email",
-        hintText: "Enter_your_email",
+        labelText: "Email".tr(),
+        // hintText: "Enter_your_email",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -288,7 +321,7 @@ class _EditPationtState extends State<EditPationt> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kNamelNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -296,8 +329,8 @@ class _EditPationtState extends State<EditPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Name",
-        hintText: "Enter_your_name",
+        labelText: "${"FirstName".tr()}*",
+        // hintText: "Enter_your_name",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -317,7 +350,7 @@ class _EditPationtState extends State<EditPationt> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kLastNamelNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -325,8 +358,8 @@ class _EditPationtState extends State<EditPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText:"Last_name",
-        hintText:"Please_Enter_your_lastname",
+        labelText:"${"LastName".tr()}*",
+        // hintText:"Please_Enter_your_lastname",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -348,7 +381,7 @@ class _EditPationtState extends State<EditPationt> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kAddressNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -356,7 +389,7 @@ class _EditPationtState extends State<EditPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Address",
+        labelText: "${"Address".tr()}*",
         alignLabelWithHint: true,
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
@@ -376,7 +409,7 @@ class _EditPationtState extends State<EditPationt> {
             borderRadius:
             BorderRadius.circular(5.0),
           ),
-          labelText:"Birthday",
+          labelText:"${"Birthday".tr()}*",
           floatingLabelBehavior:
           FloatingLabelBehavior.auto,
         ),
@@ -403,7 +436,7 @@ class _EditPationtState extends State<EditPationt> {
         },
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return "wrong_date";
+            return "wrong_date".tr();
           }
           final components = value.split("/");
           if (components.length == 3) {
@@ -417,7 +450,7 @@ class _EditPationtState extends State<EditPationt> {
               }
             }
           }
-          return "wrong_date";
+          return "wrong_date".tr();
         }
     );
   }
@@ -430,8 +463,8 @@ class _EditPationtState extends State<EditPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Phone_Number",
-        hintText:"Enter_your_phone_number",
+        // labelText: "Phone_Number",
+        // hintText:"Enter_your_phone_number",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
       initialCountryCode: cCode,
@@ -448,7 +481,7 @@ class _EditPationtState extends State<EditPationt> {
       },
       validator: (value) {
         if (value?.completeNumber=="") {
-          return "kPhoneNumberNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -460,15 +493,15 @@ class _EditPationtState extends State<EditPationt> {
       initialValue: initGender,
       type: SelectFormFieldType
           .dropdown, // or can be dialog
-      labelText: "Gender",
-      items: const [
+      labelText: "Gender".tr(),
+      items:  [
         {
           'value': 'M',
-          'label': "Male",
+          'label': "Male".tr(),
         },
         {
           'value': 'F',
-          'label': "Female",
+          'label': "Female".tr(),
         },
       ],
       decoration: InputDecoration(
@@ -482,8 +515,8 @@ class _EditPationtState extends State<EditPationt> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        label:const Text("Gender") ,
-        hintText: "Gender",
+        label: Text("Gender".tr()) ,
+        // hintText: "Gender",
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
@@ -496,7 +529,7 @@ class _EditPationtState extends State<EditPationt> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kAGenderNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -527,8 +560,8 @@ class _EditPationtState extends State<EditPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "New_Password",
-        hintText: "Enter_your_password",
+        labelText: "${"NewPassword".tr()}*",
+        // hintText: "Enter_your_password",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -559,8 +592,8 @@ class _EditPationtState extends State<EditPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
-        labelText: "Confirm_New_Password",
-        hintText: "Re_enter_your_password",
+        labelText: "${"ConfirmNewPassword".tr()}*",
+        // hintText: "Re_enter_your_password",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -580,7 +613,7 @@ class _EditPationtState extends State<EditPationt> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        hintText: "Change Password",
+        hintText: "ChangePassword".tr(),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
@@ -637,7 +670,7 @@ class _EditPationtState extends State<EditPationt> {
                           ),
                           DefaultButton(
                             loading: _isLoading,
-                            text: "Change",
+                            text: "Change".tr(),
                             press: () async{
                               if (_passwordFormKey.currentState!.validate()) {
                                 _passwordFormKey.currentState!.save();
@@ -651,12 +684,12 @@ class _EditPationtState extends State<EditPationt> {
                                 );
                                 if (await changeResponse.statusCode == 200) {
                                   print(await changeResponse.stream.bytesToString());
-                                  _dialogs.doneDialog(context,"You_are_successfully_change_your_password","ok",(){
+                                  _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){
                                     Navigator.pop(context);
                                   });
                                 }else{
                                   print(await changeResponse.stream.bytesToString());
-                                  _dialogs.errorDialog(context, "Error while update password");
+                                  _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
                                 }
                                 setState(() {
                                   _isLoading = false;

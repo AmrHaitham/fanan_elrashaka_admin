@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 class Dialogs{
-  errorDialog(context,String text){
+  errorDialog(context,String text,){
     return AwesomeDialog(
         context: context,
         animType: AnimType.SCALE,
         dialogType: DialogType.ERROR,
         body: Center(child: Text(text,),),
         btnCancelOnPress: () {},
+    )..show();
+  }
+  errorReDialog(context,String text,btnCancelOnPress){
+    return AwesomeDialog(
+      context: context,
+      animType: AnimType.SCALE,
+      dialogType: DialogType.ERROR,
+      body: Center(child: Text(text,),),
+      btnOkOnPress: btnCancelOnPress(),
     )..show();
   }
   warningDialog(context,String text,action,String okText){

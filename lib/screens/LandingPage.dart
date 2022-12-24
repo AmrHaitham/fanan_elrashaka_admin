@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/helper/actions.dart';
 import 'package:fanan_elrashaka_admin/models/CategoriesModel.dart';
 import 'package:fanan_elrashaka_admin/models/Clinic.dart';
@@ -8,6 +9,7 @@ import 'package:fanan_elrashaka_admin/providers/ClinicsData.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
 import 'package:fanan_elrashaka_admin/screens/MainScreen.dart';
 import 'package:fanan_elrashaka_admin/screens/WelcomeScreen.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/Loading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,13 +40,13 @@ class _LandingPageState extends State<LandingPage> {
       for(var clinic in data){
         Clinic clinicS =Clinic();
         clinicS.id=clinic["id"].toString();
-        clinicS.name="${clinic["clinic_en"]} | ${clinic['service_en']}";
+        clinicS.name=(context.locale.toString()=="en")?"${clinic["clinic_en"]} | ${clinic['service_en']}":"${clinic["clinic_ar"]} | ${clinic['service_ar']}";
         clinicsService.add(clinicS);
 
         if(clinic['service_en']=="New Patient"){
           Clinic clinicModel =Clinic();
           clinicModel.id=clinic["clinic_id"].toString();
-          clinicModel.name=clinic["clinic_en"];
+          clinicModel.name=(context.locale.toString()=="en")?clinic["clinic_en"]:clinic["clinic_ar"];
           clinicsName.add(clinicModel);
         }
       }
@@ -61,7 +63,7 @@ class _LandingPageState extends State<LandingPage> {
     }catch(v){
       //context.read<ClinisData>().clinicsName
       print(v);
-      _dialog.errorDialog(context, "error while getting data please reload the app or check your internet");
+      _dialog.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
     }
 
   }
@@ -73,10 +75,10 @@ class _LandingPageState extends State<LandingPage> {
       if(response!=null ){
         print("saveUserInfo response:- ${response}");
         if(response["detail"]=="Invalid token."||response["detail"]=="Not found."){
-          _dialog.warningDialog(context, "Pleace_login_again",(){
+          _dialog.warningDialog(context, "Pleace_login_again".tr(),(){
             AdminActions.logout(context);
           },
-              "Log out"
+              "Logout".tr()
           );
         }else{
           context.read<UserData>().setUserPhone(response['phone']);
@@ -85,10 +87,17 @@ class _LandingPageState extends State<LandingPage> {
           print("phone is :- ${context.read<UserData>().phone}");
         }
       }else{
-        _dialog.errorDialog(context, "check_our_internet_connection null");
+        _dialog.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
       }
     }catch(error){
-      _dialog.errorDialog(context, "check_our_internet_connection");
+
+      _dialog.errorReDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr(),
+          (){
+            // Navigator.of(context).pushReplacement(
+            //     MaterialPageRoute(builder: (context) => LandingPage())
+            // );
+          });
+
     }
   }
 
@@ -109,9 +118,12 @@ class _LandingPageState extends State<LandingPage> {
         );
       }catch(v){
           print("error :- ${v}");
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => LandingPage())
-          );
+          _dialog.errorReDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr(),
+                  (){
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => LandingPage())
+                );
+              });
       }
       // finally{
       //

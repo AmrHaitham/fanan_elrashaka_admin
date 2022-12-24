@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/screens/EditPackage.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ class PackagesCard extends StatelessWidget {
       return ListTile(
         onTap: () {
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) =>EditPackage(id: snapshot.data[index]['name_en'].toString() ))
+              MaterialPageRoute(builder: (context) =>EditPackage(id: snapshot.data[index]['id'].toString() ))
           );
         },
         leading: SizedBox(
@@ -23,7 +24,7 @@ class PackagesCard extends StatelessWidget {
           ),
         ),
         title: Text(
-          "${snapshot.data[index]['name_en']}",
+          "${(context.locale.toString()=='en')?snapshot.data[index]['name_en']:snapshot.data[index]['name_ar']}",
           style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.normal,
@@ -53,7 +54,10 @@ class PackagesCard extends StatelessWidget {
         trailing: SizedBox(
           width: 20,
           height: 20,
-          child: Image.asset("assets/right-arrow_gray.png"),
+          child: Transform.scale(
+              scaleX: (context.locale.toString()=="en")?1:-1,
+              child: Image.asset("assets/right-arrow_gray.png")
+          ),
         ),
       );
     }else{

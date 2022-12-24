@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
+import 'package:fanan_elrashaka_admin/networks/ApisEndPoint.dart';
 import 'package:fanan_elrashaka_admin/screens/EditSystemUser.dart';
 import 'package:flutter/material.dart';
 class SystemUserCard extends StatelessWidget {
@@ -20,9 +22,16 @@ class SystemUserCard extends StatelessWidget {
         height: 50,
         child: ClipRRect(
             borderRadius: BorderRadius.circular(100.0),
-            child: Image.asset("assets/patient_image.png")
-        ),
-      ),
+            child: (snapshot.data[index]['image']==null)
+                ? const CircleAvatar(backgroundImage: AssetImage("assets/user_avatar_male.png"),)
+                : SizedBox(
+              width: 50,
+              height: 70,
+              child: CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  backgroundImage: NetworkImage("${Apis.api}${snapshot.data[index]['image']}")
+              ),)
+        ),),
       title: Text(
         "${snapshot.data[index]['name']}",
         style: TextStyle(
@@ -38,10 +47,13 @@ class SystemUserCard extends StatelessWidget {
             fontWeight: FontWeight.bold
         ),
       ),
-      trailing: SizedBox(
-        width: 20,
-        height: 20,
-        child: Image.asset("assets/right-arrow_gray.png"),
+      trailing: Transform.scale(
+        scaleX: (context.locale.toString()=="en")?1:-1,
+        child: SizedBox(
+          width: 20,
+          height: 20,
+          child: Image.asset("assets/right-arrow_gray.png"),
+        ),
       ),
     );
   }

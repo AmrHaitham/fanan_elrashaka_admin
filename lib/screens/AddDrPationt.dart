@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/Patients.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
 import 'package:fanan_elrashaka_admin/screens/PationtProfile.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/AddProfilePhoto.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/EditScreenContainer.dart';
@@ -57,13 +59,13 @@ class _AddDrPationtState extends State<AddDrPationt> {
   @override
   Widget build(BuildContext context) {
     return EditScreenContainer(
-        name: "New Doctor Patient",
+        name: "NewDoctorPatient".tr(),
         topLeftAction: BackIcon(),
         topRightaction: InkWell(
           onTap: ()async{
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
-              EasyLoading.show(status: "Adding Patient");
+              EasyLoading.show(status: "AddPatient".tr());
               var changeProfileResponse = await _patients.addDrPatient(
                   context.read<UserData>().token,
                   email,
@@ -78,7 +80,7 @@ class _AddDrPationtState extends State<AddDrPationt> {
                   imageLocation??""
               );
               if (await changeProfileResponse.statusCode == 200) {
-                _dialogs.doneDialog(context,"You_are_successfully_added_new_pationt","ok",()async{
+                _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_added_new_pationt.tr(),"Ok".tr(),()async{
                   var response = jsonDecode(await changeProfileResponse.stream.bytesToString());
                   Navigator.of(context).pushReplacement(
                       MaterialPageRoute(builder: (context) => PationtProfile(pid: response["pid"].toString()))
@@ -88,11 +90,11 @@ class _AddDrPationtState extends State<AddDrPationt> {
                 var response = jsonDecode(await changeProfileResponse.stream.bytesToString());
                 print(response);
                 if(response["error"] == "702"){
-                  _dialogs.errorDialog(context, "user already exists");
+                  _dialogs.errorDialog(context, LocaleKeys.user_already_exists.tr());
                 }else if(response["error"] == "715"){
-                  _dialogs.errorDialog(context, "phone number already exists");
+                  _dialogs.errorDialog(context, LocaleKeys.PhoneNumberAlreadyExists.tr());
                 }else{
-                  _dialogs.errorDialog(context, "Error_while_adding_patient_please_check_your_internet_connection");
+                  _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
                 }
               }
               EasyLoading.dismiss();
@@ -114,14 +116,12 @@ class _AddDrPationtState extends State<AddDrPationt> {
             setState(() {});
           },
         ),
-        child: Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height*0.715,
-          padding: const EdgeInsets.only(right: 15,left: 15),
-          child: SingleChildScrollView(
+        child: Expanded(
+          child: Padding(
+            padding:EdgeInsets.only(right: 15,left: 15,bottom: MediaQuery.of(context).viewInsets.bottom),
             child: Form(
               key: _formKey,
-              child: Column(
+              child: ListView(
                 children: [
                   const SizedBox(height: 20),
                   buildEmailFormField(),
@@ -174,8 +174,8 @@ class _AddDrPationtState extends State<AddDrPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Email",
-        hintText: "Enter_your_email",
+        labelText: "${"Email".tr()}*",
+        // hintText: "Enter_your_email",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -194,7 +194,7 @@ class _AddDrPationtState extends State<AddDrPationt> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kNamelNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -202,8 +202,8 @@ class _AddDrPationtState extends State<AddDrPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Name",
-        hintText: "Enter_your_name",
+        labelText: "${"FirstName".tr()}*",
+        // hintText: "Enter_your_name",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -222,7 +222,7 @@ class _AddDrPationtState extends State<AddDrPationt> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kLastNamelNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -230,8 +230,8 @@ class _AddDrPationtState extends State<AddDrPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText:"Last_name",
-        hintText:"Please_Enter_your_lastname",
+        labelText:"${"LastName".tr()}*",
+        // hintText:"Please_Enter_your_lastname",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -260,7 +260,7 @@ class _AddDrPationtState extends State<AddDrPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Address",
+        labelText: "Address".tr(),
         alignLabelWithHint: true,
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
@@ -279,7 +279,7 @@ class _AddDrPationtState extends State<AddDrPationt> {
             borderRadius:
             BorderRadius.circular(5.0),
           ),
-          labelText:"Birthday",
+          labelText:"${"Birthday".tr()}*",
           floatingLabelBehavior:
           FloatingLabelBehavior.auto,
         ),
@@ -306,7 +306,7 @@ class _AddDrPationtState extends State<AddDrPationt> {
         },
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return "wrong_date";
+            return "wrong_date".tr();
           }
           final components = value.split("/");
           if (components.length == 3) {
@@ -320,7 +320,7 @@ class _AddDrPationtState extends State<AddDrPationt> {
               }
             }
           }
-          return "wrong_date";
+          return "wrong_date".tr();
         }
     );
   }
@@ -332,8 +332,8 @@ class _AddDrPationtState extends State<AddDrPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Phone_Number",
-        hintText:"Enter_your_phone_number",
+        // labelText: "Phone_Number",
+        // hintText:"Enter_your_phone_number",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
       initialCountryCode: "EG",
@@ -350,7 +350,7 @@ class _AddDrPationtState extends State<AddDrPationt> {
       },
       validator: (value) {
         if (value?.completeNumber=="") {
-          return "kPhoneNumberNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -361,15 +361,15 @@ class _AddDrPationtState extends State<AddDrPationt> {
     return SelectFormField(
       type: SelectFormFieldType
           .dropdown, // or can be dialog
-      labelText: "Gender",
-      items: const [
+      labelText: "Gender".tr(),
+      items:  [
         {
           'value': 'M',
-          'label': "Male",
+          'label': "Male".tr(),
         },
         {
           'value': 'F',
-          'label': "Female",
+          'label': "Female".tr(),
         },
       ],
       decoration: InputDecoration(
@@ -383,8 +383,8 @@ class _AddDrPationtState extends State<AddDrPationt> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        label:const Text("Gender") ,
-        hintText: "Gender",
+        label: Text("Gender".tr()) ,
+        hintText: "Gender".tr(),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
@@ -397,7 +397,7 @@ class _AddDrPationtState extends State<AddDrPationt> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kAGenderNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -428,8 +428,8 @@ class _AddDrPationtState extends State<AddDrPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "New_Password",
-        hintText: "Enter_your_password",
+        labelText: "${"NewPassword".tr()}*",
+        // hintText: "Enter_your_password",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -460,8 +460,8 @@ class _AddDrPationtState extends State<AddDrPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
-        labelText: "Confirm_New_Password",
-        hintText: "Re_enter_your_password",
+        labelText: "${"ConfirmNewPassword".tr()}*",
+        // hintText: "Re_enter_your_password",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,

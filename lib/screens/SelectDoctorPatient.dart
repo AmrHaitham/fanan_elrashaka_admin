@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:fanan_elrashaka_admin/networks/NewBookingInfo.dart';
 import 'package:fanan_elrashaka_admin/networks/Patients.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
 import 'package:fanan_elrashaka_admin/screens/NewBooking.dart';
@@ -23,7 +25,7 @@ class _SelectDrPatientState extends State<SelectDrPatient> {
   @override
   Widget build(BuildContext context) {
     return ScreenContainer(
-      name: "Select Doctor Patient",
+      name: "SelectDoctorPatient".tr(),
       topLeftAction: BackIcon(),
       topCenterAction: SearchList(
         onSubmitted: (value){
@@ -51,6 +53,7 @@ class _SelectDrPatientState extends State<SelectDrPatient> {
                 print(snapshot.error.toString());
                 return  Container();
               } else if (snapshot.hasData) {
+                print(snapshot.data);
                 return Expanded(
                   child: ListView.builder(
                       itemCount: snapshot.data.length,
@@ -66,7 +69,7 @@ class _SelectDrPatientState extends State<SelectDrPatient> {
                                 print("select");
                                 if(widget.is_new_booking){
                                   Navigator.of(context).push(
-                                      MaterialPageRoute(builder: (context) =>NewBooking(
+                                      MaterialPageRoute(builder: (context) =>NewBookingInfo(
                                           patient_name: "${snapshot.data[index]['first_name']} ${snapshot.data[index]['last_name']}",
                                           patient_id: snapshot.data[index]['pid'].toString()
                                       ))

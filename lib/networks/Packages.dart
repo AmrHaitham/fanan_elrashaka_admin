@@ -14,7 +14,8 @@ class Packages{
     var headers ={
       'Authorization': 'Token ${token}'
     };
-    var response =await http.get(Uri.parse("${Apis.packages}?id=${id}"),headers: headers);
+    var response =await http.get(Uri.parse("${Apis.packages}?edit=${id.toString()}"),headers: headers);
+    print(response.body);
     return jsonDecode(utf8.decode(response.bodyBytes));
   }
   getSearchAllPackages(token,String value)async{
@@ -24,6 +25,7 @@ class Packages{
     var response =await http.get(Uri.parse("${Apis.packages}?search=${value}"),headers: headers);
     return jsonDecode(utf8.decode(response.bodyBytes));
   }
+
 
   addPackage(token,name_ar,name_en,fee,order,old_fee,package_amount,package_unit,image)async{
     var headers = {
@@ -94,13 +96,13 @@ class Packages{
     var request = http.MultipartRequest('PUT', Uri.parse("${Apis.packages}"));
     request.fields.addAll({
       'id' : id.toString(),
-      'name_ar': name_ar,
-      'name_en': name_en,
-      'fee': fee,
-      'order': order,
-      'old_fee': old_fee,
-      'package_amount': package_amount,
-      'package_unit': package_unit
+      'name_ar': name_ar.toString(),
+      'name_en': name_en.toString(),
+      'fee': fee.toString(),
+      'order': order.toString(),
+      'old_fee': old_fee.toString(),
+      'package_amount': package_amount.toString(),
+      'package_unit': package_unit.toString()
     });
 
     request.files.add(await http.MultipartFile.fromPath('image', image));
@@ -117,10 +119,10 @@ class Packages{
     };
     var request = http.MultipartRequest('POST', Uri.parse("${Apis.buy_new_package}"));
     request.fields.addAll({
-      'patient': patient,
-      'package': package,
-      'paid_amount': paid_amount,
-      'description': description
+      'patient': patient.toString(),
+      'package': package.toString(),
+      'paid_amount': paid_amount.toString(),
+      'description': description.toString()
     });
     request.headers.addAll(headers);
 

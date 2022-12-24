@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/MoneyLog.dart';
 import 'package:fanan_elrashaka_admin/providers/ClinicsData.dart';
 import 'package:fanan_elrashaka_admin/screens/Finance.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/EditScreenContainer.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +13,9 @@ import 'package:provider/provider.dart';
 import 'package:select_form_field/select_form_field.dart';
 import '../providers/UserData.dart';
 class AddMoneyLog extends StatefulWidget {
+  final date;
+
+  const AddMoneyLog({Key? key,required this.date}) : super(key: key);
   @override
   State<AddMoneyLog> createState() => _AddMoneyLogState();
 }
@@ -51,72 +56,81 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
 
   @override
   Widget build(BuildContext context) {
-    return EditScreenContainer(
-        name: "Add Money Log",
-        topLeftAction: BackIcon(
-          overBack: (){
-            Navigator.pop(context);
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => Finance(token: context.read<UserData>().token))
-            );
-          },
-        ),
-        topRightaction: InkWell(
-          onTap: ()async{
-            if (_formKey.currentState!.validate()) {
-                _formKey.currentState!.save();
-                EasyLoading.show(status: "Add Money Log");
-                var responseData = await _moneyLog.addMoneyLog(
-                    context.read<UserData>().token,
-                    name, category_id, amount, log_type, notes, clinic_id
-                );
-                if (await responseData.statusCode == 200) {
-                  _dialogs.doneDialog(context,"You_are_successfully_Add_Money_Log","ok",(){
-                    setState(() {
-                      _formKey.currentState!.reset();
-                    });
-                  });
-                }else{
-                  var response = jsonDecode(await responseData.stream.bytesToString());
-                  print(response);
-                  _dialogs.errorDialog(context, "Error_adding_money_log_please_check_your_internet_connection");
-                }
-                EasyLoading.dismiss();
-            }
-          },
-          child: Container(
-            margin: EdgeInsets.only(right: 10),
-            width: 25,
-            height: 25,
-            child: Image.asset("assets/Save-512.png"),
+    print(widget.date);
+    return WillPopScope(
+        onWillPop: ()async{
+          Navigator.pop(context);
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) =>Finance(token: context.read<UserData>().token,))
+          );
+          return false;
+        },
+      child: EditScreenContainer(
+          name: "AddMoneyLog".tr(),
+          topLeftAction: BackIcon(
+            overBack: (){
+              Navigator.pop(context);
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => Finance(token: context.read<UserData>().token))
+              );
+            },
           ),
-        ),
-        child: Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height*0.83,
-          padding: const EdgeInsets.only(right: 15,left: 15,top: 25),
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 10,),
-                  buildLogTypeField(),
-                  const SizedBox(height: 20,),
-                  buildNameFormField(),
-                  const SizedBox(height: 20,),
-                  buildClinicSelect(),
-                  const SizedBox(height: 20,),
-                  buildCategorySelect(),
-                  const SizedBox(height: 20,),
-                  buildAmountFormField(),
-                  const SizedBox(height: 20,),
-                  buildNoteFormField()
-                ],
-              ),
+          topRightaction: InkWell(
+            onTap: ()async{
+              if (_formKey.currentState!.validate()) {
+                  _formKey.currentState!.save();
+                  EasyLoading.show(status: "AddMoneyLog".tr());
+                  var responseData = await _moneyLog.addMoneyLog(
+                      context.read<UserData>().token,
+                      name, category_id, amount, log_type, notes, clinic_id,widget.date
+                  );
+                  print(await responseData.stream.bytesToString());
+                  if (await responseData.statusCode == 200) {
+                    _dialogs.doneDialog(context,"You_are_successfully_Add_Money_Log".tr(),"Ok".tr(),(){
+                      setState(() {
+                        _formKey.currentState!.reset();
+                      });
+                    });
+                  }else{
+                    var response = jsonDecode(await responseData.stream.bytesToString());
+                    print(response);
+                    _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                  }
+                  EasyLoading.dismiss();
+              }
+            },
+            child: Container(
+              margin: EdgeInsets.only(right: 10),
+              width: 25,
+              height: 25,
+              child: Image.asset("assets/Save-512.png"),
             ),
           ),
-        )
+          child: Expanded(
+            child: Padding(
+              padding:EdgeInsets.only(top:25,right: 15,left: 15,),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    const SizedBox(height: 10,),
+                    buildLogTypeField(),
+                    const SizedBox(height: 20,),
+                    buildNameFormField(),
+                    const SizedBox(height: 20,),
+                    buildClinicSelect(),
+                    const SizedBox(height: 20,),
+                    buildCategorySelect(),
+                    const SizedBox(height: 20,),
+                    buildAmountFormField(),
+                    const SizedBox(height: 20,),
+                    buildNoteFormField()
+                  ],
+                ),
+              ),
+            ),
+          )
+      ),
     );
   }
 
@@ -124,15 +138,15 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
     return SelectFormField(
       type: SelectFormFieldType
           .dropdown, // or can be dialog
-      labelText: "Log Type*",
-      items: const [
+      labelText: "LogType".tr(),
+      items:  [
         {
           'value': '1',
-          'label': "Expense",
+          'label': "Expense".tr(),
         },
         {
           'value': '2',
-          'label': "Income",
+          'label': "Income".tr(),
         },
       ],
       decoration: InputDecoration(
@@ -146,8 +160,8 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        label:const Text("Log Type*") ,
-        hintText: "Log Type",
+        label: Text("LogType".tr()) ,
+        /*hintText: "LogType".tr(),*/
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
@@ -160,7 +174,7 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kLogTypeeUnitNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -178,7 +192,7 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kNamelNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -186,8 +200,8 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Name*",
-        hintText: "Enter_name",
+        labelText: "Name".tr(),
+        // hintText: "Enter_name",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -199,7 +213,7 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
     return SelectFormField(
       type: SelectFormFieldType
           .dropdown, // or can be dialog
-      labelText: "Clinic*",
+      labelText: "Clinic".tr(),
       items: getClinic(),
       decoration: InputDecoration(
         suffixIcon: Container(
@@ -212,8 +226,8 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        label:const Text("clinic") ,
-        hintText: "clinic",
+        label: Text("Clinic".tr()) ,
+        hintText: "Clinic".tr(),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
@@ -228,7 +242,7 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kAClinicNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -238,7 +252,7 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
     return SelectFormField(
       type: SelectFormFieldType
           .dropdown, // or can be dialog
-      labelText: "Category*",
+      labelText: "Category".tr(),
       items: getCategory(),
       decoration: InputDecoration(
         suffixIcon: Container(
@@ -251,8 +265,8 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        label:const Text("Category*") ,
-        hintText: "Category",
+        label: Text("Category".tr()) ,
+        hintText: "Category".tr(),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
@@ -267,7 +281,7 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kACategoryNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -280,8 +294,8 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Amount*",
-        hintText:"Enter_Amount",
+        labelText: "Amount".tr(),
+        // hintText:"Enter_Amount",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
       onSaved: (newValue) {
@@ -295,7 +309,7 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
       },
       validator: (value) {
         if (value=="") {
-          return "kFeeAfterCodeNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -322,7 +336,7 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Notes",
+        labelText: "Notes".tr(),
         alignLabelWithHint: true,
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly

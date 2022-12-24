@@ -9,6 +9,8 @@ import 'package:fanan_elrashaka_admin/screens/EditPackage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
+
+import '../translations/locale_keys.g.dart';
 class ClinicCard extends StatefulWidget {
   final snapshot;
   final index;
@@ -28,6 +30,7 @@ class _ClinicCardState extends State<ClinicCard> {
   }
   @override
   Widget build(BuildContext context) {
+      print(widget.snapshot.data[widget.index]);
       return ListTile(
         leading: SizedBox(
           width: 50,
@@ -37,8 +40,9 @@ class _ClinicCardState extends State<ClinicCard> {
               child: (is_available == true)?Image.asset("assets/availability_right_avatar.png"):Image.asset("assets/availability_wrong_avatar.png")
           ),
         ),
-        title: Text(
-          "${widget.snapshot.data[widget.index]['clinic_name_en']}",
+        title: Text((context.locale.toString()=="en")?
+          "${widget.snapshot.data[widget.index]['clinic_name_en']}":
+        "${widget.snapshot.data[widget.index]['clinic_name_ar']}",
           style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.normal,
@@ -48,7 +52,7 @@ class _ClinicCardState extends State<ClinicCard> {
         subtitle: Row(
           children: [
             Text(
-                "${DateFormat('EEEE').format(DateTime.parse("${widget.snapshot.data[widget.index]['date'].toString()} 00:00:00.00"))}",
+                "${DateFormat('EEEE',context.locale.toString()).format(DateTime.parse("${widget.snapshot.data[widget.index]['date'].toString()} 00:00:00.00"))}",
                 style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -65,7 +69,7 @@ class _ClinicCardState extends State<ClinicCard> {
         ),
         trailing: InkWell(
           onTap: ()async{
-            EasyLoading.show(status: "Update Clinic Availability");
+            EasyLoading.show(status: "UpdateClinicAvailability".tr());
             Clinics _clinics = Clinics();
             final Dialogs _dialogs = Dialogs();
             var response =await  _clinics.updateClinicSchedule(context.read<UserData>().token,widget.snapshot.data[widget.index]['id'].toString());
@@ -74,12 +78,12 @@ class _ClinicCardState extends State<ClinicCard> {
               setState(() {
                 is_available = !is_available;
               });
-              _dialogs.doneDialog(context, "Availability Updated",'ok',(){
+              _dialogs.doneDialog(context, "AvailabilityUpdated".tr(),'Ok'.tr(),(){
               });
             }else{
               print(jsonDecode(await response.stream.bytesToString()));
               EasyLoading.dismiss();
-              _dialogs.errorDialog(context, "Error_while_updating_availability_please_check_your_internet_connection");
+              _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
             }
           },
           child: SizedBox(

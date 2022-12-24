@@ -25,8 +25,12 @@ class PurchasesCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title,style: Constants.regularTextNormal,),
-              Text("${double.parse(price).toInt()} EGP",style: Constants.PriceSmallText,),
+              Text(title,style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff000000)
+              )),
+              Text("${double.parse(price).toInt()} ${"EGP".tr()}",style: Constants.PriceSmallText,),
             ],
           ),
           SizedBox(height: 15,),
@@ -37,9 +41,12 @@ class PurchasesCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Purchase Date",style: Constants.aboutSmallText,),
+                    Text("PurchaseDate".tr(),style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff6a6a6c)
+                    ),),
                     SizedBox(height: 6,),
-                    Text("${DateFormat("EEEE dd/MM/yyyy").format(DateTime.parse(date))}",style: Constants.secondSmallText,)
+                    Text("${DateFormat("EEEE dd/MM/yyyy",context.locale.toString()).format(DateTime.parse(date))}",style: Constants.secondSmallText,)
                   ],
                 ),
                 VerticalDivider(color: Colors.black,thickness: 0.8,),
@@ -47,19 +54,25 @@ class PurchasesCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("End Date",style: Constants.aboutSmallText,),
+                      Text("EndDate".tr(),style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xff6a6a6c)
+                      ),),
                       SizedBox(height: 6,),
                       if(used_amount!="null")
-                      Text("${DateFormat("EEEE dd/MM/yyyy").format(DateTime.parse(used_amount))}",style: Constants.secondSmallText,)
+                      Text("${DateFormat("EEEE dd/MM/yyyy",context.locale.toString()).format(DateTime.parse(used_amount))}",style: Constants.secondSmallText,)
                     ],
                   ),
                 if(package_unit == "2")
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Used Amount",style: Constants.aboutSmallText,),
+                      Text("UsedAmount".tr(),style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xff6a6a6c)
+                      )),
                       SizedBox(height: 6,),
-                      Text("${used_amount}/${package_amount} [${int.parse(package_amount)-int.parse(used_amount)} Remaining]",style: Constants.secondSmallText,)
+                      Text("${used_amount}/${package_amount} [${int.parse(package_amount)-int.parse(used_amount)} ${"Remaining".tr()}]",style: Constants.secondSmallText,)
                     ],
                   ),
               ],

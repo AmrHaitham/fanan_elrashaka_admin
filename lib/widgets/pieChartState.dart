@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/widgets/Indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart' as pie;
@@ -59,18 +60,18 @@ class PieChart2State extends State {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const <Widget>[
+              children:  <Widget>[
                 Indicator(
-                  color: Color(0xff0293ee),
-                  text: 'Male',
+                  color: Color(0xff0567d0),
+                  text: 'Male'.tr(),
                   isSquare: true,
                 ),
                 SizedBox(
                   height: 4,
                 ),
                 Indicator(
-                  color: Color(0xfff8b250),
-                  text: 'Female',
+                  color: Color(0xffd1d1d3),
+                  text: 'Female'.tr().toString().split("*")[0],
                   isSquare: true,
                 ),
                 SizedBox(
@@ -95,7 +96,7 @@ class PieChart2State extends State {
       switch (i) {
         case 0:
           return PieChartSectionData(
-            color: const Color(0xff0293ee),
+            color: const Color(0xff0567d0),
             value: ((value1/(value1+value2))*100),
             title: '${((value1/(value1+value2))*100).toStringAsFixed(1)}%',
             radius: radius,
@@ -106,7 +107,7 @@ class PieChart2State extends State {
           );
         case 1:
           return PieChartSectionData(
-            color: const Color(0xfff8b250),
+            color: const Color(0xffd1d1d3),
             value: (value2/(value1+value2))*100,
             title: '${((value2/(value1+value2))*100).toStringAsFixed(1)}%',
             radius: radius,

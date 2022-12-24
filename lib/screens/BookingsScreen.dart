@@ -58,7 +58,10 @@ class _BookingsScreenState extends State<BookingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ScreenContainer(
-          name: "Bookings",
+          onRefresh: (){
+            setState(() {});
+          },
+          name: "Bookings".tr(),
           topCenterAction: AnimatedContainer(
             curve: Curves.easeInOut,
             duration: Duration(milliseconds: 10),
@@ -89,7 +92,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                         _bottomSheetWidget.showBottomSheetButtons(
                             context,
                             180.0,
-                            const Text("Add New Patient",style: TextStyle(
+                             Text("AddNewPatient".tr(),style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold
@@ -107,7 +110,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                   width: 20,
                                   child: Image.asset("assets/add_patient.png"),
                                 ),
-                                title:Text("New Patient",style: TextStyle(
+                                title:Text("NewPatient".tr(),style: TextStyle(
                                     color: Constants.secondTextColor,
                                     fontSize: 17,
                                     fontWeight: FontWeight.normal
@@ -126,7 +129,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                   width: 20,
                                   child: Image.asset("assets/add_patient.png"),
                                 ),
-                                title:Text("Existing Patient",style: TextStyle(
+                                title:Text("ExistingPatient".tr(),style: TextStyle(
                                     color: Constants.secondTextColor,
                                     fontSize: 17,
                                     fontWeight: FontWeight.normal
@@ -148,7 +151,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                             padding:const EdgeInsets.all(8),
                             child: Image.asset("assets/booking_add_patient.png"),
                           ),
-                          Text("New Patient",style: TextStyle(
+                          Text("NewPatient".tr(),style: TextStyle(
                               color: Constants.secondTextColor,
                               fontWeight: FontWeight.bold
                           ),)
@@ -160,13 +163,13 @@ class _BookingsScreenState extends State<BookingsScreen> {
                 Visibility(
                   visible: !openSearch,
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 15.0),
+                    padding:  (context.locale.toString()=="en")?EdgeInsets.only(right: 15.0):EdgeInsets.only(left: 15.0),
                     child: InkWell(
                       onTap: (){
                         _bottomSheetWidget.showBottomSheetButtons(
                             context,
                             180.0,
-                            const Text("Make New Payment",style: TextStyle(
+                             Text("MakeNewPayment".tr(),style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold
@@ -184,7 +187,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                   width: 20,
                                   child: Image.asset("assets/bookings_active.png"),
                                 ),
-                                title:Text("New Booking",style: TextStyle(
+                                title:Text("NewBooking".tr(),style: TextStyle(
                                     color: Constants.secondTextColor,
                                     fontSize: 17,
                                     fontWeight: FontWeight.bold
@@ -203,7 +206,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                   width: 20,
                                   child: Image.asset("assets/package.png"),
                                 ),
-                                title:Text("Package Purchase",style: TextStyle(
+                                title:Text("PackagePurchase".tr(),style: TextStyle(
                                     color: Constants.secondTextColor,
                                     fontSize: 17,
                                     fontWeight: FontWeight.bold
@@ -225,7 +228,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                             padding:const EdgeInsets.all(8),
                             child: Image.asset("assets/booking_payment.png"),
                           ),
-                          Text("New Payment",style: TextStyle(
+                          Text("NewPayment".tr(),style: TextStyle(
                               color: Constants.secondTextColor,
                               fontWeight: FontWeight.bold
                           ),)
@@ -255,7 +258,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                           padding:const EdgeInsets.all(8),
                           child: Image.asset("assets/booking_search.png"),
                         ),
-                        Text("Search",style: TextStyle(
+                        Text("Search".tr(),style: TextStyle(
                             color: Constants.secondTextColor,
                             fontWeight: FontWeight.bold
                         ),)
@@ -319,7 +322,49 @@ class _BookingsScreenState extends State<BookingsScreen> {
                             });
                           },
                           calendarStyle: CalendarStyle(
+                              defaultTextStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff373d46),
+                                  fontSize: 15,
+                              ),
+                              holidayTextStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff373d46),
+                                fontSize: 15,
+                              ),
+                              rangeEndTextStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff373d46),
+                                fontSize: 15,
+                              ),
+                              withinRangeTextStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff373d46),
+                                fontSize: 15,
+                              ),
+                              disabledTextStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff373d46),
+                                fontSize: 15,
+                              ),
+                              // outsideTextStyle: TextStyle(
+                              //   fontWeight: FontWeight.bold,
+                              //   color: Color(0xff373d46),
+                              //   fontSize: 15,
+                              // ),
+                              rangeStartTextStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff373d46),
+                                fontSize: 15,
+                              ),
+                              weekendTextStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff373d46),
+                                fontSize: 15,
+                              ),
                               selectedTextStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
                                   color: Constants.secondColor
                               ),
                               defaultDecoration: BoxDecoration(
@@ -406,7 +451,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                       ],
                     ),
                     Align(
-                      alignment: Alignment.topRight,
+                      alignment: (context.locale.toString()=="en")?Alignment.topRight:Alignment.topLeft,
                       child: SizedBox(
                           width: 150,
                           height: 50,
@@ -431,24 +476,39 @@ class _BookingsScreenState extends State<BookingsScreen> {
                           print(snapshot.error.toString());
                           return  Container();
                         } else if (snapshot.hasData) {
-                          return Expanded(
-                            child: ListView.builder(
-                                itemCount: snapshot.data.length,
-                                itemBuilder: (context , index){
-                                  return Container(
-                                      width: double.infinity,
-                                      margin:const EdgeInsets.all(10),
-                                      child:BookingCard(
-                                        clinic_id:clinic.toString(),
-                                        snapshot: snapshot.data[index],
-                                      )
-                                  );
-                                }
-                            ),
-                          );
+                          if(snapshot.data.length>0){
+                            return Expanded(
+                              child: ListView.builder(
+                                  itemCount: snapshot.data.length,
+                                  itemBuilder: (context , index){
+                                    return Container(
+                                        width: double.infinity,
+                                        margin:const EdgeInsets.all(10),
+                                        child:BookingCard(
+                                          clinic_id:clinic.toString(),
+                                          snapshot: snapshot.data[index],
+                                        )
+                                    );
+                                  }
+                              ),
+                            );
+                          }else{
+                            return Center(
+                              child: Container(
+                                margin: EdgeInsets.only(top: 90),
+                                width: 100,
+                                height: 100,
+                                child: Image.asset('assets/fully_booked(1).png',color: Constants.secondColor,),
+                              ),
+                            );
+                          }
                         }else{
                           //no data
-                          return Container();
+                          return Container(
+                            width: 100,
+                            height: 100,
+                            child: Image.asset('assets/fully_booked(1).png'),
+                          );
                         }
                       }else{
                         //error in connection

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:flutter/material.dart';
 class MoreCard extends StatelessWidget {
@@ -28,7 +29,10 @@ class MoreCard extends StatelessWidget {
             trailing: SizedBox(
               width: 20,
               height: 20,
-              child: Image.asset("assets/right-arrow_gray.png",color: Constants.secondColor,),
+              child: Transform.scale(
+                  scaleX: (context.locale.toString()=="en")?1:-1,
+                  child: Image.asset("assets/right-arrow_gray.png",color: Constants.secondColor,)
+              ),
             ),
           ),
           const Divider(thickness: 0.6,indent: 10,endIndent: 10,)

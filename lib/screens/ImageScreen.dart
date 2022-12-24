@@ -6,8 +6,9 @@ import '../networks/ApisEndPoint.dart';
 class ImageScreen extends StatefulWidget {
   final String name , imageUrl ;
   final uploadButton;
+  final takePicAndUpload;
 
-  const ImageScreen({Key? key,required this.name,required this.imageUrl,required this.uploadButton}) : super(key: key);
+  const ImageScreen({Key? key,required this.name,required this.imageUrl,required this.uploadButton,required this.takePicAndUpload}) : super(key: key);
 
   @override
   State<ImageScreen> createState() => _ImageScreenState();
@@ -17,11 +18,23 @@ class _ImageScreenState extends State<ImageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed:(){
-          widget.uploadButton();
-        },
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            child: Icon(Icons.image),
+            onPressed:(){
+              widget.uploadButton();
+            },
+          ),
+          const SizedBox(width: 10,),
+          FloatingActionButton(
+            child: Icon(Icons.camera_alt),
+            onPressed:(){
+              widget.takePicAndUpload();
+            },
+          ),
+        ],
       ),
       body: MainContainer(
           title: widget.name,

@@ -4,6 +4,7 @@ import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/Bookings.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BottomSheet.dart';
 import 'package:fanan_elrashaka_admin/widgets/Loading.dart';
 import 'package:fanan_elrashaka_admin/widgets/TimeSlotItem.dart';
@@ -22,6 +23,8 @@ class BookingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     print(snapshot);
     return ExpansionTileCard(
+      baseColor: Colors.white,
+      shadowColor: Colors.grey,
       title: Text("${snapshot['first_name']} ${snapshot['last_name']}",style:
       const TextStyle(
           fontWeight: FontWeight.bold,
@@ -29,8 +32,9 @@ class BookingCard extends StatelessWidget {
           fontSize: 20
       ),
       ),
-      subtitle: Text(snapshot['clinic_service_en'],style: TextStyle(
-          color: Constants.secondTextColor
+      subtitle: Text((context.locale.toString()=="en")?snapshot['clinic_service_en']:snapshot['clinic_service_ar'],style: TextStyle(
+          color: Color(0xff6a6a6c),
+          fontWeight: FontWeight.bold
       ),
       ),
       trailing: Container(
@@ -45,7 +49,7 @@ class BookingCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               color: (snapshot['paid'])?Color(0xffe9dfff):Color(0xffd2d2d2)
             ),
-            child: Center(child: Text("Paid",style: TextStyle(
+            child: Center(child: Text("Paid".tr(),style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: (snapshot['paid'])?Constants.secondColor:Color(0xff9e9e9e)
             ),)),
@@ -58,7 +62,7 @@ class BookingCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 color: (snapshot['done'])?Color(0xffe9dfff):Color(0xffd2d2d2)
             ),
-            child: Center(child: Text("Done",style: TextStyle(
+            child: Center(child: Text("Done".tr(),style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: (snapshot['done'])?Constants.secondColor:Color(0xff9e9e9e)
             ),)),
@@ -66,11 +70,19 @@ class BookingCard extends StatelessWidget {
         ],),
       ),
       children: [
+        const Divider(
+          height: 4,
+          color: Colors.black,
+          thickness: 0.2,
+        ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              const Text("Email:   "),
+               Text("${"Email".tr()}:   ",style: TextStyle(
+                  color: Color(0xff6a6a6c),
+                  fontWeight: FontWeight.bold
+              ),),
               Text(snapshot['email'].toString(),style: TextStyle(fontWeight: FontWeight.bold),)
             ],
           ),
@@ -79,7 +91,10 @@ class BookingCard extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                const Text("Phone:   "),
+                 Text("${"PhoneNumber".tr()}:   ",style: TextStyle(
+                    color: Color(0xff6a6a6c),
+                    fontWeight: FontWeight.bold
+                ),),
                 Text(snapshot['phone'].toString(),style: TextStyle(fontWeight: FontWeight.bold),)
               ],
             ),
@@ -88,7 +103,10 @@ class BookingCard extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              const Text("gender:   "),
+               Text("${"Gender".tr().split("*")[0]}:   ",style: TextStyle(
+                  color: Color(0xff6a6a6c),
+                  fontWeight: FontWeight.bold
+              ),),
               Expanded(child: Text((snapshot['gender'].toString() == 'F')?"Female":"Male",style: TextStyle(fontWeight: FontWeight.bold),))
             ],
           ),
@@ -109,7 +127,7 @@ class BookingCard extends StatelessWidget {
                 _bottomSheetWidget.showBottomSheetButtons(
                     context,
                     300.0,
-                    const Text("Booking Options",style: TextStyle(
+                     Text("BookingOptions".tr(),style: TextStyle(
                         color: Colors.black,
                         fontSize: 20,
                         fontWeight: FontWeight.bold
@@ -155,7 +173,7 @@ class BookingCard extends StatelessWidget {
                           width: 20,
                           child: Image.asset("assets/clock.png"),
                         ),
-                        title:Text("Reschedule Booking",style: TextStyle(
+                        title:Text("RescheduleBooking".tr(),style: TextStyle(
                             color: Constants.secondTextColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 16
@@ -164,7 +182,7 @@ class BookingCard extends StatelessWidget {
                       const Divider(thickness: 0.6,indent: 10,endIndent: 10,),
                       ListTile(
                         onTap: ()async{
-                          EasyLoading.show(status: "Change Done Status");
+                          EasyLoading.show(status: "ChangeDoneStatus".tr());
                           try{
                             var response =await _bookings.updateBookingData(
                                 context.read<UserData>().token,
@@ -175,17 +193,14 @@ class BookingCard extends StatelessWidget {
                                 '1',
                             );
                             if (await response.statusCode == 200) {
-                              _dialogs.doneDialog(context,"You_are_successfully_update_Done_Status","ok",(){});
+                              _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){});
                             }else{
                               print(await response.stream.bytesToString());
-                              _dialogs.errorDialog(context,"Error_while_updating_Done_Status_check_your_interne_connection");
+                              _dialogs.errorDialog(context,LocaleKeys.Error__please_check_your_internet_connection.tr());
                             }
                             EasyLoading.dismiss();
                           }catch(v){
                             EasyLoading.dismiss();
-                          }finally{
-                            EasyLoading.showSuccess("Done Changing Done Status");
-                            Navigator.pop(context);
                           }
                         },
                         dense: true,
@@ -194,7 +209,7 @@ class BookingCard extends StatelessWidget {
                           width: 20,
                           child: Image.asset("assets/accept_2.png"),
                         ),
-                        title:Text("Change Done Status",style: TextStyle(
+                        title:Text("ChangeDoneStatus".tr(),style: TextStyle(
                             color: Constants.secondTextColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 16
@@ -203,7 +218,7 @@ class BookingCard extends StatelessWidget {
                       const Divider(thickness: 0.6,indent: 10,endIndent: 10,),
                       ListTile(
                         onTap: ()async{
-                          EasyLoading.show(status: "Change Paid Status");
+                          EasyLoading.show(status: "ChangePaidStatus".tr());
                           try{
                             var response =await _bookings.updateBookingData(
                               context.read<UserData>().token,
@@ -214,17 +229,14 @@ class BookingCard extends StatelessWidget {
                               '0',
                             );
                             if (await response.statusCode == 200) {
-                              _dialogs.doneDialog(context,"You_are_successfully_update_Paid_Status","ok",(){});
+                              _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){});
                             }else{
                               print(await response.stream.bytesToString());
-                              _dialogs.errorDialog(context,"Error_while_updating_Paid_Status_check_your_interne_connection");
+                              _dialogs.errorDialog(context,LocaleKeys.Error__please_check_your_internet_connection.tr());
                             }
                             EasyLoading.dismiss();
                           }catch(v){
                             EasyLoading.dismiss();
-                          }finally{
-                            EasyLoading.showSuccess("Done Changing Paid Status");
-                            Navigator.pop(context);
                           }
                         },
                         dense: true,
@@ -233,7 +245,7 @@ class BookingCard extends StatelessWidget {
                           width: 20,
                           child: Image.asset("assets/money_2.png"),
                         ),
-                        title:Text("Change Paid Status",style: TextStyle(
+                        title:Text("ChangePaidStatus".tr(),style: TextStyle(
                             color: Constants.secondTextColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 16
@@ -242,25 +254,22 @@ class BookingCard extends StatelessWidget {
                       const Divider(thickness: 0.6,indent: 10,endIndent: 10,),
                       ListTile(
                         onTap: ()async{
-                          EasyLoading.show(status: "Cancel Book");
+                          EasyLoading.show(status: "CancelBook".tr());
                           try{
                             var response =await _bookings.deleteBooking(
                               context.read<UserData>().token,
                               snapshot['id'].toString(),
-                              DateFormat("h:mm a").format(DateTime.parse("2020-01-02 ${snapshot['time']}.000")).toString(),
+                              DateFormat("h:mm a",context.locale.toString()).format(DateTime.parse("2020-01-02 ${snapshot['time']}.000")).toString(),
                             );
                             if (await response.statusCode == 200) {
-                              _dialogs.doneDialog(context,"You_are_successfully_Cancel_this_Book","ok",(){});
+                              _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){});
                             }else{
                               print(await response.stream.bytesToString());
-                              _dialogs.errorDialog(context,"Error_while_Canceling_this_Book_check_your_interne_connection");
+                              _dialogs.errorDialog(context,LocaleKeys.Error__please_check_your_internet_connection.tr());
                             }
                             EasyLoading.dismiss();
                           }catch(v){
                             EasyLoading.dismiss();
-                          }finally{
-                            EasyLoading.showSuccess("Done Cancel Book");
-                            Navigator.pop(context);
                           }
                         },
                         dense: true,
@@ -269,7 +278,7 @@ class BookingCard extends StatelessWidget {
                           width: 20,
                           child: Image.asset("assets/bookmark_2.png"),
                         ),
-                        title:Text("Cancel Booking",style: TextStyle(
+                        title:Text("CancelBook".tr(),style: TextStyle(
                             color: Constants.secondTextColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 16
@@ -288,10 +297,10 @@ class BookingCard extends StatelessWidget {
             ),
             Column(
               children: [
-                Text("Appointment Time",style: TextStyle(
+                Text("AppointmentTime".tr(),style: TextStyle(
                     color: Constants.secondTextColor
                 ),),
-                Text(DateFormat("h:mm a").format(DateTime.parse("2020-01-02 ${snapshot['time']}.000")).toString(),
+                Text(DateFormat("h:mm a",context.locale.toString()).format(DateTime.parse("2020-01-02 ${snapshot['time']}.000")).toString(),
                   style: TextStyle(
                       color: Constants.secondColor,
                       fontSize: 17

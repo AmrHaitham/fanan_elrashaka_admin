@@ -17,7 +17,10 @@ class PromoCodeCard extends StatelessWidget {
           );
         },
         title: Text(
-          "${snapshot.data[index]['code']} | ${snapshot.data[index]['clinic_service_name_en']} (${snapshot.data[index]['clinic_name_en']})",
+          "${snapshot.data[index]['code']} | ${
+              (context.locale.toString()=="en")?
+              snapshot.data[index]['clinic_service_name_en']:
+              snapshot.data[index]['clinic_service_name_ar']} (${(context.locale.toString()=="en")?snapshot.data[index]['clinic_name_en']:snapshot.data[index]['clinic_name_ar']})",
           style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.normal,
@@ -31,10 +34,13 @@ class PromoCodeCard extends StatelessWidget {
               fontWeight: FontWeight.bold
           ),
         ),
-        trailing: SizedBox(
-          width: 20,
-          height: 20,
-          child: Image.asset("assets/right-arrow_gray.png"),
+        trailing: Transform.scale(
+          scaleX: (context.locale.toString()=="en")?1:-1,
+          child: SizedBox(
+            width: 20,
+            height: 20,
+            child: Image.asset("assets/right-arrow_gray.png"),
+          ),
         ),
       );
   }

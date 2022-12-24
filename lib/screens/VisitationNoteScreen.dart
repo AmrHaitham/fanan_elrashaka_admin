@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/networks/PatientDetails.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/BottomSheet.dart';
 import 'package:fanan_elrashaka_admin/widgets/DefaultButton.dart';
@@ -51,10 +52,10 @@ class _VisitationNoteScreenState extends State<VisitationNoteScreen> {
                           buildNoteFormField(),
                           const SizedBox(height: 20,),
                           DefaultButton(
-                            text: "Add Visitation Note",
+                            text: "AddVisitationNote".tr(),
                             press: ()async{
                               if(note!=null){
-                                EasyLoading.show(status: "Adding Visitation Note");
+                                EasyLoading.show(status: "AddVisitationNote".tr());
                                 var response = await _patientDetails.addVisitation_note(
                                     context.read<UserData>().token,
                                     widget.pid,
@@ -63,7 +64,7 @@ class _VisitationNoteScreenState extends State<VisitationNoteScreen> {
                                 var data = jsonDecode(await response.stream.bytesToString());
                                 if (await response.statusCode == 200) {
                                   print(data);
-                                  EasyLoading.showSuccess("Done Adding Visitation Note");
+                                  EasyLoading.showSuccess("DoneAddingVisitationNote".tr());
                                   note = null;
                                   Navigator.pop(context);
                                   setState(() {});
@@ -80,10 +81,10 @@ class _VisitationNoteScreenState extends State<VisitationNoteScreen> {
                 ),
                 body: ScreenContainer(
                     topLeftAction:const BackIcon(),
-                    name: "Visitation Note",
+                    name: LocaleKeys.VisitationNotes.tr(),
                     child: Container(
                       width: double.infinity,
-                      height: MediaQuery.of(context).size.height*0.79,
+                      height: MediaQuery.of(context).size.height*0.78,
                       margin:const EdgeInsets.only(top: 25),
                       padding:const EdgeInsets.all(5),
                       child: ListView.builder(
@@ -111,10 +112,10 @@ class _VisitationNoteScreenState extends State<VisitationNoteScreen> {
                                       ),
                                       const SizedBox(height: 10,),
                                       Text(
-                                        DateFormat('dd/MM/yyyy - hh:mm a').format(DateTime.parse(snapshot.data[index]['datetime'])).toString(),
+                                        DateFormat('dd/MM/yyyy - hh:mm a',context.locale.toString()).format(DateTime.parse(snapshot.data[index]['datetime'])).toString(),
                                         style: TextStyle(
                                             color: Constants.secondTextColor,
-                                            fontSize: 11
+                                            fontSize: 13
                                         ),
                                       ),
                                     ],
@@ -128,7 +129,7 @@ class _VisitationNoteScreenState extends State<VisitationNoteScreen> {
                                     [
                                       ListTile(
                                         leading: Icon(Icons.edit,color: Constants.secondColor,),
-                                        title:const Text("Edit Visitation Note"),
+                                        title: Text("EditVisitationNote".tr()),
                                         onTap: (){
                                           note = snapshot.data[index]['note'];
                                           _bottomSheetWidget.showBottomSheetButtons(
@@ -139,12 +140,12 @@ class _VisitationNoteScreenState extends State<VisitationNoteScreen> {
                                                 buildEditNoteFormField(snapshot.data[index]['note']),
                                                 const SizedBox(height: 20,),
                                                 DefaultButton(
-                                                  text: "Edit Visitation Note",
+                                                  text:"EditVisitationNote".tr(),
                                                   press: ()async{
                                                     print(context.read<UserData>().token+
                                                         " id -${widget.pid} -"+ note!);
                                                     if(note!=null){
-                                                      EasyLoading.show(status: "Edit Visitation Note");
+                                                      EasyLoading.show(status: "EditVisitationNote".tr());
                                                       var response = await _patientDetails.updateVisitation_note(
                                                           context.read<UserData>().token,
                                                           snapshot.data[index]['id'].toString(),
@@ -153,7 +154,7 @@ class _VisitationNoteScreenState extends State<VisitationNoteScreen> {
                                                       var data = jsonDecode(await response.stream.bytesToString());
                                                       if (await response.statusCode == 200) {
                                                         print(data);
-                                                        EasyLoading.showSuccess("Done Editing Visitation Note");
+                                                        EasyLoading.showSuccess(LocaleKeys.You_are_successfully_updated_information.tr());
                                                         note = null;
                                                         Navigator.pop(context);
                                                         setState(() {});
@@ -171,9 +172,9 @@ class _VisitationNoteScreenState extends State<VisitationNoteScreen> {
                                       const Divider(thickness: 0.6,indent: 10,endIndent: 10,),
                                       ListTile(
                                         leading: const Icon(Icons.delete,color: Colors.red,),
-                                        title: const Text("Delete Visitation Note"),
+                                        title:  Text("DeleteVisitationNote".tr()),
                                         onTap: () async{
-                                          EasyLoading.show(status: "Delete Visitation Note");
+                                          EasyLoading.show(status: "DeleteVisitationNote".tr());
                                           var response = await _patientDetails.deleteVisitation_note(
                                               context.read<UserData>().token,
                                               snapshot.data[index]['id'].toString(),
@@ -181,7 +182,7 @@ class _VisitationNoteScreenState extends State<VisitationNoteScreen> {
                                           var data = jsonDecode(await response.stream.bytesToString());
                                           if (await response.statusCode == 200) {
                                             print(data);
-                                            EasyLoading.showSuccess("Done Deleting Visitation Note");
+                                            EasyLoading.showSuccess("DoneDeletingVisitationNote".tr());
                                             Navigator.pop(context);
                                             setState(() {});
                                           }else{
@@ -221,17 +222,17 @@ class _VisitationNoteScreenState extends State<VisitationNoteScreen> {
         }
         return null;
       },
-      // validator: (value) {
-      //   if (value!.isEmpty) {
-      //     return "knoteNullError";
-      //   }
-      //   return null;
-      // },
+      validator: (value) {
+        if (value!.isEmpty) {
+          return LocaleKeys.ThisFieldIsRequired.tr();
+        }
+        return null;
+      },
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "note",
+        labelText: "Note".tr(),
         alignLabelWithHint: true,
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
@@ -251,17 +252,17 @@ class _VisitationNoteScreenState extends State<VisitationNoteScreen> {
         }
         return null;
       },
-      // validator: (value) {
-      //   if (value!.isEmpty) {
-      //     return "knoteNullError";
-      //   }
-      //   return null;
-      // },
+      validator: (value) {
+        if (value!.isEmpty) {
+          return LocaleKeys.ThisFieldIsRequired.tr();
+        }
+        return null;
+      },
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "note",
+        labelText: "Note".tr(),
         alignLabelWithHint: true,
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly

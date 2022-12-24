@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:flutter/material.dart';
 class BackIcon extends StatelessWidget {
@@ -6,7 +7,7 @@ class BackIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Transform.scale(
-      scaleX: -1,
+      scaleX: (context.locale.toString()=="en")?-1:1,
       child: InkWell(
         onTap: overBack ??(){
           Navigator.pop(context);

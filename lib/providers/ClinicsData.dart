@@ -29,4 +29,14 @@ class ClinisData with ChangeNotifier{
     notifyListeners();
   }
 
+  String _timeId = "";
+
+  String get timeId => _timeId;
+
+  void set_timeId(String timeId){
+    _timeId = timeId;
+    notifyListeners();
+  }
+
+
 }

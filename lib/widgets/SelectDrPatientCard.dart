@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/networks/Patients.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
@@ -30,15 +31,18 @@ class SelectDrPatientCard extends StatelessWidget {
         ),
       ),
       subtitle: Text(
-        "${(snapshot.data[index]['phone']==null)?"":snapshot.data[index]['phone']+","} ${(snapshot.data[index]['gender']=="M")?"Male":"Female"}",
+        "${snapshot.data[index]['pid']} | ${(snapshot.data[index]['phone']==null)?"":snapshot.data[index]['phone']+","} ${(snapshot.data[index]['gender']=="M")?"Male":"Female"}",
         style:const TextStyle(
             fontWeight: FontWeight.bold
         ),
       ),
-      trailing: SizedBox(
-        width: 20,
-        height: 20,
-        child: Image.asset("assets/right-arrow_gray.png"),
+      trailing: Transform.scale(
+        scaleX: (context.locale.toString()=="en")?1:-1,
+        child: SizedBox(
+          width: 20,
+          height: 20,
+          child: Image.asset("assets/right-arrow_gray.png"),
+        ),
       ),
     );
   }

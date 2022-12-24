@@ -6,6 +6,7 @@ import 'package:fanan_elrashaka_admin/models/CategoriesModel.dart';
 import 'package:fanan_elrashaka_admin/networks/Finance.dart';
 import 'package:fanan_elrashaka_admin/networks/Reports.dart';
 import 'package:fanan_elrashaka_admin/providers/ClinicsData.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/DefaultButton.dart';
 import 'package:fanan_elrashaka_admin/widgets/FinanceStats.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -65,7 +66,7 @@ class _FinanceState extends State<Finance> {
   static List<Clinic> _clinicServices = [];
   List<MultiSelectItem<Object?>> _itemsServices = [];
   List<dynamic?> _selectedClinicServices = [];
-
+  DateTime? fromDateI , toDateI;
   @override
   void initState() {
     // TODO: implement initState
@@ -90,7 +91,7 @@ class _FinanceState extends State<Finance> {
 
   downloadReport(api)async{
     try{
-      EasyLoading.show(status: "Getting report");
+      EasyLoading.show(status: "GettingReport".tr());
       var response =await api;
       var data = jsonDecode(await response.stream.bytesToString());
       if(response.statusCode == 200){
@@ -107,11 +108,11 @@ class _FinanceState extends State<Finance> {
         try{
           print("save file to -> $path");
           File(path).writeAsBytesSync(bytes);
-          EasyLoading.showSuccess("Done Downloading Report");
+          EasyLoading.showSuccess("DoneDownloadingReport".tr());
           OpenFile.open(path);
         }catch(v){
           print(v);
-          EasyLoading.showError("Error while downloading file");
+          EasyLoading.showError("ErrorWhileDownloadingFile".tr());
         }finally{
           Navigator.pop(context);
           EasyLoading.dismiss();
@@ -136,12 +137,15 @@ class _FinanceState extends State<Finance> {
           child:const Icon(Icons.add,size: 30),
           onPressed: (){
             Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => AddMoneyLog())
+                MaterialPageRoute(builder: (context) => AddMoneyLog(date: _selectedDay.toString().split(" ")[0],))
             );
           }
       ),
       body: ScreenContainer(
-          name: "Finance",
+          onRefresh: (){
+            setState(() {});
+          },
+          name: "Financial".tr(),
           topLeftAction: BackIcon(),
           topCenterAction: Container(
             height: 80,
@@ -180,7 +184,7 @@ class _FinanceState extends State<Finance> {
                         padding:const EdgeInsets.all(8),
                         child: Image.asset("assets/stats.png"),
                       ),
-                       Text("Stats",style: TextStyle(
+                       Text("Stats".tr(),style: TextStyle(
                         color: Constants.secondTextColor,
                          fontWeight: FontWeight.bold
                       ),)
@@ -191,8 +195,8 @@ class _FinanceState extends State<Finance> {
                   onTap: (){
                     _bottomSheetWidget.showBottomSheetButtons(
                         context,
-                        200.0,
-                        const Text("Reports",style: TextStyle(
+                        250.0,
+                         Text("Reports".tr(),style: TextStyle(
                             color: Colors.black,
                             fontSize: 20,
                             fontWeight: FontWeight.bold
@@ -206,7 +210,7 @@ class _FinanceState extends State<Finance> {
                                   _bottomSheetWidget.showBottomSheetButtons(
                                       context,
                                       350.0,
-                                      const Text("Full Financial Report",style: TextStyle(
+                                       Text("FullFinancialReport".tr(),style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -219,7 +223,7 @@ class _FinanceState extends State<Finance> {
                                       buildClinicSelect(),
                                       const SizedBox(height: 20,),
                                       DefaultButton(
-                                        text: "Get Report",
+                                        text: "GetReport".tr(),
                                         press: ()async{
                                           await downloadReport(_reports.getFinance_full_report(widget.token, fromDate, toDate, clinics));
                                         },
@@ -227,11 +231,11 @@ class _FinanceState extends State<Finance> {
                                     ]
                                   );
                                 },
-                                child: Text("Full Financial Report"
+                                  child: Text("FullFinancialReport".tr()
                                   ,style: TextStyle(
-                                    color: Constants.secondTextColor,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
+                                      color: Constants.secondTextColor,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold
                                   ),)
                             ),
                           ),
@@ -243,7 +247,7 @@ class _FinanceState extends State<Finance> {
                                   _bottomSheetWidget.showBottomSheetButtons(
                                       context,
                                       550.0,
-                                      const Text("Financial Comparison Report",style: TextStyle(
+                                       Text("FinancialComparisonReport".tr(),style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
@@ -258,7 +262,7 @@ class _FinanceState extends State<Finance> {
                                         buildCategorysSelect(),
                                         const SizedBox(height: 20,),
                                         DefaultButton(
-                                          text: "Get Report",
+                                          text: "GetReport".tr(),
                                           press: ()async{
                                             await downloadReport(_reports.getFinance_comparison_report(widget.token, fromDate, toDate, services,categories));
                                           },
@@ -266,11 +270,11 @@ class _FinanceState extends State<Finance> {
                                       ]
                                   );
                                 },
-                                child: Text("Financial Comparison Report"
-                                  ,style: TextStyle(
-                                    color: Constants.secondTextColor,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
+                                child: Text("FinancialComparisonReport".tr()
+                                  ,style:TextStyle(
+                                      color: Constants.secondTextColor,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold
                                   ),)
                             ),
                           ),
@@ -282,7 +286,7 @@ class _FinanceState extends State<Finance> {
                                   _bottomSheetWidget.showBottomSheetButtons(
                                       context,
                                       350.0,
-                                      const Text("Financial Services Report",style: TextStyle(
+                                       Text("FinancialServicesReport".tr(),style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
@@ -295,7 +299,7 @@ class _FinanceState extends State<Finance> {
                                         buildClinicServicesSelect(),
                                         const SizedBox(height: 20,),
                                         DefaultButton(
-                                          text: "Get Report",
+                                          text: "GetReport".tr(),
                                           press: ()async{
                                             await downloadReport(_reports.getFinance_service_report(widget.token, fromDate, toDate, services));
                                           },
@@ -303,11 +307,11 @@ class _FinanceState extends State<Finance> {
                                       ]
                                   );
                                 },
-                                child: Text("Financial Services Report"
+                                child: Text("FinancialServicesReport".tr()
                                   ,style: TextStyle(
-                                    color: Constants.secondTextColor,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
+                                      color: Constants.secondTextColor,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold
                                   ),
                                 )
                             ),
@@ -328,7 +332,7 @@ class _FinanceState extends State<Finance> {
                         padding:const EdgeInsets.all(8),
                         child: Image.asset("assets/report.png"),
                       ),
-                       Text("Reports",style: TextStyle(
+                       Text("Reports".tr(),style: TextStyle(
                           color: Constants.secondTextColor,
                           fontWeight: FontWeight.bold
                       ))
@@ -365,9 +369,51 @@ class _FinanceState extends State<Finance> {
                     });
                   },
                   calendarStyle: CalendarStyle(
-                    selectedTextStyle: TextStyle(
-                      color: Constants.secondColor
-                    ),
+                      defaultTextStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff373d46),
+                        fontSize: 15,
+                      ),
+                      holidayTextStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff373d46),
+                        fontSize: 15,
+                      ),
+                      rangeEndTextStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff373d46),
+                        fontSize: 15,
+                      ),
+                      withinRangeTextStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff373d46),
+                        fontSize: 15,
+                      ),
+                      disabledTextStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff373d46),
+                        fontSize: 15,
+                      ),
+                      // outsideTextStyle: TextStyle(
+                      //   fontWeight: FontWeight.bold,
+                      //   color: Color(0xff373d46),
+                      //   fontSize: 15,
+                      // ),
+                      rangeStartTextStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff373d46),
+                        fontSize: 15,
+                      ),
+                      weekendTextStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff373d46),
+                        fontSize: 15,
+                      ),
+                      selectedTextStyle: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Constants.secondColor
+                      ),
                       defaultDecoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         shape: BoxShape.rectangle,
@@ -474,6 +520,7 @@ class _FinanceState extends State<Finance> {
                                       margin:const EdgeInsets.all(10),
                                       child:FinanceCard(
                                         snapshot: snapshot.data[index],
+                                        date: _selectedDay.toString().split(" ")[0],
                                       )
                                   );
                                 }
@@ -503,17 +550,20 @@ class _FinanceState extends State<Finance> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        hintText:"Date Range*",
-        label: const Text("Date Range*"),
+        hintText:"DateRange".tr(),
+        label:  Text("DateRange".tr()),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
       readOnly: true,
       onTap: () {
         BottomPicker.range(
-          initialFirstDate: DateTime.now().subtract(const  Duration(days:700)),
-          minSecondDate:  DateTime.now().subtract(const  Duration(days:356)),
-          title: "Date Range",
+          // initialFirstDate: DateTime.now().subtract(const  Duration(days:700)),
+          // minSecondDate:  DateTime.now().subtract(const  Duration(days:356)),
+          initialFirstDate:fromDateI?? DateTime.now().subtract(Duration(days: 1000)),
+          initialSecondDate:toDateI,
+          minSecondDate:toDateI??  DateTime.now().subtract(Duration(days: 1000)),
+          title: "DateRange".tr(),
           dateOrder: DatePickerDateOrder.dmy,
           pickerTextStyle:const TextStyle(
             color: Colors.blue,
@@ -527,6 +577,8 @@ class _FinanceState extends State<Finance> {
           ),
           bottomPickerTheme: BottomPickerTheme.blue,
           onSubmitPressed: (from , to ) {
+            fromDateI = from;
+            toDateI = to;
           fromDate = from.toString().split(" ")[0];
           toDate = to.toString().split(" ")[0];
           _controller.text = fromDate! + " - " + toDate!;
@@ -541,7 +593,7 @@ class _FinanceState extends State<Finance> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kfromDateNullError" ;
+          return LocaleKeys.ThisFieldIsRequired.tr() ;
         }
         return null;
       },
@@ -559,8 +611,8 @@ class _FinanceState extends State<Finance> {
       initialChildSize: 0.4,
       listType: MultiSelectListType.CHIP,
       searchable: true,
-      buttonText: const Text("Category",),
-      title:const Text("Category",style: TextStyle(
+      buttonText: Text("Category".tr(),),
+      title: Text("Category".tr(),style: TextStyle(
           fontSize: 30
       ),),
       items: _categoriesItems,
@@ -576,8 +628,8 @@ class _FinanceState extends State<Finance> {
       selectedItemsTextStyle:const TextStyle(
           color:  Color(0xfff8755ea)
       ),
-      cancelText:const Text("Cancel"),
-      confirmText:const Text("Select"),
+      cancelText: Text("Cancel".tr()),
+      confirmText: Text("Select".tr()),
       selectedColor:const Color(0xfffe9dfff) ,
       chipDisplay: MultiSelectChipDisplay(
         chipColor:const Color(0xfffe9dfff),
@@ -611,8 +663,8 @@ class _FinanceState extends State<Finance> {
       initialChildSize: 0.4,
       listType: MultiSelectListType.CHIP,
       searchable: true,
-      buttonText: const Text("Clinics",),
-      title:const Text("Clinics",style: TextStyle(
+      buttonText:  Text("Clinic".tr(),),
+      title: Text("Clinic".tr(),style: TextStyle(
           fontSize: 30
       ),),
       items: _items,
@@ -628,8 +680,8 @@ class _FinanceState extends State<Finance> {
       selectedItemsTextStyle:const TextStyle(
           color:  Color(0xfff8755ea)
       ),
-      cancelText:const Text("Cancel"),
-      confirmText:const Text("Select"),
+      cancelText: Text("Cancel".tr()),
+      confirmText: Text("Select".tr()),
       selectedColor:const Color(0xfffe9dfff) ,
       chipDisplay: MultiSelectChipDisplay(
         chipColor:const Color(0xfffe9dfff),
@@ -663,8 +715,8 @@ class _FinanceState extends State<Finance> {
       initialChildSize: 0.4,
       listType: MultiSelectListType.CHIP,
       searchable: true,
-      buttonText: const Text("Clinics Services",),
-      title:const Text("Clinics Services",style: TextStyle(
+      buttonText:  Text("ClinicsServices".tr(),),
+      title: Text("ClinicsServices".tr(),style: TextStyle(
           fontSize: 30
       ),),
       items: _itemsServices,
@@ -680,8 +732,8 @@ class _FinanceState extends State<Finance> {
       selectedItemsTextStyle:const TextStyle(
           color:  Color(0xfff8755ea)
       ),
-      cancelText:const Text("Cancel"),
-      confirmText:const Text("Select"),
+      cancelText: Text("Cancel".tr()),
+      confirmText: Text("Select".tr()),
       selectedColor:const Color(0xfffe9dfff) ,
       chipDisplay: MultiSelectChipDisplay(
         chipColor:const Color(0xfffe9dfff),

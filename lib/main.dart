@@ -40,11 +40,12 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primarySwatch: Colors.blue,
-            fontFamily: 'Segoe',
+            fontFamily: 'Grotesco',
           ),
           home: LandingPage());
     } else {
       return MaterialApp(
+          builder: EasyLoading.init(),
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,

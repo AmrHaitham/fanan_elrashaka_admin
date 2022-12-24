@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/networks/Users.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
@@ -20,7 +21,10 @@ class _ListAllUsersState extends State<ListAllUsers> {
   @override
   Widget build(BuildContext context) {
     return ScreenContainer(
-      name: "All Users",
+      onRefresh: (){
+        setState(() {});
+      },
+      name: "AllUsers".tr(),
       topLeftAction: BackIcon(),
       topRightaction: InkWell(
         onTap: (){

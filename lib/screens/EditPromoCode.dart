@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:bottom_picker/resources/arrays.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/PromoCodes.dart';
 import 'package:fanan_elrashaka_admin/providers/ClinicsData.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/screens/ListAllPromoCodes.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/EditScreenContainer.dart';
 import 'package:fanan_elrashaka_admin/widgets/Loading.dart';
@@ -33,6 +36,8 @@ class _EditPromoCodeState extends State<EditPromoCode> {
 
   String? code , fromDate, toDate, clinic, max_number, fee_after_code;
 
+  DateTime? fromDateI, toDateI ;
+
   TextEditingController _controller = TextEditingController();
 
   TextEditingController _controller2 = TextEditingController();
@@ -56,135 +61,155 @@ class _EditPromoCodeState extends State<EditPromoCode> {
   }
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: _promoCodes.getPromoCode(context.read<UserData>().token, widget.promoCode),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CustomLoading());
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError) {
-              // error in data
-              print(snapshot.error.toString());
-              return  Container();
-            } else if (snapshot.hasData) {
-              return EditScreenContainer(
-                  name: "Edit Promo Code",
-                  topLeftAction: BackIcon(),
-                  topRightaction: InkWell(
-                    onTap: ()async{
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        EasyLoading.show(status: "Edit Promo Code");
-                        var responseData = await _promoCodes.updatePromoCode(
-                          context.read<UserData>().token,
-                          snapshot.data['code'],
-                            fromDate,
-                            toDate,
-                            clinic,
-                            max_number,
-                            fee_after_code
+    return WillPopScope(
+      onWillPop: ()async{
+        Navigator.pop(context);
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) =>ListAllPromoCodes())
+        );
+        return false;
+      },
+      child: FutureBuilder(
+          future: _promoCodes.getPromoCode(context.read<UserData>().token, widget.promoCode),
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Scaffold(body: Center(child: CustomLoading()));
+            } else if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError) {
+                // error in data
+                print(snapshot.error.toString());
+                return  Container();
+              } else if (snapshot.hasData) {
+                return EditScreenContainer(
+                    name: "EditPromoCode".tr(),
+                    topLeftAction: BackIcon(
+                      overBack: (){
+                        Navigator.pop(context);
+                        Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (context) =>ListAllPromoCodes())
                         );
-                        if (await responseData.statusCode == 200) {
-                          _dialogs.doneDialog(context,"You_are_successfully_Edit_promo_code","ok",(){
-                            setState(() {
-                              _formKey.currentState!.reset();
-                              _controller.clear();
-                              _controller2.clear();
-                            });
-                          });
-                        }else{
-                          var response = jsonDecode(await responseData.stream.bytesToString());
-                          print(response);
-                          _dialogs.errorDialog(context, "Error_while_edit_promocode_please_check_your_internet_connection");
-                        }
-                        EasyLoading.dismiss();
-                      }
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(right: 10),
-                      width: 25,
-                      height: 25,
-                      child: Image.asset("assets/Save-512.png"),
+                      },
                     ),
-                  ),
-                  child: Container(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height*0.8,
-                    padding: const EdgeInsets.only(right: 15,left: 15),
-                    child: SingleChildScrollView(
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 40,),
-                            buildCodeFormField(snapshot.data['code']),
-                            const SizedBox(height: 20,),
-                            buildMaxFormField(snapshot.data['max_number']),
-                            const SizedBox(height: 20,),
-                            buildSelect(snapshot.data['clinic_service_id']),
-                            const SizedBox(height: 20,),
-                            buildFromDateFormField(context,snapshot.data['from_date']),
-                            const SizedBox(height: 20,),
-                            buildToDateFormField(context,snapshot.data['to_date']),
-                            const SizedBox(height: 20,),
-                            buildFeeAfterCodeFormField(snapshot.data['fee_after_code']),
-                            const SizedBox(height: 20),
-                            const Divider(height: 5,color: Colors.black,thickness: 0.8,),
-                            const SizedBox(height: 10),
-                            Card(
-                              color:const Color(0xffff5d63),
-                              child: ListTile(
-                                leading: SizedBox(
-                                  width: 25,
-                                  height: 25,
-                                  child: Image.asset("assets/delete.png"),
-                                ),
-                                title: Text("Delete Promo Code",style: TextStyle(
-                                    color: Constants.mainColor,
-                                    fontWeight: FontWeight.bold
-                                ),),
-                                trailing: SizedBox(
-                                  width: 10,
-                                  height: 10,
-                                  child: Image.asset("assets/right-arrow_gray.png",color: Colors.white,),
-                                ),
-                                onTap: (){
-                                  AwesomeDialog(
-                                      context: context,
-                                      animType: AnimType.SCALE,
-                                      dialogType: DialogType.WARNING,
-                                      body:const Center(child: Text(
-                                        "Are you sure you want to delete this promo code",
-                                      ),),
-                                      btnOkOnPress: () async{
-                                        var response = await _promoCodes.deletePromoCode(context.read<UserData>().token, snapshot.data['code']);
-                                        if (await response.statusCode == 200) {
-                                          print(await response.stream.bytesToString());
-                                          Navigator.pop(context);
-                                        }
-                                      },
-                                      btnCancelOnPress: (){},
-                                      btnCancelText:"Cancel",
-                                      btnOkText:"Delete"
-                                  ).show();
-                                },
-                              ),
-                            )
-                          ],
-                        ),
+                    topRightaction: InkWell(
+                      onTap: ()async{
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+                          EasyLoading.show(status: "EditPromoCode".tr());
+                          var responseData = await _promoCodes.updatePromoCode(
+                            context.read<UserData>().token,
+                            snapshot.data['code'],
+                              fromDate,
+                              toDate,
+                              clinic,
+                              max_number,
+                              fee_after_code
+                          );
+                          if (await responseData.statusCode == 200) {
+                            _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){
+                              setState(() {
+                                _formKey.currentState!.reset();
+                                _controller.clear();
+                                _controller2.clear();
+                              });
+                            });
+                          }else{
+                            var response = jsonDecode(await responseData.stream.bytesToString());
+                            print(response);
+                            _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                          }
+                          EasyLoading.dismiss();
+                        }
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: 10),
+                        width: 25,
+                        height: 25,
+                        child: Image.asset("assets/Save-512.png"),
                       ),
                     ),
-                  )
-              );
+                    child: Expanded(
+                      child: Padding(
+                        padding:EdgeInsets.only(top: 35,right: 15,left: 15,),
+                        child: Form(
+                          key: _formKey,
+                          child: ListView(
+                            children: [
+                              const SizedBox(height: 10,),
+                              buildCodeFormField(snapshot.data['code']),
+                              const SizedBox(height: 20,),
+                              buildMaxFormField(snapshot.data['max_number']),
+                              const SizedBox(height: 20,),
+                              buildSelect(snapshot.data['clinic_service_id']),
+                              const SizedBox(height: 20,),
+                              buildFromDateFormField(context,snapshot.data['from_date']),
+                              const SizedBox(height: 20,),
+                              buildToDateFormField(context,snapshot.data['to_date']),
+                              const SizedBox(height: 20,),
+                              buildFeeAfterCodeFormField(snapshot.data['fee_after_code']),
+                              const SizedBox(height: 20),
+                              const Divider(height: 5,color: Colors.black,thickness: 0.8,),
+                              const SizedBox(height: 10),
+                              Card(
+                                color:const Color(0xffff5d63),
+                                child: ListTile(
+                                  leading: SizedBox(
+                                    width: 25,
+                                    height: 25,
+                                    child: Image.asset("assets/delete.png"),
+                                  ),
+                                  title: Text("DeletePromoCode".tr(),style: TextStyle(
+                                      color: Constants.mainColor,
+                                      fontWeight: FontWeight.bold
+                                  ),),
+                                  trailing: Transform.scale(
+                                    scaleX: (context.locale.toString()=="en")?1:-1,
+                                    child: SizedBox(
+                                      width: 10,
+                                      height: 10,
+                                      child: Image.asset("assets/right-arrow_gray.png",color: Colors.white,),
+                                    ),
+                                  ),
+                                  onTap: (){
+                                    AwesomeDialog(
+                                        context: context,
+                                        animType: AnimType.SCALE,
+                                        dialogType: DialogType.WARNING,
+                                        body: Center(child: Text(
+                                          "AreYouSureYouWantToDeleteThisPromoCode".tr(),
+                                        ),),
+                                        btnOkOnPress: () async{
+                                          var response = await _promoCodes.deletePromoCode(context.read<UserData>().token, snapshot.data['code']);
+                                          if (await response.statusCode == 200) {
+                                            print(await response.stream.bytesToString());
+                                            Navigator.pop(context);
+                                            Navigator.of(context).pushReplacement(
+                                                MaterialPageRoute(builder: (context) =>ListAllPromoCodes())
+                                            );
+                                          }
+                                        },
+                                        btnCancelOnPress: (){},
+                                        btnCancelText:"Cancel".tr(),
+                                        btnOkText:"Delete".tr()
+                                    ).show();
+                                  },
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                );
+              }else{
+                //no data
+                return Container();
+              }
             }else{
-              //no data
+              //error in connection
               return Container();
             }
-          }else{
-            //error in connection
-            return Container();
           }
-        }
+      ),
     );
   }
   TextFormField buildCodeFormField(initData) {
@@ -200,7 +225,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "Code is null";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -208,8 +233,8 @@ class _EditPromoCodeState extends State<EditPromoCode> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Code*",
-        hintText: "Enter_promo_code",
+        labelText: "Code".tr(),
+        // hintText: "Enter_promo_code",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -224,8 +249,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Max number of users*",
-        hintText:"Enter_max_number_of_users",
+        labelText: "MaxNumberOfUsers".tr(),
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
       onSaved: (newValue) {
@@ -239,7 +263,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
       },
       validator: (value) {
         if (value=="") {
-          return "kmax_numberNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -250,7 +274,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
       initialValue:initData ,
       type: SelectFormFieldType
           .dropdown, // or can be dialog
-      labelText: "clinic",
+      labelText: "Clinic".tr(),
       items: getClinic(),
       decoration: InputDecoration(
         suffixIcon: Container(
@@ -263,8 +287,8 @@ class _EditPromoCodeState extends State<EditPromoCode> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        label:const Text("clinic") ,
-        hintText: "clinic",
+        label: Text("Clinic".tr()) ,
+        hintText: "Clinic".tr(),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
@@ -280,7 +304,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kAClinicNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -298,8 +322,8 @@ class _EditPromoCodeState extends State<EditPromoCode> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        hintText:"From Date*",
-        label: const Text("From Date*"),
+        hintText:"FromDate".tr(),
+        label:  Text("FromDate".tr()),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
@@ -307,7 +331,8 @@ class _EditPromoCodeState extends State<EditPromoCode> {
       onTap: () {
         BottomPicker.date(
           // maxDateTime: DateTime.now(),
-          title: "From Date",
+          title: "FromDate".tr(),
+          initialDateTime: fromDateI??DateTime.now(),
           dateOrder: DatePickerDateOrder.dmy,
           pickerTextStyle:const TextStyle(
             color: Colors.blue,
@@ -323,6 +348,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
             // print(index);
           },
           onSubmit: (index) {
+            fromDateI = index;
             fromDate = index!.toString().split(" ")[0];
             _controller.text = fromDate!;
           },
@@ -338,7 +364,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kfromDateNullError" ;
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -355,8 +381,8 @@ class _EditPromoCodeState extends State<EditPromoCode> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        hintText:"To Date*",
-        label: const Text("To Date*"),
+        hintText:"ToDate".tr(),
+        label: Text("ToDate".tr()),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
@@ -364,7 +390,8 @@ class _EditPromoCodeState extends State<EditPromoCode> {
       onTap: () {
         BottomPicker.date(
           // maxDateTime: DateTime.now(),
-          title: "To Date",
+          title: "ToDate".tr(),
+          initialDateTime: toDateI??DateTime.now(),
           dateOrder: DatePickerDateOrder.dmy,
           pickerTextStyle:const TextStyle(
             color: Colors.blue,
@@ -380,6 +407,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
             // print(index);
           },
           onSubmit: (index) {
+            toDateI = index;
             toDate = index!.toString().split(" ")[0];
             _controller2.text = toDate!;
           },
@@ -395,7 +423,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kToDateNullError" ;
+          return LocaleKeys.ThisFieldIsRequired.tr() ;
         }
         return null;
       },
@@ -409,8 +437,8 @@ class _EditPromoCodeState extends State<EditPromoCode> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Fee After Code",
-        hintText:"Enter_FeeAfterCode",
+        labelText: "FeeAfterCode".tr(),
+        // hintText:"Enter_FeeAfterCode",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
       onSaved: (newValue) {
@@ -424,7 +452,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
       },
       validator: (value) {
         if (value=="") {
-          return "kFeeAfterCodeNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },

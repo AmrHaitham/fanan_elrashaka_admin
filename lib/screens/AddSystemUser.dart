@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/models/Clinic.dart';
@@ -6,6 +7,8 @@ import 'package:fanan_elrashaka_admin/networks/Patients.dart';
 import 'package:fanan_elrashaka_admin/networks/Users.dart';
 import 'package:fanan_elrashaka_admin/providers/ClinicsData.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/screens/AllUsersScreen.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/AddProfilePhoto.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/EditScreenContainer.dart';
@@ -64,96 +67,110 @@ class _AddUserState extends State<AddUser> {
   }
   @override
   Widget build(BuildContext context) {
-    return EditScreenContainer(
-        name: "Add User",
-        topLeftAction: BackIcon(),
-        topRightaction: InkWell(
-          onTap: ()async{
-            if (_formKey.currentState!.validate()) {
-              _formKey.currentState!.save();
-              EasyLoading.show(status: "Adding System User");
-              var responseData = await _users.addSystemUser(
-                  context.read<UserData>().token,
-                  email,
-                  fullName,
-                  password,
-                  phoneNumber,
-                  imageLocation??"",
-                  clinics??"",
+    return WillPopScope(
+      onWillPop: ()async{
+        Navigator.pop(context);
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) =>ListAllUsers())
+        );
+        return false;
+      },
+      child: EditScreenContainer(
+          name: "AddUser".tr(),
+          topLeftAction: BackIcon(
+            overBack: (){
+              Navigator.pop(context);
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) =>ListAllUsers())
               );
-              if (await responseData.statusCode == 200) {
-                _dialogs.doneDialog(context,"You_are_successfully_added_new_user","ok",(){
-                  setState(() {
-                    _formKey.currentState!.reset();
-                  });
-                });
-              }else{
-                var response = jsonDecode(await responseData.stream.bytesToString());
-                print(response);
-                if(response["error"] == "702"){
-                  _dialogs.errorDialog(context, "user already exists");
-                }else{
-                  print(response);
-                  _dialogs.errorDialog(context, "Error_while_adding_user_please_check_your_internet_connection");
-                }
-              }
-              EasyLoading.dismiss();
-            }
-          },
-          child: Container(
-            margin: EdgeInsets.only(right: 10),
-            width: 25,
-            height: 25,
-            child: Image.asset("assets/Save-512.png"),
+            },
           ),
-        ),
-        topCenterAction: AddProfilePhoto(
-          profile: imageLocation,
-          getImage: () async{
-            var imagePicker;
-            imagePicker = await _picker.pickImage(source: ImageSource.gallery,imageQuality: 20);
-            imageLocation = imagePicker.path.toString();
-            setState(() {});
-          },
-        ),
-        child: Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height*0.715,
-          padding: const EdgeInsets.only(right: 15,left: 15),
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  buildFirstNameFormField(),
-                  const SizedBox(height: 20),
-                  buildEmailFormField(),
-                  const SizedBox(height: 20),
-                  buildPhoneNumberFormField(),
-                  const SizedBox(height: 20),
-                  buildPasswordFormField(),
-                  const SizedBox(height: 20),
-                  buildConformPassFormField(),
-                  const SizedBox(height: 20),
-                  buildMultiSelect(),
-                  const SizedBox(height: 10),
-                  // buildIsUserActive(),
-                  // const SizedBox(height: 10),
-                ],
-              ),
+          topRightaction: InkWell(
+            onTap: ()async{
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                EasyLoading.show(status: "AddUser".tr());
+                var responseData = await _users.addSystemUser(
+                    context.read<UserData>().token,
+                    email,
+                    fullName,
+                    password,
+                    phoneNumber,
+                    imageLocation??"",
+                    clinics??"",
+                );
+                if (await responseData.statusCode == 200) {
+                  _dialogs.doneDialog(context,"You_are_successfully_added_new_user".tr(),"Ok".tr(),(){
+                    setState(() {
+                      _formKey.currentState!.reset();
+                    });
+                  });
+                }else{
+                  var response = jsonDecode(await responseData.stream.bytesToString());
+                  print(response);
+                  if(response["error"] == "702"){
+                    _dialogs.errorDialog(context, "user_already_exists".tr());
+                  }else{
+                    print(response);
+                    _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                  }
+                }
+                EasyLoading.dismiss();
+              }
+            },
+            child: Container(
+              margin: EdgeInsets.only(right: 10),
+              width: 25,
+              height: 25,
+              child: Image.asset("assets/Save-512.png"),
             ),
           ),
-        )
+          topCenterAction: AddProfilePhoto(
+            profile: imageLocation,
+            getImage: () async{
+              var imagePicker;
+              imagePicker = await _picker.pickImage(source: ImageSource.gallery,imageQuality: 20);
+              imageLocation = imagePicker.path.toString();
+              setState(() {});
+            },
+          ),
+          child: Expanded(
+            child: Padding(
+              padding:EdgeInsets.only(right: 15,left: 15,),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    const SizedBox(height: 20),
+                    buildFirstNameFormField(),
+                    const SizedBox(height: 20),
+                    buildEmailFormField(),
+                    const SizedBox(height: 20),
+                    buildPhoneNumberFormField(),
+                    const SizedBox(height: 20),
+                    buildPasswordFormField(),
+                    const SizedBox(height: 20),
+                    buildConformPassFormField(),
+                    const SizedBox(height: 20),
+                    buildMultiSelect(),
+                    const SizedBox(height: 10),
+                    // buildIsUserActive(),
+                    // const SizedBox(height: 10),
+                  ],
+                ),
+              ),
+            ),
+          )
+      ),
     );
   }
   buildIsUserActive(){
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-      const Padding(
+       Padding(
         padding:  EdgeInsets.all(8.0),
-        child:  Text("Is User Active:",
+        child:  Text("IsUserActive".tr(),
             style: TextStyle(
                 color: Colors.grey,
                 fontSize: 17,
@@ -186,8 +203,8 @@ class _AddUserState extends State<AddUser> {
       initialChildSize: 0.4,
       listType: MultiSelectListType.CHIP,
       searchable: true,
-      buttonText: const Text("Active Clinics",),
-      title:const Text("Clinics",style: TextStyle(
+      buttonText:  Text("ActiveClinics".tr(),),
+      title: Text("Clinics".tr(),style: TextStyle(
           fontSize: 30
       ),),
       items: _items,
@@ -203,8 +220,8 @@ class _AddUserState extends State<AddUser> {
       selectedItemsTextStyle:const TextStyle(
         color:  Color(0xfff8755ea)
       ),
-      cancelText:const Text("Cancel"),
-      confirmText:const Text("Select"),
+      cancelText: Text("Cancel".tr()),
+      confirmText: Text("Select".tr()),
       selectedColor:const Color(0xfffe9dfff) ,
       chipDisplay: MultiSelectChipDisplay(
         chipColor:const Color(0xfffe9dfff),
@@ -250,8 +267,8 @@ class _AddUserState extends State<AddUser> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Email",
-        hintText: "Enter_your_email",
+        labelText: "${"Email".tr()}*",
+        // hintText: "Enter_your_email",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -270,7 +287,7 @@ class _AddUserState extends State<AddUser> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kNamelNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -278,8 +295,8 @@ class _AddUserState extends State<AddUser> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Full Name*",
-        hintText: "Enter_your_full_name",
+        labelText: "FullName".tr(),
+        // hintText: "Enter_your_full_name",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -294,8 +311,8 @@ class _AddUserState extends State<AddUser> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Phone_Number",
-        hintText:"Enter_your_phone_number",
+        labelText:"${"PhoneNumber".tr()}*",
+        // hintText:"Enter_your_phone_number",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
       onSaved: (newValue) {
@@ -309,7 +326,7 @@ class _AddUserState extends State<AddUser> {
       },
       validator: (value) {
         if (value=="") {
-          return "kPhoneNumberNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -340,8 +357,8 @@ class _AddUserState extends State<AddUser> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "New_Password",
-        hintText: "Enter_your_password",
+        labelText: "${"NewPassword".tr()}*",
+        // hintText: "Enter_your_password",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -372,8 +389,8 @@ class _AddUserState extends State<AddUser> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
-        labelText: "Confirm_New_Password",
-        hintText: "Re_enter_your_password",
+        labelText: "${"ConfirmNewPassword".tr()}*",
+        // hintText: "Re_enter_your_password",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,

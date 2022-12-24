@@ -7,6 +7,8 @@ import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/Clinics.dart';
 import 'package:fanan_elrashaka_admin/providers/ClinicsData.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/screens/ListAllClinicsSchedule.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/EditScreenContainer.dart';
 import 'package:flutter/cupertino.dart';
@@ -37,6 +39,8 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
 
   TextEditingController _controller4 = TextEditingController();
 
+  DateTime? fromDateH , toDateH;
+
   getClinicList(data){
     List<Map<String, dynamic>> items =[];
     data.forEach((element) {
@@ -54,85 +58,97 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
 
   @override
   Widget build(BuildContext context) {
-    return EditScreenContainer(
-        name: "Add Clinic Schedule",
-        topLeftAction: BackIcon(),
-        topRightaction: InkWell(
-          onTap: ()async{
-            if (_formKey.currentState!.validate()) {
-              _formKey.currentState!.save();
-              try{
-
-
-              EasyLoading.show(status: "Add Clinic Schedule");
-              //token,clinic,from_hour,to_hour,repeat_from_date,repeat_to_date,day
-              var responseData = await _clinics.addClinicSchedule(
-                context.read<UserData>().token,
-                clinic,
-                finalfromHoure,
-                finaltoHoure,
-                fromDate,
-                toDate,
-                day,
+    return WillPopScope(
+      onWillPop: ()async{
+        Navigator.pop(context);
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) =>ListAllSchedule())
+        );
+        return false;
+      },
+      child: EditScreenContainer(
+          name: LocaleKeys.AddClinicSchedule.tr(),
+          topLeftAction: BackIcon(
+            overBack: (){
+              Navigator.pop(context);
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) =>ListAllSchedule())
               );
-              if (await responseData.statusCode == 200) {
-                _dialogs.doneDialog(context,"You_are_successfully_added_Clinic_Schedule","ok",(){
-                  setState(() {
-                    _formKey.currentState!.reset();
-                    _controller.clear();
-                    _controller2.clear();
-                    _controller3.clear();
-                    _controller4.clear();
-                    clinic  = day  = fromHour  = toHour  = fromDate = toDate = finalfromHoure = finaltoHoure =  fromHour = toHour = null;
-                  });
-                });
-              }else{
-                var response = jsonDecode(await responseData.stream.bytesToString());
-                print(response);
-                _dialogs.errorDialog(context, "Error_while_adding_Clinic_Schedule_please_check_your_internet_connection");
-              }
-              // print("$clinic, $finalfromHoure, $finaltoHoure, $fromDate , $toDate , $day");
-              EasyLoading.dismiss();
-            }catch(v){
-                print(v);
-                EasyLoading.dismiss();
-              }
-            }
-          },
-          child: Container(
-            margin: EdgeInsets.only(right: 10),
-            width: 25,
-            height: 25,
-            child: Image.asset("assets/Save-512.png"),
+            },
           ),
-        ),
-        child: Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height*0.81,
-          padding: const EdgeInsets.only(right: 15,left: 15,top: 40),
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 10),
-                  buildClinicFormField(context.read<ClinisData>().clinicsName),
-                  const SizedBox(height: 20),
-                  buildDayFormField(),
-                  const SizedBox(height: 20),
-                  buildFromHoureFormField(),
-                  const SizedBox(height: 20),
-                  buildToHoureFormField(),
-                  const SizedBox(height: 20),
-                  buildFromDateFormField(context),
-                  const SizedBox(height: 20),
-                  buildToDateFormField(context),
-                  const SizedBox(height: 20),
-                ],
-              ),
+          topRightaction: InkWell(
+            onTap: ()async{
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                try{
+                EasyLoading.show(status: LocaleKeys.AddClinicSchedule.tr());
+                //token,clinic,from_hour,to_hour,repeat_from_date,repeat_to_date,day
+                var responseData = await _clinics.addClinicSchedule(
+                  context.read<UserData>().token,
+                  clinic,
+                  finalfromHoure,
+                  finaltoHoure,
+                  fromDate,
+                  toDate,
+                  day,
+                );
+                if (await responseData.statusCode == 200) {
+                  _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_added_Clinic_Schedule.tr(),"ok",(){
+                    setState(() {
+                      _formKey.currentState!.reset();
+                      _controller.clear();
+                      _controller2.clear();
+                      _controller3.clear();
+                      _controller4.clear();
+                      clinic  = day  = fromHour  = toHour  = fromDate = toDate = finalfromHoure = finaltoHoure =  fromHour = toHour = null;
+                    });
+                  });
+                }else{
+                  var response = jsonDecode(await responseData.stream.bytesToString());
+                  print(response);
+                  _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                }
+                // print("$clinic, $finalfromHoure, $finaltoHoure, $fromDate , $toDate , $day");
+                EasyLoading.dismiss();
+              }catch(v){
+                  print(v);
+                  EasyLoading.dismiss();
+                }
+              }
+            },
+            child: Container(
+              margin: EdgeInsets.only(right: 10),
+              width: 25,
+              height: 25,
+              child: Image.asset("assets/Save-512.png"),
             ),
           ),
-        )
+          child: Expanded(
+            child: Padding(
+              padding:EdgeInsets.only(top: 25,right: 15,left: 15,bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Form(
+                key: _formKey,
+                  child: ListView(
+                    children: [
+                      const SizedBox(height: 10),
+                      buildClinicFormField(context.read<ClinisData>().clinicsName),
+                      const SizedBox(height: 20),
+                      buildDayFormField(),
+                      const SizedBox(height: 20),
+                      buildFromHoureFormField(),
+                      const SizedBox(height: 20),
+                      buildToHoureFormField(),
+                      const SizedBox(height: 20),
+                      buildFromDateFormField(context),
+                      const SizedBox(height: 20),
+                      buildToDateFormField(context),
+                      const SizedBox(height: 20),
+                    ],
+                ),
+              ),
+            ),
+          )
+      ),
     );
   }
 
@@ -153,8 +169,8 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        label:const Text("Clinic*") ,
-        hintText: "Clinic",
+        label: Text(LocaleKeys.Clinic.tr()) ,
+        hintText: LocaleKeys.Clinic.tr(),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
@@ -167,7 +183,7 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kClinicNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -177,35 +193,35 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
     return SelectFormField(
       type: SelectFormFieldType
           .dropdown, // or can be dialog
-      labelText: "Day*",
-      items: const [
+      labelText: LocaleKeys.Day.tr(),
+      items:  [
         {
           'value': 'Sat',
-          'label': "Saturday",
+          'label': LocaleKeys.Saturday.tr(),
         },
         {
           'value': 'Sun',
-          'label': "Sunday",
+          'label': LocaleKeys.Sunday.tr(),
         },
         {
           'value': 'Mon',
-          'label': "Monday",
+          'label': LocaleKeys.Monday.tr(),
         },
         {
           'value': 'Tue',
-          'label': "Tuesday",
+          'label': LocaleKeys.Tuesday.tr(),
         },
         {
           'value': 'Wed',
-          'label': "Wednesday",
+          'label': LocaleKeys.Wednesday.tr(),
         },
         {
           'value': 'Thu',
-          'label': "Thursday",
+          'label': LocaleKeys.Thursday.tr(),
         },
         {
           'value': 'Fri',
-          'label': "Friday",
+          'label': LocaleKeys.Friday.tr(),
         },
       ],
       decoration: InputDecoration(
@@ -219,8 +235,8 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        label:const Text("Day*") ,
-        hintText: "Day",
+        label: Text(LocaleKeys.Day.tr()) ,
+        hintText: LocaleKeys.Day.tr(),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
@@ -233,7 +249,7 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kDayNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -247,8 +263,8 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
            borderRadius:
            BorderRadius.circular(5.0),
          ),
-         hintText:"Repeated From Date*",
-         label: const Text("Repeated From Date*"),
+         hintText:LocaleKeys.RepeatedFromDate.tr(),
+         label:  Text(LocaleKeys.RepeatedFromDate.tr()),
          floatingLabelBehavior:
          FloatingLabelBehavior.auto,
        ),
@@ -256,7 +272,8 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
        onTap: () {
          BottomPicker.date(
            // maxDateTime: DateTime.now(),
-           title: "Repeated From Date",
+           initialDateTime: fromDateH??DateTime.now(),
+           title: LocaleKeys.RepeatedFromDate.tr(),
            dateOrder: DatePickerDateOrder.dmy,
            pickerTextStyle:const TextStyle(
              color: Colors.blue,
@@ -272,6 +289,7 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
              // print(index);
            },
            onSubmit: (index) {
+             fromDateH = index;
              fromDate = index!.toString().split(" ")[0];
              _controller.text = fromDate!;
            },
@@ -287,7 +305,7 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
        },
        validator: (value) {
          if (value!.isEmpty) {
-           return "kfromDateNullError" ;
+           return LocaleKeys.ThisFieldIsRequired.tr() ;
          }
          return null;
        },
@@ -301,8 +319,8 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        hintText:"Repeated To Date*",
-        label: const Text("Repeated To Date*"),
+        hintText:LocaleKeys.RepeatedToDate.tr(),
+        label:  Text(LocaleKeys.RepeatedToDate.tr()),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
@@ -310,7 +328,8 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
       onTap: () {
         BottomPicker.date(
           // maxDateTime: DateTime.now(),
-          title: "Repeated To Date",
+          initialDateTime: toDateH??DateTime.now(),
+          title: LocaleKeys.RepeatedToDate.tr(),
           dateOrder: DatePickerDateOrder.dmy,
           pickerTextStyle:const TextStyle(
             color: Colors.blue,
@@ -326,6 +345,7 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
             // print(index);
           },
           onSubmit: (index) {
+            toDateH = index;
             toDate = index!.toString().split(" ")[0];
             _controller2.text = toDate!;
           },
@@ -341,7 +361,7 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kToDateNullError" ;
+          return LocaleKeys.ThisFieldIsRequired.tr() ;
         }
         return null;
       },
@@ -355,15 +375,15 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        hintText:"From Hour*",
-        label:const Text("From Hour*"),
+        hintText:LocaleKeys.FromHour.tr(),
+        label: Text("FromHour".tr()),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
       readOnly: true,
       onTap: () {
         BottomPicker.time(
-            title:  "From Hour",
+            title:  LocaleKeys.FromHour.tr(),
             titleStyle: const TextStyle(
                 fontWeight:  FontWeight.bold,
                 fontSize:  15,
@@ -394,7 +414,7 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kToDateNullError" ;
+          return LocaleKeys.ThisFieldIsRequired.tr() ;
         }
         return null;
       },
@@ -408,15 +428,15 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        hintText:"To Hour*",
-        label: const Text("To Hour*"),
+        hintText:LocaleKeys.ToHour.tr(),
+        label:  Text(LocaleKeys.ToHour.tr()),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
       readOnly: true,
       onTap: () {
         BottomPicker.time(
-            title:  "To Hour",
+            title:  LocaleKeys.ToHour.tr(),
             titleStyle:const  TextStyle(
                 fontWeight:  FontWeight.bold,
                 fontSize:  15,
@@ -447,7 +467,7 @@ class _AddClinicSchedualState extends State<AddClinicSchedual> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kToDateNullError" ;
+          return LocaleKeys.ThisFieldIsRequired.tr() ;
         }
         return null;
       },

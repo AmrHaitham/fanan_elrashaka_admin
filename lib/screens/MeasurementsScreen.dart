@@ -7,6 +7,7 @@ import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/ApisEndPoint.dart';
 import 'package:fanan_elrashaka_admin/networks/PatientDetails.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/BottomSheet.dart';
 import 'package:fanan_elrashaka_admin/widgets/DefaultButton.dart';
@@ -53,9 +54,9 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                       context,
                         750.0,
                       _formKey,
-                      Text("Add New Measurement"),
+                      Text("AddNewMeasurement".tr()),
                       [
-                        buildTextFormField(0,'Weight'),
+                        buildTextFormField(0,'Weight'.tr()),
                         const SizedBox(height: 10,),
                         buildTextFormField(1,'Arms'),
                         const SizedBox(height: 10,),
@@ -72,18 +73,18 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                         buildNoteFormField(7)
                       ],
                       DefaultButton(
-                        text: "Add Measurement",
+                        text: "AddNewMeasurement".tr(),
                         press: ()async{
                           if (_formKey.currentState!.validate()){
                             _formKey.currentState!.save();
-                            EasyLoading.show(status: "Adding Measurement");
+                            EasyLoading.show(status: "AddNewMeasurement".tr());
                             var changeProfileResponse = await _patientDetails.addMeasurement(
                                 context.read<UserData>().token,
                                 widget.pid.toString(),
                                 data
                             );
                             if (await changeProfileResponse.statusCode == 200) {
-                              _dialogs.doneDialog(context,"You_are_successfully_added_new_Measurement","ok",(){
+                              _dialogs.doneDialog(context,"You_are_successfully_added_new_Measurement".tr(),"Ok".tr(),(){
                                 setState(() {
                                   _formKey.currentState!.reset();
                                 });
@@ -91,7 +92,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                             }else{
                               var response = jsonDecode(await changeProfileResponse.stream.bytesToString());
                               print(response);
-                              _dialogs.errorDialog(context, "Error_while_adding_Measurement_please_check_your_internet_connection");
+                              _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
                             }
                           EasyLoading.dismiss();
                           }
@@ -102,10 +103,10 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                 ),
                 body: ScreenContainer(
                     topLeftAction:const BackIcon(),
-                    name: "Measurements",
+                    name: "Measurements".tr(),
                     child: Container(
                       width: double.infinity,
-                      height: MediaQuery.of(context).size.height*0.79,
+                      height: MediaQuery.of(context).size.height*0.78,
                       margin:const EdgeInsets.only(top: 25),
                       padding:const EdgeInsets.all(5),
                       child: ListView.builder(
@@ -114,16 +115,21 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: ExpansionTileCard(
-                                baseColor:const Color(0xfff8f4ff),
+                                baseColor:const Color(0xffffefff),
                                 leading: (snapshot.data[index]['image']==null)
-                                    ? const CircleAvatar(backgroundImage: AssetImage("assets/user_avatar_male.png"),)
-                                    : CircleAvatar(
-                                        backgroundColor: Colors.transparent,
-                                        backgroundImage: NetworkImage("${Apis.api}${snapshot.data[index]['image']}"
-                                  ),
-                                ),
+                                    ?  SizedBox(
+                                      width: 50,
+                                      height: 50,
+                                      child: Image.asset("assets/user_avatar_male.png",)
+                                    )
+                                    : SizedBox(
+                                      width: 50,
+                                      height: 50,
+                                      child: Image.network("${Apis.api}${snapshot.data[index]['image']}"
+                                      ),
+                                    ),
                                 title: Text(
-                                    DateFormat('dd/MM/yyyy - hh:mm a').format(DateTime.parse(snapshot.data[index]['datetime'])).toString()
+                                    DateFormat('dd/MM/yyyy - hh:mm a',context.locale.toString()).format(DateTime.parse(snapshot.data[index]['datetime'])).toString()
                                     ,style:
                                    const TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -136,7 +142,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
                                       children: [
-                                        Text("Weight:   ",style: TextStyle(color: Constants.secondColor),),
+                                        Text("${"Weight".tr()}:   ",style: TextStyle(color: Constants.secondColor),),
                                         (snapshot.data[index]['weight'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['weight'].toString().split('.')[0]} kg",style:const TextStyle(fontWeight: FontWeight.bold),)
                                       ],
                                     ),
@@ -207,9 +213,13 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text("Notes:   ",style: TextStyle(color: Constants.secondColor),),
-                                        (snapshot.data[index]['note'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['note'].toString().split('.')[0]}",style:const TextStyle(fontWeight: FontWeight.bold),)
+                                        Text("${"Notes".tr()}:   ",style: TextStyle(color: Constants.secondColor),),
+                                        (snapshot.data[index]['note'].toString() == "null")?Text("---"):
+                                        Expanded(
+                                            child: Text("${snapshot.data[index]['note'].toString().split('.')[0]}",
+                                              style:const TextStyle(fontWeight: FontWeight.bold,),))
                                       ],
                                     ),
                                   ),
@@ -233,7 +243,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                                 context,
                                                 750.0,
                                                 _formKey,
-                                                Text("Edit Measurement"),
+                                                Text("EditMeasurement".tr()),
                                                 [
                                                   buildinitTextFormField(0,'Weight',snapshot.data[index]['weight']),
                                                   const SizedBox(height: 10,),
@@ -252,11 +262,11 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                                   buildinitNoteFormField(7,snapshot.data[index]['note'])
                                                 ],
                                                 DefaultButton(
-                                                  text: "Update Measurement",
+                                                  text: "UpdateMeasurement".tr(),
                                                   press: ()async{
                                                     if (_formKey.currentState!.validate()){
                                                       _formKey.currentState!.save();
-                                                      EasyLoading.show(status: "Update Measurement");
+                                                      EasyLoading.show(status: "UpdateMeasurement".tr());
                                                       print(data);
                                                       try{
                                                         var changeProfileResponse = await _patientDetails.updateMeasurement(
@@ -265,32 +275,32 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                                             data
                                                         );
                                                         if (await changeProfileResponse.statusCode == 200) {
-                                                          _dialogs.doneDialog(context,"You_are_successfully_updated_new_Measurement","ok",(){
+                                                          _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"ok",(){
                                                             Navigator.pop(context);
                                                             setState(() {});
                                                           });
                                                         }else{
                                                           var response = jsonDecode(await changeProfileResponse.stream.bytesToString());
                                                           print(response);
-                                                          _dialogs.errorDialog(context, "Error_while_updating_Measurement_please_check_your_internet_connection");
+                                                          _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
                                                         }
                                                         EasyLoading.dismiss();
                                                       }catch(v){
                                                         print(v);
-                                                        _dialogs.errorDialog(context, "Error_while_updating_Measurement_please_check_your_internet_connection");
+                                                        _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
                                                       }
                                                     }
                                                   },
                                                 )
                                             );
-                                          }, icon: Icon(Icons.edit), label: Text("Edit")
+                                          }, icon: Icon(Icons.edit), label: Text("Edit".tr())
                                       ),
                                       ElevatedButton.icon(
                                           style: ButtonStyle(
                                             backgroundColor:  MaterialStateProperty.all(Colors.red)
                                             ),
                                           onPressed: ()async{
-                                            EasyLoading.show(status: "Delete Measurement");
+                                            EasyLoading.show(status: "DeleteMeasurement".tr());
                                             var response = await _patientDetails.deleteMeasurement(
                                               context.read<UserData>().token,
                                               snapshot.data[index]['id'].toString(),
@@ -298,13 +308,13 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                             var data = jsonDecode(await response.stream.bytesToString());
                                             if (await response.statusCode == 200) {
                                               print(data);
-                                              EasyLoading.showSuccess("Done Deleting Measurement");
+                                              EasyLoading.showSuccess("DoneDeletingMeasurement".tr());
                                               setState(() {});
                                             }else{
                                               print(data);
                                             }
                                             EasyLoading.dismiss();
-                                          }, icon: Icon(Icons.delete_forever,), label: Text("Delete")
+                                          }, icon: Icon(Icons.delete_forever,), label: Text("Delete".tr())
                                       ),
                                     ],
                                   )
@@ -339,7 +349,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "you_need_to_fill_this_text_field";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -369,7 +379,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Note",
+        labelText: "Note".tr(),
         alignLabelWithHint: true,
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
@@ -390,7 +400,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "you_need_to_fill_this_text_field";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }else{
           data[dataIndex] = value;
         }
@@ -423,7 +433,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Note",
+        labelText: "Note".tr(),
         alignLabelWithHint: true,
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly

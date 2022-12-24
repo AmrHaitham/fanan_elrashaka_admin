@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/models/agenda.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:flutter/material.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 class AgendaContainer extends StatelessWidget {
@@ -20,13 +21,17 @@ class AgendaContainer extends StatelessWidget {
       Padding(
       padding: const EdgeInsets.all(8.0),
       child: ExpansionTileCard(
-        subtitle: Text(DateFormat('jm').format(DateTime.parse(agenda.time!)),),
+        subtitle: Text(DateFormat('jm').format(DateTime.parse(agenda.time!))
+          ,style: TextStyle(
+              color: Color(0xff7f8b9e)
+          ),
+        ),
         baseColor: Colors.white,
         borderRadius: BorderRadius.zero,
         title: Text(
           (agenda.type==1)?"${agenda.name}"
-              :(agenda.type==2)?"Water log | ${agenda.amount} L"
-              :(agenda.type==3)?"Walking log | ${agenda.amount} Min":""
+              :(agenda.type==2)?"${"Waterlog".tr()} | ${agenda.amount} ${"L".tr()}"
+              :(agenda.type==3)?"${"Walkinglog".tr()} | ${agenda.amount} ${"Min".tr()}":""
           ,style: Constants.regularTextNormal,),
         leading: SizedBox(
           width: 40,
@@ -52,8 +57,9 @@ class AgendaContainer extends StatelessWidget {
                     children: [
                       Container(
                         margin: const EdgeInsets.only(right: 20.0),
-                        child: Text("Meal:",
-                          // style: Constants.smallTextNormal,
+                        child: Text("${"Meal".tr()}: ",style: TextStyle(
+                            color: Color(0xff484ce2)
+                        ),
                         ),
                       ),
                       Expanded(child: Text(
@@ -67,11 +73,13 @@ class AgendaContainer extends StatelessWidget {
                     children: [
                       Container(
                         margin: const EdgeInsets.only(right: 20.0),
-                        child: Text("Butter:",
-                          // style: Constants.smallTextNormal,
+                        child: Text("${"Butter".tr()}:  "
+                          ,style: TextStyle(
+                              color: Color(0xff484ce2)
+                          ),
                         ),
                       ),
-                      Expanded(child: Text("${agenda.amount} gm",
+                      Expanded(child: Text("${agenda.amount} ${LocaleKeys.gm.tr()}",
                         // style: Constants.smallTextBookScreen,
                       ))
                     ],
@@ -80,12 +88,16 @@ class AgendaContainer extends StatelessWidget {
                   children: [
                     Container(
                       margin: const EdgeInsets.only(right: 20.0),
-                      child: Text("Note:"
-                        // ,style: Constants.smallTextNormal,
+                      child: Text("${"Note".tr()}:  "
+                        ,style: TextStyle(
+                          color: Color(0xff484ce2)
+                        ),
                       ),
                     ),
                     Expanded(child: Text("${agenda.note}",
-                      // style: Constants.smallTextBookScreen,
+                      style: TextStyle(
+                          color: Color(0xff7f8b9e)
+                      ),
                     ))
                   ],
                 ),

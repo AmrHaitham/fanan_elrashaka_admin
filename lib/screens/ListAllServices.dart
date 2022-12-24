@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/Services.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/BottomSheet.dart';
 import 'package:fanan_elrashaka_admin/widgets/DefaultButton.dart';
@@ -26,7 +28,10 @@ class _ListAllServicesState extends State<ListAllServices> {
   @override
   Widget build(BuildContext context) {
     return ScreenContainer(
-      name: "Services",
+      onRefresh: (){
+        setState(() {});
+      },
+      name: "Services".tr(),
       topLeftAction: BackIcon(),
       topCenterAction: SearchList(
         onSubmitted: (value){
@@ -66,13 +71,18 @@ class _ListAllServicesState extends State<ListAllServices> {
                               trailing: SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: Image.asset("assets/right-arrow_gray.png"),
+                                child: Transform.scale(
+                                    scaleX: (context.locale.toString()=='en')?1:-1,
+                                    child: Image.asset("assets/right-arrow_gray.png")
+                                ),
                               ),
-                              title: Text(data[index]['clinic_en'],style:const TextStyle(
+                              title: Text(
+                                (context.locale.toString()=='en')?data[index]['clinic_en']:data[index]['clinic_ar'],
+                                style:const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold
                               ),),
-                              subtitle: Text("${data[index]['service_en']}  |  ${data[index]['fee'].toString()} EGP"),
+                              subtitle: Text("${(context.locale.toString()=='en')?data[index]['service_en']:data[index]['service_ar']}  |  ${data[index]['fee'].toString()} EGP"),
                               onTap: (){
                                 _bottomSheetWidget.showBottomSheetButtons(
                                     context,
@@ -85,16 +95,16 @@ class _ListAllServicesState extends State<ListAllServices> {
                                   ),
                                   const SizedBox(height: 20,),
                                   DefaultButton(
-                                    text: "Apply",
+                                    text: "Apply".tr(),
                                     press: ()async{
                                       if (_formKey.currentState!.validate()) {
                                         _formKey.currentState!.save();
-                                        EasyLoading.show(status: "Update Service Fee");
+                                        EasyLoading.show(status: "UpdateServiceFee".tr());
                                         var responseData = await _services.updateService(
                                           context.read<UserData>().token,data[index]['id'],new_fee
                                         );
                                         if (await responseData.statusCode == 200) {
-                                          _dialogs.doneDialog(context,"You_are_successfully_update_service_fee","ok",(){
+                                          _dialogs.doneDialog(context,"You_are_successfully_update_service_fee".tr(),"Ok".tr(),(){
                                             setState(() {
                                               _formKey.currentState!.reset();
                                             });
@@ -104,7 +114,7 @@ class _ListAllServicesState extends State<ListAllServices> {
                                         }else{
                                           var response = jsonDecode(await responseData.stream.bytesToString());
                                       print(response);
-                                      _dialogs.errorDialog(context, "Error_while_updating_service_fee_please_check_your_internet_connection");
+                                      _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
                                       }
                                       EasyLoading.dismiss();
                                     }
@@ -138,8 +148,7 @@ class _ListAllServicesState extends State<ListAllServices> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Fee",
-        hintText:"Enter_Fee",
+        labelText: "Fee".tr(),
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
       onSaved: (newValue) {
@@ -153,7 +162,7 @@ class _ListAllServicesState extends State<ListAllServices> {
       },
       validator: (value) {
         if (value=="") {
-          return "kFeeNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },

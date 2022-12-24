@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/Bookings.dart';
 import 'package:fanan_elrashaka_admin/networks/Packages.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/EditScreenContainer.dart';
 import 'package:fanan_elrashaka_admin/widgets/Loading.dart';
@@ -31,6 +33,7 @@ class _PayPackageState extends State<PayPackage> {
 
   @override
   Widget build(BuildContext context) {
+    print("patient id is ${widget.patient_id}");
     return FutureBuilder(
         future: _packages.getAllPackages(context.read<UserData>().token),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -46,11 +49,11 @@ class _PayPackageState extends State<PayPackage> {
               for(var data in snapshot.data){
                 items.add({
                   'value': data['id'].toString(),
-                  'label': data['name_en'],
+                  'label': (context.locale.toString()=="en")?data['name_en']:data['name_ar'],
                 });
               }
               return EditScreenContainer(
-                name: "Package Purchase",
+                name: "PackagePurchase".tr(),
                 topLeftAction: BackIcon(),
                 topRightaction: InkWell(
                   onTap: ()async{
@@ -59,7 +62,7 @@ class _PayPackageState extends State<PayPackage> {
                     //
                     // }
                     if(package_unit != null && paidAmount != null){
-                      EasyLoading.show(status: "Buy Package");
+                      EasyLoading.show(status: "PackagePurchase".tr());
                       var responseData = await _packages.buy_new_package(
                           context.read<UserData>().token,
                           widget.patient_id,
@@ -68,12 +71,13 @@ class _PayPackageState extends State<PayPackage> {
                           description??""
                       );
                       if (await responseData.statusCode == 200) {
-                        _dialogs.doneDialog(context,"You_are_successfully_Buy_package","ok",(){
+                        print(await responseData.stream.bytesToString());
+                        _dialogs.doneDialog(context,"You_are_successfully_Buy_package".tr(),"Ok".tr(),(){
                         });
                       }else{
                         var response = jsonDecode(await responseData.stream.bytesToString());
                         print(response);
-                        _dialogs.errorDialog(context, "Error_while_Buying_package_please_check_your_internet_connection");
+                        _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
                       }
                       EasyLoading.dismiss();
                     }else{
@@ -87,28 +91,24 @@ class _PayPackageState extends State<PayPackage> {
                     child: Image.asset("assets/Save-512.png"),
                   ),
                 ),
-                  child: Container(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height*0.715,
-                    padding: const EdgeInsets.only(right: 15,left: 15),
-                    child: SingleChildScrollView(
-                      // child: Form(
-                      //   key: _formKey1,
-                      //   child:
-                      // ),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 40),
-                          buildNameFormField(widget.patient_name),
-                          const SizedBox(height: 20),
-                          buildPackageFormField(items),
-                          const SizedBox(height: 20),
-                          // const SizedBox(height: 20),
-                          buildFeeFormField(),
-                          const SizedBox(height: 20),
-                          buildDescriptionFormField()
-                        ],
-                      ),
+                  child: Expanded(
+                    child: Padding(
+                      // width: double.infinity,
+                      // height: MediaQuery.of(context).size.height*0.715,
+                      padding: const EdgeInsets.only(right: 15,left: 15),
+                      child: ListView(
+                          children: [
+                            const SizedBox(height: 40),
+                            buildNameFormField(widget.patient_name),
+                            const SizedBox(height: 20),
+                            buildPackageFormField(items),
+                            const SizedBox(height: 20),
+                            // const SizedBox(height: 20),
+                            buildFeeFormField(),
+                            const SizedBox(height: 20),
+                            buildDescriptionFormField()
+                          ],
+                        ),
                     ),
                   )
               );
@@ -126,12 +126,13 @@ class _PayPackageState extends State<PayPackage> {
 
   TextFormField buildNameFormField(initData) {
     return TextFormField(
+      readOnly: true,
       initialValue: initData,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Patient Name*",
+        labelText: "PatientName".tr(),
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
@@ -142,7 +143,7 @@ class _PayPackageState extends State<PayPackage> {
       // key: _formKey1,
       type: SelectFormFieldType
           .dropdown, // or can be dialog
-      labelText: "Package Type*",
+      labelText: "Package".tr(),
       items: items,
       decoration: InputDecoration(
         suffixIcon: Container(
@@ -155,8 +156,8 @@ class _PayPackageState extends State<PayPackage> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        label:const Text("Package*") ,
-        hintText: "Package",
+        label: Text("Package".tr()) ,
+        hintText: "Package".tr(),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
@@ -169,7 +170,7 @@ class _PayPackageState extends State<PayPackage> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kPackageUnitNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -184,8 +185,8 @@ class _PayPackageState extends State<PayPackage> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Paid Amount*",
-        hintText:"Enter_your_Paid Amount",
+        labelText: "PaidAmount".tr(),
+        // hintText:"Enter_your_Paid Amount",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
       onSaved: (newValue) {
@@ -199,7 +200,7 @@ class _PayPackageState extends State<PayPackage> {
       },
       validator: (value) {
         if (value=="") {
-          return "kPaidAmountNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -228,7 +229,7 @@ class _PayPackageState extends State<PayPackage> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Description",
+        labelText: "Description".tr(),
         alignLabelWithHint: true,
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly

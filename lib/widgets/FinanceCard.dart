@@ -5,11 +5,14 @@ import 'package:fanan_elrashaka_admin/screens/EditMoneyLog.dart';
 import 'package:flutter/material.dart';
 class FinanceCard extends StatelessWidget {
   final snapshot;
-  const FinanceCard({Key? key, this.snapshot}) : super(key: key);
+  final date;
+  const FinanceCard({Key? key, this.snapshot,required this.date}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     print(snapshot);
     return ExpansionTileCard(
+      baseColor: Colors.white,
+      shadowColor: Colors.grey,
       leading: Container(
         width: 50,
         height: 50,
@@ -28,16 +31,17 @@ class FinanceCard extends StatelessWidget {
         ),
       ),
       title: Text(snapshot['name'],style:
-            const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20
-          ),
+      const TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+          fontSize: 20
+      ),
         ),
       subtitle: Text(snapshot['category_name'],style: TextStyle(
             color: Constants.secondTextColor
           ),
       ),
-      trailing: Text(DateFormat("h:mm a").format(DateTime.parse(snapshot['timestamp'])).toString(),
+      trailing: Text(DateFormat("h:mm a",context.locale.toString()).format(DateTime.parse(snapshot['timestamp'])).toString(),
         style: TextStyle(
             color: Constants.secondTextColor,
             fontSize: 17
@@ -48,8 +52,11 @@ class FinanceCard extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              const Text("Clinic:   "),
-              Text(snapshot['clinic_name_en'].toString())
+               Text("${"ClinicName".tr()}:   ",style: TextStyle(
+                  color: Color(0xff6a6a6c),
+                  fontWeight: FontWeight.bold
+              ),),
+              Text((context.locale.toString()=='en')?snapshot['clinic_name_en'].toString():snapshot['clinic_name_ar'].toString())
             ],
           ),
         ),
@@ -57,8 +64,12 @@ class FinanceCard extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Notes:   "),
+               Text("${"Notes".tr()}:   ",style: TextStyle(
+                  color: Color(0xff6a6a6c),
+                  fontWeight: FontWeight.bold
+              ),),
               Expanded(child: Text(snapshot['notes'].toString()))
             ],
           ),
@@ -77,7 +88,7 @@ class FinanceCard extends StatelessWidget {
             InkWell(
               onTap: (){
                 Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => EditMoneyLog(id: snapshot['id'].toString()))
+                    MaterialPageRoute(builder: (context) => EditMoneyLog(id: snapshot['id'].toString(),date: date,))
                 );
               },
               child: Container(

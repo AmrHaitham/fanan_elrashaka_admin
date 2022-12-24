@@ -6,6 +6,7 @@ import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/models/agenda.dart';
 import 'package:fanan_elrashaka_admin/networks/PatientDetails.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/Loading.dart';
 import 'package:fanan_elrashaka_admin/widgets/ScreenContainer.dart';
@@ -119,11 +120,11 @@ class _FoodAgendaScreenState extends State<FoodAgendaScreen> {
     return Scaffold(
       body: ScreenContainer(
           topLeftAction: BackIcon(),
-          name: "Food Agenda",
+          name: "FoodAgenda".tr(),
           child: Container(
             width: double.infinity,
             margin: EdgeInsets.only(top: 18),
-            height: MediaQuery.of(context).size.height*0.8,
+            height: MediaQuery.of(context).size.height*0.79,
             child: ListView(
               children: [
                 Container(
@@ -253,7 +254,7 @@ class _FoodAgendaScreenState extends State<FoodAgendaScreen> {
                           Column(
                             children: [
                               Text(
-                                "Meals",
+                                "Meals".tr(),
                                 style: Constants.regularTextNormal,
                               ),
                               SizedBox(
@@ -267,36 +268,36 @@ class _FoodAgendaScreenState extends State<FoodAgendaScreen> {
                           ),
                           Column(
                             children: [
-                              Text("Butter", style: Constants.regularTextNormal),
+                              Text("Butter".tr(), style: Constants.regularTextNormal),
                               SizedBox(
                                 height: 10,
                               ),
                               Text(
-                                "${getAmount(1, data)}gm",
+                                "${getAmount(1, data)}${LocaleKeys.gm.tr()}",
                                 // style: Constants.secondsmallTextBookScreen,
                               )
                             ],
                           ),
                           Column(
                             children: [
-                              Text("Walking", style: Constants.regularTextNormal),
+                              Text("Walking".tr(), style: Constants.regularTextNormal),
                               SizedBox(
                                 height: 10,
                               ),
                               Text(
-                                "${getAmount(3, data)}Min",
+                                "${getAmount(3, data)}${"Min".tr()}",
                                 // style: Constants.secondsmallTextBookScreen,
                               )
                             ],
                           ),
                           Column(
                             children: [
-                              Text("Water", style: Constants.regularTextNormal),
+                              Text("Water".tr(), style: Constants.regularTextNormal),
                               SizedBox(
                                 height: 10,
                               ),
                               Text(
-                                "${getAmount(2, data)}L",
+                                "${getAmount(2, data)}${"L".tr()}",
                                 // style: Constants.secondsmallTextBookScreen,
                               )
                             ],

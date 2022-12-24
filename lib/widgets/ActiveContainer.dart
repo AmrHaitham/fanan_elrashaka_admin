@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,9 +17,9 @@ class _ActiveContainerState extends State<ActiveContainer> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Padding(
+        Padding(
           padding:  EdgeInsets.all(8.0),
-          child:  Text("Is User Active:",
+          child:  Text("IsUserActive".tr(),
               style: TextStyle(
                   color: Colors.grey,
                   fontSize: 17,

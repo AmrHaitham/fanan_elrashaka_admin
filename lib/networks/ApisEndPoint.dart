@@ -29,6 +29,7 @@ class Apis {
   static const String reschedule_booking = "${api}/api/cpanel/reschedule_booking/";
   static const String buy_new_package = "${api}/api/cpanel/buy_new_package/";
   static const String new_bookings = "${api}/api/cpanel/new_bookings/";
+  static const String clinic_calendar = "${api}/api/cpanel/clinic_calendar/";
   static const String patient_details = "${api}/api/patient_management/patient_details/";
   static const String change_IsConnected_status = "${api}/api/patient_management/change_IsConnected_status/";
   static const String change_IsPenalized_status = "${api}/api/patient_management/change_IsPenalized_status/";

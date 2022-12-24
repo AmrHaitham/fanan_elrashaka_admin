@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/Patients.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
 import 'package:fanan_elrashaka_admin/screens/EditPationt.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/DefaultButton.dart';
 import 'package:fanan_elrashaka_admin/widgets/EditScreenContainer.dart';
@@ -71,15 +73,16 @@ class _EditDrPationtState extends State<EditDrPationt> {
               print(snapshot.error.toString());
               return  Container();
             } else if (snapshot.hasData) {
+              print(snapshot.data);
               return EditScreenContainer(
-                  name: "Edit Doctor Patient",
+                  name: "EditDoctorPatient".tr(),
                   topLeftAction: BackIcon(),
                   topRightaction: InkWell(
                     onTap: ()async{
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
                         // save data
-                        EasyLoading.show(status: "Updating Doctor Patient");
+                        EasyLoading.show(status: "EditDoctorPatient".tr());
                         try{
                           var changeProfileResponse = await _patients.updateDrPatient(
                             context.read<UserData>().token,
@@ -91,11 +94,11 @@ class _EditDrPationtState extends State<EditDrPationt> {
                             notes
                           );
                           if (await changeProfileResponse.statusCode == 200) {
-                            _dialogs.doneDialog(context,"You_are_successfully_change_your_profile_data","ok",(){});
+                            _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){});
                             print(await changeProfileResponse.stream.bytesToString());
                           }else{
                             print(await changeProfileResponse.stream.bytesToString());
-                            _dialogs.errorDialog(context, "Error_while_updating_profile_data_check_your_internet_connection");
+                            _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
                           }
                           EasyLoading.dismiss();
                           setState(() {});
@@ -116,7 +119,7 @@ class _EditDrPationtState extends State<EditDrPationt> {
                   topCenterAction: ProfilePic(
                     profile: snapshot.data['image'],
                     uploadImage: () async{
-                      EasyLoading.show(status: "Updating Doctor Patient Image");
+                      EasyLoading.show(status: "EditDoctorPatient".tr());
                       try{
                         var imagePicker;
                         imagePicker = await _picker.pickImage(source: ImageSource.gallery,imageQuality: 20);
@@ -132,10 +135,10 @@ class _EditDrPationtState extends State<EditDrPationt> {
                             snapshot.data['note']
                         );
                         if (await picResponse.statusCode == 200) {
-                          _dialogs.doneDialog(context,"You_are_successfully_change_your_profile_picture","ok",(){});
+                          _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){});
                         }else{
                           print(await picResponse.stream.bytesToString());
-                          _dialogs.errorDialog(context,"Error_while_updating_picture_profile_data_check_your_interne_connection");
+                          _dialogs.errorDialog(context,LocaleKeys.Error__please_check_your_internet_connection.tr());
                         }
                         EasyLoading.dismiss();
                         setState(() {});
@@ -145,14 +148,12 @@ class _EditDrPationtState extends State<EditDrPationt> {
                       }
                     },
                   ),
-                  child: Container(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height*0.7,
-                    padding: const EdgeInsets.only(top: 8.0,right: 15,left: 15),
-                    child: SingleChildScrollView(
+                  child: Expanded(
+                    child: Padding(
+                      padding:EdgeInsets.only(right: 15,left: 15),
                       child: Form(
                         key: _formKey,
-                        child: Column(
+                        child: ListView(
                           children: [
                             const SizedBox(height: 20),
                             buildFirstNameFormField(snapshot.data['name']),
@@ -180,14 +181,14 @@ class _EditDrPationtState extends State<EditDrPationt> {
                                   borderRadius:
                                   BorderRadius.circular(5.0),
                                 ),
-                                hintText: "Edit Patient Data",
+                                hintText: "EditPatientData".tr(),
                                 floatingLabelBehavior:
                                 FloatingLabelBehavior.auto,
                               ),
                               readOnly: true,
                               onTap: (){
                                 Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (context) => EditPationt(id: snapshot.data["patient_id"].toString(),))
+                                    MaterialPageRoute(builder: (context) => EditPationt(id: snapshot.data["patient_id"].toString(),refreshOnBack: false,))
                                 );
                               },
                             ),
@@ -200,7 +201,7 @@ class _EditDrPationtState extends State<EditDrPationt> {
                                   height: 25,
                                   child: Image.asset("assets/delete.png"),
                                 ),
-                                title: Text("Delete Patient Data",style: TextStyle(
+                                title: Text("DeletePatientData".tr(),style: TextStyle(
                                     color: Constants.mainColor,
                                     fontWeight: FontWeight.bold
                                 ),),
@@ -214,8 +215,8 @@ class _EditDrPationtState extends State<EditDrPationt> {
                                       context: context,
                                       animType: AnimType.SCALE,
                                       dialogType: DialogType.WARNING,
-                                      body:const Center(child: Text(
-                                        "Are you sure you want to delete this patient",
+                                      body: Center(child: Text(
+                                        "AreYouSureYouWantToDeleteThisPatient".tr(),
                                       ),),
                                       btnOkOnPress: () async{
                                         var response = await _patients.deleteDrPatient(context.read<UserData>().token, snapshot.data['pid'].toString());
@@ -226,8 +227,8 @@ class _EditDrPationtState extends State<EditDrPationt> {
                                         }
                                       },
                                       btnCancelOnPress: (){},
-                                      btnCancelText:"Cancel",
-                                      btnOkText:"Delete"
+                                      btnCancelText:"Cancel".tr(),
+                                      btnOkText:"Delete".tr()
                                   ).show();
                                 },
                               ),
@@ -263,7 +264,7 @@ class _EditDrPationtState extends State<EditDrPationt> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kNamelNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -271,8 +272,8 @@ class _EditDrPationtState extends State<EditDrPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Name",
-        hintText: "Enter_your_name",
+        labelText: "Name".tr(),
+        // hintText: "Enter_your_name",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -292,7 +293,7 @@ class _EditDrPationtState extends State<EditDrPationt> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kHeightlNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -300,8 +301,8 @@ class _EditDrPationtState extends State<EditDrPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Height",
-        hintText: "Enter_your_Height",
+        labelText: "Height".tr(),
+        // hintText: "Enter_your_Height",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -321,7 +322,7 @@ class _EditDrPationtState extends State<EditDrPationt> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kTargetWeightNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -329,8 +330,8 @@ class _EditDrPationtState extends State<EditDrPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "TargetWeight",
-        hintText: "Enter_your_TargetWeight",
+        labelText: "TargetWeight".tr(),
+        // hintText: "Enter_your_TargetWeight",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -354,7 +355,7 @@ class _EditDrPationtState extends State<EditDrPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "notes",
+        labelText: "Notes".tr(),
         alignLabelWithHint: true,
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
@@ -371,8 +372,8 @@ class _EditDrPationtState extends State<EditDrPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Phone_Number",
-        hintText:"Enter_your_phone_number",
+        labelText: "PhoneNumber".tr(),
+        // hintText:"Enter_your_phone_number",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
       onSaved: (newValue) {
@@ -386,7 +387,7 @@ class _EditDrPationtState extends State<EditDrPationt> {
       },
       validator: (value) {
         if (value=="") {
-          return "kPhoneNumberNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },

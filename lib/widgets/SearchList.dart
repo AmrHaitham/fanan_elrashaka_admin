@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:flutter/material.dart';
 class SearchList extends StatelessWidget {
@@ -33,9 +34,9 @@ class SearchList extends StatelessWidget {
                 onSubmitted:(value){
                   onSubmitted(value);
                 },
-                decoration:const InputDecoration(
+                decoration: InputDecoration(
                   border: InputBorder.none,
-                  hintText: 'Search..',
+                  hintText: 'Search'.tr(),
                 ),
               ),
             ),

@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 class ProfilePic extends StatelessWidget {
   final uploadImage;
   final  profile;
-  ProfilePic({Key? key, this.uploadImage, this.profile}) : super(key: key);
+  final demoImage;
+  ProfilePic({Key? key, this.uploadImage, this.profile, this.demoImage}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -19,7 +20,7 @@ class ProfilePic extends StatelessWidget {
             if(profile==null)
               CircleAvatar(
                 backgroundColor: Colors.white,
-                backgroundImage: AssetImage("assets/user_avatar_male.png"),
+                backgroundImage: AssetImage(demoImage??"assets/user_avatar_male.png"),
                 // child: SizedBox( width:40,height:40,child: Image.asset("assets/user_avatar_male.png")),
               ),
             if(profile != null)

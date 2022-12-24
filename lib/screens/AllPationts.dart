@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/networks/Patients.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
@@ -20,7 +21,10 @@ class _ListAllPatientsState extends State<ListAllPatients> {
   @override
   Widget build(BuildContext context) {
     return ScreenContainer(
-      name: "All Patients",
+      onRefresh: (){
+        setState(() {});
+      },
+      name: "AllPatients".tr(),
       topLeftAction: BackIcon(),
       topRightaction: InkWell(
         onTap: (){

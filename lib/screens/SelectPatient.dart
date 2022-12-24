@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/networks/Patients.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
@@ -21,7 +22,7 @@ class _SelectPatientState extends State<SelectPatient> {
   @override
   Widget build(BuildContext context) {
     return ScreenContainer(
-      name: "Select Patient",
+      name: "SelectPatient".tr(),
       topLeftAction: BackIcon(),
       topCenterAction: SearchList(
         onSubmitted: (value){
@@ -49,6 +50,7 @@ class _SelectPatientState extends State<SelectPatient> {
                 print(snapshot.error.toString());
                 return  Container();
               } else if (snapshot.hasData) {
+                print(snapshot.data);
                 return Expanded(
                   child: ListView.builder(
                       itemCount: snapshot.data.length,

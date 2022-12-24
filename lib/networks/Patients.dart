@@ -118,12 +118,12 @@ class Patients{
     };
     var request = http.MultipartRequest('PUT', Uri.parse("${Apis.getDrPatients}"));
     request.fields.addAll({
-      'pid': pid,
-      'name': name,
-      'phone': phone,
-      'height': height,
-      'target_weight': target_weight,
-      'notes':notes
+      'pid': pid.toString(),
+      'name': name.toString(),
+      'phone': phone.toString(),
+      'height': height.toString(),
+      'target_weight': target_weight.toString(),
+      'notes':notes.toString()
     });
     request.files.add(await http.MultipartFile.fromPath('image', image));
     request.headers.addAll(headers);

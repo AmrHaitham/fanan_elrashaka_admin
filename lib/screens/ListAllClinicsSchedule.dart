@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/networks/Clinics.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
@@ -20,7 +21,10 @@ class _ListAllScheduleState extends State<ListAllSchedule> {
   @override
   Widget build(BuildContext context) {
     return ScreenContainer(
-      name: "Clinic Schedule",
+      onRefresh: (){
+        setState(() {});
+      },
+      name: "ClinicSchedule".tr(),
       topRightaction: InkWell(
         onTap: (){
           Navigator.of(context).push(

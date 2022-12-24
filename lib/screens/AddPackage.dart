@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/Packages.dart';
+import 'package:fanan_elrashaka_admin/screens/ListAllPackages.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/AddProfilePhoto.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/EditScreenContainer.dart';
@@ -31,84 +34,98 @@ class _AddPackageState extends State<AddPackage> {
   String? name_ar, name_en, fee, order, old_fee, package_amount, package_unit;
   @override
   Widget build(BuildContext context) {
-    return EditScreenContainer(
-        name: "Add Package",
-        topLeftAction: BackIcon(),
-        topRightaction: InkWell(
-          onTap: ()async{
-            if (_formKey.currentState!.validate()) {
-              _formKey.currentState!.save();
-              EasyLoading.show(status: "Adding Package");
-              var responseData = await _packages.addPackage(
-                  context.read<UserData>().token,
-                  name_ar,
-                  name_en,
-                  fee,
-                  order,
-                  old_fee,
-                  package_amount,
-                  package_unit,
-                  imageLocation??"",
+    return WillPopScope(
+      onWillPop: ()async{
+        Navigator.pop(context);
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) =>ListAllPackages())
+        );
+        return false;
+      },
+      child: EditScreenContainer(
+          name: "AddPackage".tr(),
+          topLeftAction: BackIcon(
+            overBack: (){
+              Navigator.pop(context);
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) =>ListAllPackages())
               );
-              if (await responseData.statusCode == 200) {
-                _dialogs.doneDialog(context,"You_are_successfully_added_new_package","ok",(){
-                  setState(() {
-                    _formKey.currentState!.reset();
-                  });
-                });
-              }else{
-                var response = jsonDecode(await responseData.stream.bytesToString());
-                print(response);
-                _dialogs.errorDialog(context, "Error_while_adding_new_package_please_check_your_internet_connection");
-              }
-              EasyLoading.dismiss();
-            }
-          },
-          child: Container(
-            margin: EdgeInsets.only(right: 10),
-            width: 25,
-            height: 25,
-            child: Image.asset("assets/Save-512.png"),
+            },
           ),
-        ),
-        topCenterAction: AddProfilePhoto(
-          profile: imageLocation,
-          demoPhoto: "assets/package_avatar.png",
-          getImage: () async{
-            var imagePicker;
-            imagePicker = await _picker.pickImage(source: ImageSource.gallery,imageQuality: 20);
-            imageLocation = imagePicker.path.toString();
-            setState(() {});
-          },
-        ),
-        child: Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height*0.715,
-          padding: const EdgeInsets.only(right: 15,left: 15),
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  buildName_enFormField(),
-                  const SizedBox(height: 20),
-                  buildName_arFormField(),
-                  const SizedBox(height: 20),
-                  buildOld_feeFormField(),
-                  const SizedBox(height: 20),
-                  buildFeeFormField(),
-                  const SizedBox(height: 20),
-                  buildTypeFormField(),
-                  const SizedBox(height: 20),
-                  buildPackageAmountFormField(),
-                  const SizedBox(height: 20),
-                  buildOrderField(),
-                  const SizedBox(height: 20),
-                ],
-              ),
+          topRightaction: InkWell(
+            onTap: ()async{
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                EasyLoading.show(status: "AddPackage".tr());
+                var responseData = await _packages.addPackage(
+                    context.read<UserData>().token,
+                    name_ar,
+                    name_en,
+                    fee,
+                    order,
+                    old_fee,
+                    package_amount,
+                    package_unit,
+                    imageLocation??"",
+                );
+                if (await responseData.statusCode == 200) {
+                  _dialogs.doneDialog(context,"You_are_successfully_added_new_package".tr(),"Ok".tr(),(){
+                    setState(() {
+                      _formKey.currentState!.reset();
+                    });
+                  });
+                }else{
+                  var response = jsonDecode(await responseData.stream.bytesToString());
+                  print(response);
+                  _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                }
+                EasyLoading.dismiss();
+              }
+            },
+            child: Container(
+              margin: EdgeInsets.only(right: 10),
+              width: 25,
+              height: 25,
+              child: Image.asset("assets/Save-512.png"),
             ),
           ),
-        )
+          topCenterAction: AddProfilePhoto(
+            profile: imageLocation,
+            demoPhoto: "assets/package_avatar.png",
+            getImage: () async{
+              var imagePicker;
+              imagePicker = await _picker.pickImage(source: ImageSource.gallery,imageQuality: 20);
+              imageLocation = imagePicker.path.toString();
+              setState(() {});
+            },
+          ),
+          child: Expanded(
+            child: Padding(
+              padding:EdgeInsets.only(right: 15,left: 15),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    buildName_enFormField(),
+                    const SizedBox(height: 20),
+                    buildName_arFormField(),
+                    const SizedBox(height: 20),
+                    buildOld_feeFormField(),
+                    const SizedBox(height: 20),
+                    buildFeeFormField(),
+                    const SizedBox(height: 20),
+                    buildTypeFormField(),
+                    const SizedBox(height: 20),
+                    buildPackageAmountFormField(),
+                    const SizedBox(height: 20),
+                    buildOrderField(),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ),
+          )
+      ),
     );
   }
   TextFormField buildName_enFormField() {
@@ -122,7 +139,7 @@ class _AddPackageState extends State<AddPackage> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kNamelNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -130,8 +147,8 @@ class _AddPackageState extends State<AddPackage> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "English Name*",
-        hintText: "Enter_English_name",
+        labelText: "EnglishName".tr(),
+        // hintText: "Enter_English_name",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -149,7 +166,7 @@ class _AddPackageState extends State<AddPackage> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kNamelNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -157,8 +174,8 @@ class _AddPackageState extends State<AddPackage> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Arabic Name*",
-        hintText: "Enter_Arabic_name",
+        labelText: "ArabicName".tr(),
+        // hintText: "Enter_Arabic_name",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -173,8 +190,8 @@ class _AddPackageState extends State<AddPackage> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Old Fee*",
-        hintText:"Enter_your_phone_number",
+        labelText: "OldFee".tr(),
+        // hintText:"Enter_your_phone_number",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
       onSaved: (newValue) {
@@ -188,7 +205,7 @@ class _AddPackageState extends State<AddPackage> {
       },
       validator: (value) {
         if (value=="") {
-          return "kOldFeeNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -202,8 +219,8 @@ class _AddPackageState extends State<AddPackage> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Fee*",
-        hintText:"Enter_Fee*",
+        labelText: "Fee".tr(),
+        // hintText:"Enter_Fee*",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
       onSaved: (newValue) {
@@ -217,7 +234,7 @@ class _AddPackageState extends State<AddPackage> {
       },
       validator: (value) {
         if (value=="") {
-          return "kFeeNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -228,15 +245,15 @@ class _AddPackageState extends State<AddPackage> {
     return SelectFormField(
       type: SelectFormFieldType
           .dropdown, // or can be dialog
-      labelText: "Package Type*",
-      items: const [
+      labelText: "PackageType".tr(),
+      items:  [
         {
           'value': '1',
-          'label': "Days",
+          'label': "Days".tr(),
         },
         {
           'value': '2',
-          'label': "Quantity",
+          'label': "Quantity".tr(),
         },
       ],
       decoration: InputDecoration(
@@ -250,8 +267,8 @@ class _AddPackageState extends State<AddPackage> {
           borderRadius:
           BorderRadius.circular(5.0),
         ),
-        label:const Text("Package Type*") ,
-        hintText: "Package Type",
+        label: Text("PackageType".tr()) ,
+        hintText: "PackageType".tr(),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
@@ -264,7 +281,7 @@ class _AddPackageState extends State<AddPackage> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kPackageUnitNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -278,8 +295,8 @@ class _AddPackageState extends State<AddPackage> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Package_Amount",
-        hintText:"Enter_Package_Amount",
+        labelText: "PackageAmount".tr(),
+        // hintText:"Enter_Package_Amount",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
       onSaved: (newValue) {
@@ -293,7 +310,7 @@ class _AddPackageState extends State<AddPackage> {
       },
       validator: (value) {
         if (value=="") {
-          return "kPackageAmountNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },
@@ -306,8 +323,8 @@ class _AddPackageState extends State<AddPackage> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Order*",
-        hintText:"Enter_Order_number",
+        labelText: "Order".tr(),
+        // hintText:"Enter_Order_number",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
       onSaved: (newValue) {
@@ -321,7 +338,7 @@ class _AddPackageState extends State<AddPackage> {
       },
       validator: (value) {
         if (value=="") {
-          return "kOrderNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },

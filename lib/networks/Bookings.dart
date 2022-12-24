@@ -84,17 +84,24 @@ class Bookings{
     var headers = {
       'Authorization': 'Token $token'
     };
-    var request = http.MultipartRequest('POST', Uri.parse("${Apis.new_bookings}$clinic_time/$clinic_service"));
-    request.fields.addAll({
-      'booking_time': booking_time,
-      'doctor_patient': doctor_patient,
-      'payment_method': payment_method,
-      'paid_amount': paid_amount
-    });
-    request.headers.addAll(headers);
-
-    http.StreamedResponse response = await request.send();
-
+    // var request = http.MultipartRequest('POST', Uri.parse("${Apis.new_bookings}$clinic_time/$clinic_service"));
+    // request.fields.addAll({
+    //   'booking_time': booking_time,
+    //   'doctor_patient': doctor_patient,
+    //   'payment_method': payment_method,
+    //   'paid_amount': paid_amount
+    // });
+    // request.headers.addAll(headers);
+    //
+    // // http.StreamedResponse response = await request.send();
+    print("$clinic_time,$clinic_service,$booking_time,$doctor_patient,$payment_method,$paid_amount");
+    var response = http.post( Uri.parse("${Apis.new_bookings}$clinic_time/$clinic_service/"),headers: headers,
+        body: {
+          'booking_time': booking_time,
+          'doctor_patient': doctor_patient,
+          'payment_method': payment_method,
+          'paid_amount': paid_amount
+        });
     return response;
   }
 
@@ -110,5 +117,21 @@ class Bookings{
 
     return response;
   }
+  get_clinic_calendar(token,clinic_service)async{
+    print(clinic_service);
+    var headers = {
+      'Authorization': 'Token $token'
+    };
+    var request = http.MultipartRequest('GET', Uri.parse("${Apis.clinic_calendar}$clinic_service/"));
+
+    request.headers.addAll(headers);
+
+
+    http.StreamedResponse response = await request.send();
+
+    return jsonDecode(await response.stream.bytesToString());
+  }
+
+
 
 }

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/networks/PromoCodes.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
@@ -20,7 +21,10 @@ class _ListAllPromoCodesState extends State<ListAllPromoCodes> {
   @override
   Widget build(BuildContext context) {
     return ScreenContainer(
-      name: "Promo Codes",
+      onRefresh: (){
+        setState(() {});
+      },
+      name: "PromoCodes".tr(),
       topRightaction: InkWell(
         onTap: (){
           Navigator.of(context).push(

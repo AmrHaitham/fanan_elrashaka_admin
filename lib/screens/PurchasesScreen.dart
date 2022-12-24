@@ -6,6 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/PatientDetails.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/BottomSheet.dart';
 import 'package:fanan_elrashaka_admin/widgets/DefaultButton.dart';
@@ -46,11 +47,11 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
             } else if (snapshot.hasData) {
               print(snapshot.data);
               return ScreenContainer(
-                  name: "Purchases",
+                  name: "Purchases".tr(),
                   topLeftAction:const BackIcon(),
                   child: Container(
                     width: double.infinity,
-                    height: MediaQuery.of(context).size.height*0.79,
+                    height: MediaQuery.of(context).size.height*0.78,
                     margin:const EdgeInsets.only(top: 25),
                     padding: EdgeInsets.all(5),
                     child: ListView.builder(
@@ -58,7 +59,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                         itemBuilder: (context,index){
                           return InkWell(
                             child: PurchasesCard(
-                              title: snapshot.data[index]['name_en'].toString(),
+                              title: (context.locale.toString()=="en")?snapshot.data[index]['name_en'].toString():snapshot.data[index]['name_ar'].toString(),
                               used_amount: snapshot.data[index]['used_amount'].toString(),
                               remaining_amount: snapshot.data[index]['remaining_amount'].toString(),
                               package_unit: snapshot.data[index]['package_unit'].toString(),
@@ -80,9 +81,9 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                                         buildDateFormField(),
                                         const SizedBox(height: 20,),
                                         DefaultButton(
-                                          text: "Update Package End Date",
+                                          text: "UpdatePackageEndDate".tr(),
                                           press: ()async{
-                                            EasyLoading.show(status: "Updating Package End Date");
+                                            EasyLoading.show(status: "UpdatePackageEndDate".tr());
                                             var response = await _patientDetails.updatePatientPurchases(
                                                 context.read<UserData>().token,
                                                 snapshot.data[index]['id'].toString(),
@@ -91,13 +92,13 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                                             var data = jsonDecode(await response.stream.bytesToString());
                                             if (await response.statusCode == 200) {
                                               print(data);
-                                              EasyLoading.showSuccess("Done Updating Package End Date");
+                                              EasyLoading.showSuccess(LocaleKeys.You_are_successfully_updated_information.tr());
                                               Navigator.pop(context);
                                               setState(() {});
                                             }else{
                                               print(data);
                                               if(response["error"] == "721"){
-                                                _dialogs.errorDialog(context, "patient is not connected");
+                                                _dialogs.errorDialog(context, LocaleKeys.PatientIsNotConnected.tr());
                                               }
                                             }
                                             EasyLoading.dismiss();
@@ -113,11 +114,11 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                                         buildMaxFormField(snapshot.data[index]['used_amount'].toString(),snapshot.data[index]['package_amount'].toString()),
                                         const SizedBox(height: 20,),
                                         DefaultButton(
-                                          text: "Update Used Amount",
+                                          text: "UpdateUsedAmount".tr(),
                                           press: ()async{
                                             try{
                                               if(int.parse(usedAmount.toString()) <= snapshot.data[index]['package_amount']){
-                                                EasyLoading.show(status: "Updating Used Amount");
+                                                EasyLoading.show(status: "UpdateUsedAmount".tr());
                                                 var response = await _patientDetails.updatePatientPurchases(
                                                     context.read<UserData>().token,
                                                     snapshot.data[index]['id'].toString(),
@@ -126,13 +127,13 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                                                 var data = jsonDecode(await response.stream.bytesToString());
                                                 if (await response.statusCode == 200) {
                                                   print(data);
-                                                  EasyLoading.showSuccess("Done Updating Used Amount");
+                                                  EasyLoading.showSuccess(LocaleKeys.You_are_successfully_updated_information.tr());
                                                   Navigator.pop(context);
                                                   setState(() {});
                                                 }else{
                                                   print(data);
                                                   if(response["error"] == "721"){
-                                                    _dialogs.errorDialog(context, "patient is not connected");
+                                                    _dialogs.errorDialog(context, LocaleKeys.PatientIsNotConnected.tr());
                                                   }
                                                 }
                                                 EasyLoading.dismiss();
@@ -178,7 +179,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
       readOnly: true,
       onTap: () {
         BottomPicker.date(
-          title: "Update Package End Date",
+          title: "UpdatePackageEndDate".tr(),
           dateOrder: DatePickerDateOrder.dmy,
           pickerTextStyle:const TextStyle(
             color: Colors.blue,
@@ -209,7 +210,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kDateNullError" ;
+          return LocaleKeys.ThisFieldIsRequired.tr() ;
         }
         return null;
       },
@@ -220,7 +221,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
       initialValue: initData,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
-        suffixText: "From ${maxUse}",
+        suffixText: "${"From".tr()} ${maxUse}",
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
@@ -237,7 +238,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
       },
       validator: (value) {
         if (value=="") {
-          return "kUsedAmountNullError";
+          return LocaleKeys.ThisFieldIsRequired.tr();
         }
         return null;
       },

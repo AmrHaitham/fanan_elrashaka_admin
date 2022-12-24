@@ -1,8 +1,10 @@
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:bottom_picker/resources/arrays.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/networks/Finance.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/Loading.dart';
 import 'package:fanan_elrashaka_admin/widgets/ScreenContainer.dart';
@@ -18,6 +20,7 @@ class FinanceStats extends StatefulWidget {
 
 class _FinanceStatsState extends State<FinanceStats> {
   String? fromDate , toDate;
+  DateTime? fromDateI , toDateI;
   TextEditingController _controller = TextEditingController();
   FinanceStatistics _financeStatistics = FinanceStatistics();
   @override
@@ -28,7 +31,7 @@ class _FinanceStatsState extends State<FinanceStats> {
   @override
   Widget build(BuildContext context) {
     return ScreenContainer(
-        name: "Finance Statistics",
+        name: "FinanceStatistics".tr(),
         topLeftAction: BackIcon(),
         topCenterAction: Container(
           height: 70,
@@ -170,17 +173,18 @@ class _FinanceStatsState extends State<FinanceStats> {
           borderRadius:
           BorderRadius.circular(10),
         ),
-        hintText:"Date Range*",
-        label: const Text("Date Range*"),
+        hintText:"DateRange".tr(),
+        label:  Text("DateRange".tr()),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
       readOnly: true,
       onTap: () {
         BottomPicker.range(
-          initialFirstDate: DateTime.now().subtract(const  Duration(days:700)),
-          minSecondDate:  DateTime.now().subtract(const  Duration(days:356)),
-          title: "Date Range",
+          initialFirstDate:fromDateI?? DateTime.now().subtract(Duration(days: 1000)),
+          initialSecondDate:toDateI,
+          minSecondDate:toDateI??  DateTime.now().subtract(Duration(days: 1000)),
+          title: "DateRange".tr(),
           dateOrder: DatePickerDateOrder.dmy,
           pickerTextStyle:const TextStyle(
             color: Colors.blue,
@@ -194,6 +198,8 @@ class _FinanceStatsState extends State<FinanceStats> {
           ),
           bottomPickerTheme: BottomPickerTheme.blue,
           onSubmitPressed: (from , to ) {
+            fromDateI = from;
+            toDateI = to;
             fromDate = from.toString().split(" ")[0];
             toDate = to.toString().split(" ")[0];
             _controller.text = fromDate! + " - " + toDate!;
@@ -209,7 +215,7 @@ class _FinanceStatsState extends State<FinanceStats> {
       },
       validator: (value) {
         if (value!.isEmpty) {
-          return "kfromDateNullError" ;
+          return LocaleKeys.ThisFieldIsRequired.tr() ;
         }
         return null;
       },

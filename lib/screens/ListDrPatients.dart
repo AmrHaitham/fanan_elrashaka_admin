@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/networks/Patients.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
@@ -22,13 +23,16 @@ class _ListDrPatientsState extends State<ListDrPatients> {
   @override
   Widget build(BuildContext context) {
     return ScreenContainer(
-        name: "Doctor Patients",
+      onRefresh: (){
+        setState(() {});
+      },
+        name: "DoctorPatients".tr(),
         topRightaction: InkWell(
           onTap: (){
             _bottomSheetWidget.showBottomSheetButtons(
                 context,
                 180.0,
-                const Text("Add New Patient",style: TextStyle(
+                 Text("AddNewPatient".tr(),style: TextStyle(
                   color: Colors.black,
                   fontSize: 20,
                   fontWeight: FontWeight.bold
@@ -44,9 +48,9 @@ class _ListDrPatientsState extends State<ListDrPatients> {
                     leading: SizedBox(
                       height: 20,
                       width: 20,
-                      child: Image.asset("assets/add_patient.png"),
+                      child: Image.asset("assets/add_new_patient.png"),
                     ),
-                    title:Text("New Patient",style: TextStyle(
+                    title:Text("NewPatient".tr(),style: TextStyle(
                       color: Constants.secondTextColor,
                         fontSize: 17,
                         fontWeight: FontWeight.normal
@@ -63,9 +67,9 @@ class _ListDrPatientsState extends State<ListDrPatients> {
                     leading: SizedBox(
                       height: 20,
                       width: 20,
-                      child: Image.asset("assets/add_patient.png"),
+                      child: Image.asset("assets/add_existing_patinet.png"),
                     ),
-                    title:Text("Existing Patient",style: TextStyle(
+                    title:Text("ExistingPatient".tr(),style: TextStyle(
                         color: Constants.secondTextColor,
                         fontSize: 17,
                         fontWeight: FontWeight.normal

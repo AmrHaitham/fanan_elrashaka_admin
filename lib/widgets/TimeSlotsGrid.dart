@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/Bookings.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/DefaultButton.dart';
 import 'package:fanan_elrashaka_admin/widgets/TimeSlotItem.dart';
 import 'package:flutter/material.dart';
@@ -44,11 +46,11 @@ class _TimeSlotsGridState extends State<TimeSlotsGrid> {
           ),
           const SizedBox(height: 20,),
           DefaultButton(
-            text: "Reschedule",
+            text: "RescheduleBooking".tr(),
             press: ()async{
               print("selected time is :- ${widget.keys[selectedIndex!]} : ${widget.values[selectedIndex!]}");
               print("for id : ${widget.id}");
-              EasyLoading.show(status: "Reschedule Book");
+              EasyLoading.show(status: "RescheduleBooking".tr());
               try{
                 var response =await _bookings.rescheduleBook(
                   context.read<UserData>().token,
@@ -56,10 +58,10 @@ class _TimeSlotsGridState extends State<TimeSlotsGrid> {
                   widget.keys[selectedIndex!]
                 );
                 if (await response.statusCode == 200) {
-                  _dialogs.doneDialog(context,"You_are_successfully_update_Book_time","ok",(){});
+                  _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){});
                 }else{
                   print(await response.stream.bytesToString());
-                  _dialogs.errorDialog(context,"Error_while_updating_Book_time_data_check_your_interne_connection");
+                  _dialogs.errorDialog(context,LocaleKeys.Error__please_check_your_internet_connection.tr());
                 }
                 EasyLoading.dismiss();
                 setState(() {});
@@ -67,7 +69,7 @@ class _TimeSlotsGridState extends State<TimeSlotsGrid> {
                 EasyLoading.dismiss();
                 setState(() {});
               }finally{
-                EasyLoading.showSuccess("Done Rescheduling Book");
+                EasyLoading.showSuccess("DoneReschedulingBook".tr());
                 Navigator.pop(context);
               }
             },

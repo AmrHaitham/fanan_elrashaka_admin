@@ -33,39 +33,52 @@ class UserProfile{
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
-    return jsonDecode(await response.stream.bytesToString());
+    return response;
   }
 
-  updateUserProfile(email,token,name,lastname,phone,birthday,gender,address)async{
+  updateUserProfile(email,token,name,phone)async{
     var headers = {
       'authorization': 'Token ${token}'
     };
     var request = http.MultipartRequest('PUT', Uri.parse('${Apis.userProfileEndPoint}${email}/'));
     request.fields.addAll({
       'email': email,
-      'first_name': name,
-      'last_name': lastname,
+      'name': name,
       'phone': phone,
-      'birthday': birthday,
-      'gender': gender,
-      'address': address,
     });
 
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
-    return jsonDecode(await response.stream.bytesToString());
+    return response;
   }
 
+  updateUserProfileImage(email,token,name,phone,image)async{
+    var headers = {
+      'authorization': 'Token ${token}'
+    };
+    var request = http.MultipartRequest('PUT', Uri.parse('${Apis.userProfileEndPoint}${email}/'));
+    request.fields.addAll({
+      'email': email,
+      'name': name,
+      'phone': phone,
+    });
 
-  deleteProfile(email,token)async{
+    request.headers.addAll(headers);
+    request.files.add(await http.MultipartFile.fromPath('image', image));
+    request.headers.addAll(headers);
+    http.StreamedResponse response = await request.send();
+    return response;
+  }
+
+  deleteProfile(token,email)async{
     var response =await http.delete(
         Uri.parse("${Apis.deleteEmailEndPoint}${email}/"),
         headers: {
           'authorization': 'Token ${token}'
         }
     );
-    return jsonDecode(utf8.decode(response.bodyBytes));
+    return response;
   }
 
 
