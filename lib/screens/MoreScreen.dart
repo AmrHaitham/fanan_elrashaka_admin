@@ -125,13 +125,15 @@ class MoreScreen extends StatelessWidget {
                             MaterialPageRoute(builder: (context) =>ListAllPromoCodes())
                         );
                       }),
+                  (context.read<UserData>().userType!="")
+                      ?(context.read<UserData>().userType=="Admin")?
                   MoreCard(title: "Financial".tr(),
                       image: "assets/financial.png",
                       onTap: (){
                         Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) => Finance(token: context.read<UserData>().token,))
                         );
-                      }),
+                      }):Container():Container(),
                   MoreCard(title: LocaleKeys.AllPatients.tr(),
                       image: "assets/patient.png",
                       onTap: (){
@@ -139,13 +141,15 @@ class MoreScreen extends StatelessWidget {
                             MaterialPageRoute(builder: (context) => ListAllPatients())
                         );
                       }),
+                  (context.read<UserData>().userType!="")
+                      ?(context.read<UserData>().userType=="Admin")?
                   MoreCard(title: LocaleKeys.Users.tr(),
                       image: "assets/users.png",
                       onTap: (){
                         Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) => ListAllUsers())
                         );
-                      }),
+                      }):Container():Container(),
               InkWell(
                 onTap: (){
                   AdminActions.logout(context);

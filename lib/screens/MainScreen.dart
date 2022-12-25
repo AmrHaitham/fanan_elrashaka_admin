@@ -29,7 +29,6 @@ class _MainScreenState extends State<MainScreen> {
     const BookingsScreen(),
     MoreScreen()
   ];
-
   void _selectScreen(int index) {
     setState(() {
       _selectedScreenIndex = index;
@@ -58,10 +57,21 @@ class _MainScreenState extends State<MainScreen> {
             onTap: _selectScreen,
             selectedItemColor: Constants.secondColor,
             unselectedItemColor: Constants.secondTextColor,
-            items: [
+            items: (context.read<UserData>().userType!="")
+                ?(context.read<UserData>().userType=="Admin")?[
               BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/dashboard.png",color:(_selectedScreenIndex==0)?Constants.secondColor:Colors.black,)), label: "Dashboard".tr()),
               BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/patient.png",color:(_selectedScreenIndex==1)?Constants.secondColor:Colors.black,)), label: "Patients".tr()),
               BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/bookings.png",color:(_selectedScreenIndex==2)?Constants.secondColor:Colors.black,)), label: "Bookings".tr()),
+              BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/more.png",color:(_selectedScreenIndex==3)?Constants.secondColor:Colors.black,)), label: "More".tr())
+            ]
+                :[
+              BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/dashboard.png",color:(_selectedScreenIndex==0)?Constants.secondColor:Colors.black,)), label: "Dashboard".tr()),
+              BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/patient.png",color:(_selectedScreenIndex==1)?Constants.secondColor:Colors.black,)), label: "Patients".tr()),
+              BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/more.png",color:(_selectedScreenIndex==3)?Constants.secondColor:Colors.black,)), label: "More".tr())
+            ]
+                :[
+              BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/dashboard.png",color:(_selectedScreenIndex==0)?Constants.secondColor:Colors.black,)), label: "Dashboard".tr()),
+              BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/patient.png",color:(_selectedScreenIndex==1)?Constants.secondColor:Colors.black,)), label: "Patients".tr()),
               BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/more.png",color:(_selectedScreenIndex==3)?Constants.secondColor:Colors.black,)), label: "More".tr())
             ],
           ),

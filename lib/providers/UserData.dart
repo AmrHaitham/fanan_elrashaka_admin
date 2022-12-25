@@ -45,4 +45,12 @@ class UserData with ChangeNotifier{
     notifyListeners();
   }
 
+  String _userType = "";
+
+  String get userType => _userType;
+
+  void setUserType(String userType){
+    _userType = userType;
+    notifyListeners();
+  }
 }

@@ -83,8 +83,10 @@ class _LandingPageState extends State<LandingPage> {
         }else{
           context.read<UserData>().setUserPhone(response['phone']);
           context.read<UserData>().setUserName(response['name']);
+          context.read<UserData>().setUserType(response['groups'][0]);
           print("name is :- ${context.read<UserData>().name}");
           print("phone is :- ${context.read<UserData>().phone}");
+          print("type is :- ${context.read<UserData>().userType}");
         }
       }else{
         _dialog.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
