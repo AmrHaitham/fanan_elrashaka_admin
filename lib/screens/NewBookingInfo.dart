@@ -83,6 +83,7 @@ class _NewBookingInfoState extends State<NewBookingInfo> {
 
   TextFormField buildNameFormField(initData) {
     return TextFormField(
+      readOnly: true,
       initialValue: initData,
       decoration: InputDecoration(
         border: OutlineInputBorder(
@@ -145,12 +146,20 @@ class _NewBookingInfoState extends State<NewBookingInfo> {
           'label':"CreditCard".tr(),
         },
         {
-          'value':"5",
+          'value':"2",
           'label':"Cash".tr(),
         },
         {
           'value':"4",
-          'label':"MobileWallet".tr(),
+          'label':"SmartWallet".tr(),
+        },
+        {
+          'value':"5",
+          'label':"PaidBefore".tr(),
+        },
+        {
+          'value':"6",
+          'label':"BankInstallment".tr(),
         }
       ],
       decoration: InputDecoration(

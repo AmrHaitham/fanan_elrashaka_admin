@@ -19,13 +19,19 @@ class StatisticsCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text(name,style: TextStyle(
-            color: Constants.mainColor,
-            fontSize: 13,
-              fontWeight: FontWeight.bold
-          ),),
           Padding(
-            padding: const EdgeInsets.only(left: 8.0),
+            padding: const EdgeInsets.only(left: 7.0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(name,style: TextStyle(
+                color: Constants.mainColor,
+                fontSize: 13,
+                  fontWeight: FontWeight.bold
+              ),),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 7.0),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(value,style: TextStyle(

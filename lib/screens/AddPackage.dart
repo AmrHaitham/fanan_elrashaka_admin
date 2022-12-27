@@ -72,6 +72,7 @@ class _AddPackageState extends State<AddPackage> {
                   _dialogs.doneDialog(context,"You_are_successfully_added_new_package".tr(),"Ok".tr(),(){
                     setState(() {
                       _formKey.currentState!.reset();
+                      imageLocation = null;
                     });
                   });
                 }else{
@@ -106,6 +107,7 @@ class _AddPackageState extends State<AddPackage> {
                 key: _formKey,
                 child: ListView(
                   children: [
+                    const SizedBox(height: 20),
                     buildName_enFormField(),
                     const SizedBox(height: 20),
                     buildName_arFormField(),

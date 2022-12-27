@@ -4,7 +4,8 @@ class SearchWithBack extends StatelessWidget {
   final onSubmitted;
   final onSearchClick;
   final onBack;
-  SearchWithBack({Key? key,required this.onSubmitted,required this.onSearchClick, this.onBack}) : super(key: key);
+  final controller;
+  SearchWithBack({Key? key,required this.onSubmitted,required this.onSearchClick, this.onBack, this.controller}) : super(key: key);
   final myController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,7 @@ class SearchWithBack extends StatelessWidget {
               width: MediaQuery.of(context).size.width*0.76,
               padding:const EdgeInsets.only(left: 10,right: 10),
               child: TextField(
-                controller: myController,
+                controller: controller??myController,
                 onSubmitted:(value){
                   onSubmitted(value);
                 },

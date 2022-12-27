@@ -157,28 +157,30 @@ class _AddPationtState extends State<AddPationt> {
               padding:EdgeInsets.only(right: 15,left: 15,),
               child: Form(
                   key: _formKey,
-                  child: ListView(
-                    children: [
-                      const SizedBox(height: 20),
-                      buildEmailFormField(),
-                      const SizedBox(height: 20),
-                      buildFirstNameFormField(),
-                      const SizedBox(height: 20),
-                      buildLastNameFormField(),
-                      const SizedBox(height: 20),
-                      buildPasswordFormField(),
-                      const SizedBox(height: 20),
-                      buildConformPassFormField(),
-                      const SizedBox(height: 20),
-                      buildPhoneNumberFormField(),
-                      const SizedBox(height: 20),
-                      buildGenderFormField(),
-                      const SizedBox(height: 20),
-                      buildBirthdayFormField(),
-                      const SizedBox(height: 20),
-                      buildAddressFormField(),
-                      const SizedBox(height: 20),
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        buildEmailFormField(),
+                        const SizedBox(height: 20),
+                        buildFirstNameFormField(),
+                        const SizedBox(height: 20),
+                        buildLastNameFormField(),
+                        const SizedBox(height: 20),
+                        buildPasswordFormField(),
+                        const SizedBox(height: 20),
+                        buildConformPassFormField(),
+                        const SizedBox(height: 20),
+                        buildPhoneNumberFormField(),
+                        const SizedBox(height: 20),
+                        buildGenderFormField(),
+                        const SizedBox(height: 20),
+                        buildBirthdayFormField(),
+                        const SizedBox(height: 20),
+                        buildAddressFormField(),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                 ),
             ),
@@ -239,7 +241,7 @@ class _AddPationtState extends State<AddPationt> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "${"Name".tr()}*",
+        labelText: "${"FirstName".tr()}*",
         // hintText: "Enter_your_name",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
@@ -316,7 +318,7 @@ class _AddPationtState extends State<AddPationt> {
             borderRadius:
             BorderRadius.circular(5.0),
           ),
-          labelText:"${"Birthday".tr()}*",
+          labelText:"Birthday".tr(),
           floatingLabelBehavior:
           FloatingLabelBehavior.auto,
         ),
@@ -406,7 +408,7 @@ class _AddPationtState extends State<AddPationt> {
         },
         {
           'value': 'F',
-          'label': "Female".tr(),
+          'label': "Female".tr().split("*")[0],
         },
       ],
       decoration: InputDecoration(

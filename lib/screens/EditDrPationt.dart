@@ -7,6 +7,7 @@ import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/Patients.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
 import 'package:fanan_elrashaka_admin/screens/EditPationt.dart';
+import 'package:fanan_elrashaka_admin/screens/MainScreen.dart';
 import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/DefaultButton.dart';
@@ -153,87 +154,92 @@ class _EditDrPationtState extends State<EditDrPationt> {
                       padding:EdgeInsets.only(right: 15,left: 15),
                       child: Form(
                         key: _formKey,
-                        child: ListView(
-                          children: [
-                            const SizedBox(height: 20),
-                            buildFirstNameFormField(snapshot.data['name']),
-                            const SizedBox(height: 20),
-                            buildPhoneNumberFormField(snapshot.data['phone']),
-                            const SizedBox(height: 20),
-                            buildHeightFormField(snapshot.data['height']??""),
-                            const SizedBox(height: 20),
-                            buildTargetWeightFormField(snapshot.data['target_weight']??""),
-                            const SizedBox(height: 20),
-                            buildNotesFormField(snapshot.data['note']),
-                            const SizedBox(height: 20),
-                            const Divider(height: 5,color: Colors.black,thickness: 0.1,),
-                            const SizedBox(height: 10),
-                            if(snapshot.data["patient_id"]!= null)
-                            TextField(
-                              decoration: InputDecoration(
-                                suffixIcon: Container(
-                                  width: 10,
-                                  height: 10,
-                                  child:
-                                  Icon(Icons.arrow_forward_ios),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 20),
+                              buildFirstNameFormField(snapshot.data['name']),
+                              const SizedBox(height: 20),
+                              buildPhoneNumberFormField(snapshot.data['phone']),
+                              const SizedBox(height: 20),
+                              buildHeightFormField(snapshot.data['height']??""),
+                              const SizedBox(height: 20),
+                              buildTargetWeightFormField(snapshot.data['target_weight']??""),
+                              const SizedBox(height: 20),
+                              buildNotesFormField(snapshot.data['note']),
+                              const SizedBox(height: 20),
+                              const Divider(height: 5,color: Colors.black,thickness: 0.1,),
+                              const SizedBox(height: 10),
+                              if(snapshot.data["patient_id"]!= null)
+                              TextField(
+                                decoration: InputDecoration(
+                                  suffixIcon: Container(
+                                    width: 10,
+                                    height: 10,
+                                    child:
+                                    Icon(Icons.arrow_forward_ios),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(5.0),
+                                  ),
+                                  hintText: "EditPatientData".tr(),
+                                  floatingLabelBehavior:
+                                  FloatingLabelBehavior.auto,
                                 ),
-                                border: OutlineInputBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(5.0),
-                                ),
-                                hintText: "EditPatientData".tr(),
-                                floatingLabelBehavior:
-                                FloatingLabelBehavior.auto,
-                              ),
-                              readOnly: true,
-                              onTap: (){
-                                Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (context) => EditPationt(id: snapshot.data["patient_id"].toString(),refreshOnBack: false,))
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 10),
-                            Card(
-                              color:const Color(0xffff5d63),
-                              child: ListTile(
-                                leading: SizedBox(
-                                  width: 25,
-                                  height: 25,
-                                  child: Image.asset("assets/delete.png"),
-                                ),
-                                title: Text("DeletePatientData".tr(),style: TextStyle(
-                                    color: Constants.mainColor,
-                                    fontWeight: FontWeight.bold
-                                ),),
-                                trailing: SizedBox(
-                                  width: 10,
-                                  height: 10,
-                                  child: Image.asset("assets/right-arrow_gray.png",color: Colors.white,),
-                                ),
+                                readOnly: true,
                                 onTap: (){
-                                  AwesomeDialog(
-                                      context: context,
-                                      animType: AnimType.SCALE,
-                                      dialogType: DialogType.WARNING,
-                                      body: Center(child: Text(
-                                        "AreYouSureYouWantToDeleteThisPatient".tr(),
-                                      ),),
-                                      btnOkOnPress: () async{
-                                        var response = await _patients.deleteDrPatient(context.read<UserData>().token, snapshot.data['pid'].toString());
-                                        if (await response.statusCode == 200) {
-                                          print(await response.stream.bytesToString());
-                                          Navigator.pop(context);
-                                          Navigator.pop(context);
-                                        }
-                                      },
-                                      btnCancelOnPress: (){},
-                                      btnCancelText:"Cancel".tr(),
-                                      btnOkText:"Delete".tr()
-                                  ).show();
+                                  Navigator.of(context).push(
+                                      MaterialPageRoute(builder: (context) => EditPationt(id: snapshot.data["patient_id"].toString(),refreshOnBack: false,))
+                                  );
                                 },
                               ),
-                            )
-                          ],
+                              const SizedBox(height: 10),
+                              Card(
+                                color:const Color(0xffff5d63),
+                                child: ListTile(
+                                  leading: SizedBox(
+                                    width: 25,
+                                    height: 25,
+                                    child: Image.asset("assets/delete.png"),
+                                  ),
+                                  title: Text("DeletePatientData".tr(),style: TextStyle(
+                                      color: Constants.mainColor,
+                                      fontWeight: FontWeight.bold
+                                  ),),
+                                  trailing: SizedBox(
+                                    width: 10,
+                                    height: 10,
+                                    child: Image.asset("assets/right-arrow_gray.png",color: Colors.white,),
+                                  ),
+                                  onTap: (){
+                                    AwesomeDialog(
+                                        context: context,
+                                        animType: AnimType.SCALE,
+                                        dialogType: DialogType.WARNING,
+                                        body: Center(child: Text(
+                                          "AreYouSureYouWantToDeleteThisPatient".tr(),
+                                        ),),
+                                        btnOkOnPress: () async{
+                                          var response = await _patients.deleteDrPatient(context.read<UserData>().token, snapshot.data['pid'].toString());
+                                          if (await response.statusCode == 200) {
+                                            print(await response.stream.bytesToString());
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                            Navigator.of(context).pushReplacement(
+                                                MaterialPageRoute(builder: (context) => MainScreen(selectedIndex: 1,))
+                                            );
+                                          }
+                                        },
+                                        btnCancelOnPress: (){},
+                                        btnCancelText:"Cancel".tr(),
+                                        btnOkText:"Delete".tr()
+                                    ).show();
+                                  },
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),

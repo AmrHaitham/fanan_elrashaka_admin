@@ -17,12 +17,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../helper/Dialogs.dart';
 class MainScreen extends StatefulWidget {
+  final int selectedIndex ;
+
+  const MainScreen({Key? key, this.selectedIndex =0}) : super(key: key);
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedScreenIndex = 0;
+  int _selectedScreenIndex  = 0;
   final List _screens = [
     DashBoard(),
     ListDrPatients(),
@@ -40,6 +43,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _selectedScreenIndex =widget.selectedIndex;
   }
 
   @override

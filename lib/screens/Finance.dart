@@ -114,6 +114,15 @@ class _FinanceState extends State<Finance> {
           print(v);
           EasyLoading.showError("ErrorWhileDownloadingFile".tr());
         }finally{
+          setState(() {
+            services = null;
+            clinics = null;
+            services = null;
+            _selectedClinicServices.clear();
+            _selectedCategories.clear();
+            _selectedClinics.clear();
+          });
+          Navigator.pop(context);
           Navigator.pop(context);
           EasyLoading.dismiss();
         }
@@ -226,12 +235,13 @@ class _FinanceState extends State<Finance> {
                                         text: "GetReport".tr(),
                                         press: ()async{
                                           await downloadReport(_reports.getFinance_full_report(widget.token, fromDate, toDate, clinics));
+
                                         },
                                       )
                                     ]
                                   );
                                 },
-                                  child: Text("FullFinancialReport".tr()
+                                  child: Text(LocaleKeys.FullFinancialReport.tr()
                                   ,style: TextStyle(
                                       color: Constants.secondTextColor,
                                       fontSize: 17,
@@ -239,7 +249,9 @@ class _FinanceState extends State<Finance> {
                                   ),)
                             ),
                           ),
+                          const SizedBox(height: 5,),
                           const Divider(thickness: 0.6,indent: 10,endIndent: 10,),
+                          const SizedBox(height: 5,),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: InkWell(
@@ -278,7 +290,9 @@ class _FinanceState extends State<Finance> {
                                   ),)
                             ),
                           ),
+                          const SizedBox(height: 5,),
                           const Divider(thickness: 0.6,indent: 10,endIndent: 10,),
+                          const SizedBox(height: 5,),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: InkWell(
@@ -636,18 +650,18 @@ class _FinanceState extends State<Finance> {
         textStyle:const TextStyle(
             color: Color(0xfff8755ea)
         ),
-        icon:const Icon(Icons.cancel_outlined,color: Color(0xfff8755ea),),
-        onTap: (value) {
-          setState(() {
-            _selectedCategories.remove(value);
-            String holder = "";
-            _selectedCategories.forEach((element) {
-              holder +=  element.id;
-            });
-            categories = holder.split("").join(",");
-            print(categories);
-          });
-        },
+        // icon:const Icon(Icons.cancel_outlined,color: Color(0xfff8755ea),),
+        // onTap: (value) {
+        //   setState(() {
+        //     _selectedCategories.remove(value);
+        //     String holder = "";
+        //     _selectedCategories.forEach((element) {
+        //       holder +=  element.id;
+        //     });
+        //     categories = holder.split("").join(",");
+        //     print(categories);
+        //   });
+        // },
       ),
     );
   }
@@ -688,18 +702,18 @@ class _FinanceState extends State<Finance> {
         textStyle:const TextStyle(
             color: Color(0xfff8755ea)
         ),
-        icon:const Icon(Icons.cancel_outlined,color: Color(0xfff8755ea),),
-        onTap: (value) {
-          setState(() {
-            _selectedClinics.remove(value);
-            String holder = "";
-            _selectedClinics.forEach((element) {
-              holder +=  element.id;
-            });
-            clinics = holder.split("").join(",");
-            print(clinics);
-          });
-        },
+        // icon:const Icon(Icons.cancel_outlined,color: Color(0xfff8755ea),),
+        // onTap: (value) {
+        //   setState(() {
+        //     _selectedClinics.remove(value);
+        //     String holder = "";
+        //     _selectedClinics.forEach((element) {
+        //       holder +=  element.id;
+        //     });
+        //     clinics = holder.split("").join(",");
+        //     print(clinics);
+        //   });
+        // },
       ),
     );
   }

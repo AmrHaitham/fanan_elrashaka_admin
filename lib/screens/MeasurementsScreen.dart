@@ -115,7 +115,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: ExpansionTileCard(
-                                baseColor:const Color(0xffffefff),
+                                baseColor:Colors.white,
                                 leading: (snapshot.data[index]['image']==null)
                                     ?  SizedBox(
                                       width: 50,
@@ -142,7 +142,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
                                       children: [
-                                        Text("${"Weight".tr()}:   ",style: TextStyle(color: Constants.secondColor),),
+                                        Text("${"Weight"}:         ",style: TextStyle(color: Constants.secondColor),),
                                         (snapshot.data[index]['weight'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['weight'].toString().split('.')[0]} kg",style:const TextStyle(fontWeight: FontWeight.bold),)
                                       ],
                                     ),
@@ -151,7 +151,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
                                       children: [
-                                        Text("Arms:   ",style: TextStyle(color: Constants.secondColor),),
+                                        Text("Arms:             ",style: TextStyle(color: Constants.secondColor),),
                                         (snapshot.data[index]['arms'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['arms'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
                                       ],
                                     ),
@@ -160,7 +160,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
                                       children: [
-                                        Text("Chest:   ",style: TextStyle(color: Constants.secondColor),),
+                                        Text("Chest:            ",style: TextStyle(color: Constants.secondColor),),
                                         (snapshot.data[index]['chest'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['chest'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
                                       ],
                                     ),
@@ -169,7 +169,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
                                       children: [
-                                        Text("Waist:   ",style: TextStyle(color: Constants.secondColor),),
+                                        Text("Waist:            ",style: TextStyle(color: Constants.secondColor),),
                                         (snapshot.data[index]['waist'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['waist'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
                                       ],
                                     ),
@@ -178,7 +178,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
                                       children: [
-                                        Text("High Hip:   ",style: TextStyle(color: Constants.secondColor),),
+                                        Text("High Hip:       ",style: TextStyle(color: Constants.secondColor),),
                                         (snapshot.data[index]['high_hip'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['high_hip'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
                                       ],
                                     ),
@@ -187,7 +187,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
                                       children: [
-                                        Text("Calves:   ",style: TextStyle(color: Constants.secondColor),),
+                                        Text("Calves:           ",style: TextStyle(color: Constants.secondColor),),
                                         (snapshot.data[index]['calves'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['calves'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
                                       ],
                                     ),
@@ -196,7 +196,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
                                       children: [
-                                        Text("Thigh:   ",style: TextStyle(color: Constants.secondColor),),
+                                        Text("Thigh:             ",style: TextStyle(color: Constants.secondColor),),
                                         (snapshot.data[index]['thigh'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['thigh'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
                                       ],
                                     ),
@@ -205,7 +205,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
                                       children: [
-                                        Text("BMI:   ",style: TextStyle(color: Constants.secondColor),),
+                                        Text("BMI:                ",style: TextStyle(color: Constants.secondColor),),
                                         (snapshot.data[index]['bmi'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['bmi'].toString().split('.')[0]}",style:const TextStyle(fontWeight: FontWeight.bold),)
                                       ],
                                     ),
@@ -215,7 +215,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text("${"Notes".tr()}:   ",style: TextStyle(color: Constants.secondColor),),
+                                        Text("${"Notes"}:             ",style: TextStyle(color: Constants.secondColor),),
                                         (snapshot.data[index]['note'].toString() == "null")?Text("---"):
                                         Expanded(
                                             child: Text("${snapshot.data[index]['note'].toString().split('.')[0]}",

@@ -50,7 +50,7 @@ class UserCard extends StatelessWidget {
         ),
       ),
       subtitle: Text(
-        "${(isDrPatient)?snapshot.data[index]['pid']:snapshot.data[index]['id']}  |  ${(snapshot.data[index]['phone']==null)?"":"${!isDrPatient?snapshot.data[index]['phone_country_code']:""}${snapshot.data[index]['phone']}"+","} ${(snapshot.data[index]['gender']=="M")?"Male":"Female"}",
+        "${(isDrPatient)?snapshot.data[index]['pid']:snapshot.data[index]['id']}  |  ${(snapshot.data[index]['phone']=="NoneNone")?"":"${!isDrPatient?(snapshot.data[index]['phone_country_code']==null)?"":snapshot.data[index]['phone_country_code']:""}${(snapshot.data[index]['phone']==null)?"":snapshot.data[index]['phone']}"+","} ${(snapshot.data[index]['gender']=="M")?"Male":"Female"}",
         style:const TextStyle(
             fontWeight: FontWeight.bold
         ),

@@ -101,7 +101,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
                               fromDate,
                               toDate,
                               clinic,
-                              max_number,
+                              max_number??"-1",
                               fee_after_code
                           );
                           if (await responseData.statusCode == 200) {
@@ -147,7 +147,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
                               const SizedBox(height: 20,),
                               buildFeeAfterCodeFormField(snapshot.data['fee_after_code']),
                               const SizedBox(height: 20),
-                              const Divider(height: 5,color: Colors.black,thickness: 0.8,),
+                              const Divider(height: 5,color: Colors.grey,thickness: 0.8,),
                               const SizedBox(height: 10),
                               Card(
                                 color:const Color(0xffff5d63),
@@ -261,12 +261,12 @@ class _EditPromoCodeState extends State<EditPromoCode> {
         }
         return null;
       },
-      validator: (value) {
-        if (value=="") {
-          return LocaleKeys.ThisFieldIsRequired.tr();
-        }
-        return null;
-      },
+      // validator: (value) {
+      //   if (value=="") {
+      //     return LocaleKeys.ThisFieldIsRequired.tr();
+      //   }
+      //   return null;
+      // },
     );
   }
   SelectFormField buildSelect(initData){

@@ -1,9 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/screens/AddDrPationt.dart';
 import 'package:fanan_elrashaka_admin/screens/AddPationt.dart';
 import 'package:fanan_elrashaka_admin/screens/LandingPage.dart';
 import 'package:fanan_elrashaka_admin/screens/SelectDoctorPatient.dart';
+import 'package:fanan_elrashaka_admin/screens/SelectPatient.dart';
 import 'package:fanan_elrashaka_admin/widgets/ActoinButton.dart';
 import 'package:fanan_elrashaka_admin/widgets/BottomSheet.dart';
 import 'package:fanan_elrashaka_admin/widgets/Loading.dart';
@@ -79,8 +81,53 @@ class DashBoard extends StatelessWidget {
                               text: "AddPatient".tr(),
                               image: "assets/quick_add_patient.png",
                               onClick: (){
-                                Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (context) => AddPationt(backToList: false,))
+                                _bottomSheetWidget.showBottomSheetButtons(
+                                    context,
+                                    180.0,
+                                    Text("AddNewPatient".tr(),style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold
+                                    ),),
+                                    [
+                                      ListTile(
+                                        onTap: (){
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(builder: (context) =>AddDrPationt())
+                                          );
+                                        },
+                                        dense: true,
+                                        leading: SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: Image.asset("assets/add_new_patient.png"),
+                                        ),
+                                        title:Text("NewPatient".tr(),style: TextStyle(
+                                            color: Constants.secondTextColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16
+                                        ),),
+                                      ),
+                                      const Divider(thickness: 0.6,indent: 10,endIndent: 10,),
+                                      ListTile(
+                                        onTap: (){
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(builder: (context) =>SelectPatient())
+                                          );
+                                        },
+                                        dense: true,
+                                        leading: SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: Image.asset("assets/add_existing_patinet.png"),
+                                        ),
+                                        title:Text("ExistingPatient".tr(),style: TextStyle(
+                                            color: Constants.secondTextColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16
+                                        ),),
+                                      ),
+                                    ]
                                 );
                               }
                           ),

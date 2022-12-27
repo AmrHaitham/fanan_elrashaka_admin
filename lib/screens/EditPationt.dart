@@ -189,73 +189,75 @@ class _EditPationtState extends State<EditPationt> {
                         padding:EdgeInsets.only(right: 15,left: 15),
                         child: Form(
                           key: _formKey,
-                          child: ListView(
-                            children: [
-                              const SizedBox(height: 20),
-                              buildEmailFormField(snapshot.data['email']),
-                              const SizedBox(height: 20),
-                              buildFirstNameFormField(snapshot.data['first_name']),
-                              const SizedBox(height: 20),
-                              buildLastNameFormField(snapshot.data['last_name']),
-                              const SizedBox(height: 20),
-                              buildPhoneNumberFormField(snapshot.data['phone'],getCountryCode(snapshot.data['phone_country_code'].toString())),
-                              const SizedBox(height: 20),
-                              buildGenderFormField(snapshot.data['gender']),
-                              const SizedBox(height: 20),
-                              buildBirthdayFormField(snapshot.data['birthday']),
-                              const SizedBox(height: 20),
-                              buildAddressFormField(snapshot.data['address']),
-                              const SizedBox(height: 20),
-                              const Divider(height: 5,color: Colors.black,thickness: 0.8,),
-                              const SizedBox(height: 20),
-                              changePassword(context,snapshot.data['email']),
-                              const SizedBox(height: 20),
-                              Card(
-                                color:const Color(0xffff5d63),
-                                child: ListTile(
-                                  leading: SizedBox(
-                                    width: 25,
-                                    height: 25,
-                                    child: Image.asset("assets/delete.png"),
-                                  ),
-                                  title: Text("DeleteAccount".tr(),style: TextStyle(
-                                      color: Constants.mainColor,
-                                      fontWeight: FontWeight.bold
-                                  ),),
-                                  trailing: Transform.scale(
-                                    scaleX: (context.locale.toString()=="en")?1:-1,
-                                    child: SizedBox(
-                                      width: 10,
-                                      height: 10,
-                                      child: Image.asset("assets/right-arrow_gray.png",color: Colors.white,),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 20),
+                                buildEmailFormField(snapshot.data['email']),
+                                const SizedBox(height: 20),
+                                buildFirstNameFormField(snapshot.data['first_name']),
+                                const SizedBox(height: 20),
+                                buildLastNameFormField(snapshot.data['last_name']),
+                                const SizedBox(height: 20),
+                                buildPhoneNumberFormField(snapshot.data['phone'],getCountryCode(snapshot.data['phone_country_code'].toString())),
+                                const SizedBox(height: 20),
+                                buildGenderFormField(snapshot.data['gender']),
+                                const SizedBox(height: 20),
+                                buildBirthdayFormField(snapshot.data['birthday']),
+                                const SizedBox(height: 20),
+                                buildAddressFormField(snapshot.data['address']),
+                                const SizedBox(height: 20),
+                                const Divider(height: 5,color: Colors.grey,thickness: 0.8,),
+                                const SizedBox(height: 20),
+                                changePassword(context,snapshot.data['email']),
+                                const SizedBox(height: 20),
+                                Card(
+                                  color:const Color(0xffff5d63),
+                                  child: ListTile(
+                                    leading: SizedBox(
+                                      width: 25,
+                                      height: 25,
+                                      child: Image.asset("assets/delete.png"),
                                     ),
+                                    title: Text("DeleteAccount".tr(),style: TextStyle(
+                                        color: Constants.mainColor,
+                                        fontWeight: FontWeight.bold
+                                    ),),
+                                    trailing: Transform.scale(
+                                      scaleX: (context.locale.toString()=="en")?1:-1,
+                                      child: SizedBox(
+                                        width: 10,
+                                        height: 10,
+                                        child: Image.asset("assets/right-arrow_gray.png",color: Colors.white,),
+                                      ),
+                                    ),
+                                    onTap: (){
+                                      AwesomeDialog(
+                                          context: context,
+                                          animType: AnimType.SCALE,
+                                          dialogType: DialogType.WARNING,
+                                          body: Center(child: Text(
+                                            "DeleteAccount".tr(),
+                                          ),),
+                                          btnOkOnPress: () async{
+                                            var response = await _patients.deletePatient(context.read<UserData>().token, snapshot.data['email']);
+                                            if (await response.statusCode == 200) {
+                                              print(await response.stream.bytesToString());
+                                              Navigator.pop(context);
+                                              Navigator.of(context).pushReplacement(
+                                                  MaterialPageRoute(builder: (context) =>ListAllPatients())
+                                              );
+                                            }
+                                          },
+                                          btnCancelOnPress: (){},
+                                          btnCancelText:"Cancel".tr(),
+                                          btnOkText:"Delete".tr()
+                                      ).show();
+                                    },
                                   ),
-                                  onTap: (){
-                                    AwesomeDialog(
-                                        context: context,
-                                        animType: AnimType.SCALE,
-                                        dialogType: DialogType.WARNING,
-                                        body: Center(child: Text(
-                                          "DeleteAccount".tr(),
-                                        ),),
-                                        btnOkOnPress: () async{
-                                          var response = await _patients.deletePatient(context.read<UserData>().token, snapshot.data['email']);
-                                          if (await response.statusCode == 200) {
-                                            print(await response.stream.bytesToString());
-                                            Navigator.pop(context);
-                                            Navigator.of(context).pushReplacement(
-                                                MaterialPageRoute(builder: (context) =>ListAllPatients())
-                                            );
-                                          }
-                                        },
-                                        btnCancelOnPress: (){},
-                                        btnCancelText:"Cancel".tr(),
-                                        btnOkText:"Delete".tr()
-                                    ).show();
-                                  },
-                                ),
-                              )
-                            ],
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -379,17 +381,17 @@ class _EditPationtState extends State<EditPationt> {
         }
         return null;
       },
-      validator: (value) {
-        if (value!.isEmpty) {
-          return LocaleKeys.ThisFieldIsRequired.tr();
-        }
-        return null;
-      },
+      // validator: (value) {
+      //   if (value!.isEmpty) {
+      //     return LocaleKeys.ThisFieldIsRequired.tr();
+      //   }
+      //   return null;
+      // },
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "${"Address".tr()}*",
+        labelText: "${"Address".tr()}",
         alignLabelWithHint: true,
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
@@ -501,7 +503,7 @@ class _EditPationtState extends State<EditPationt> {
         },
         {
           'value': 'F',
-          'label': "Female".tr(),
+          'label': "Female".tr().split("*")[0],
         },
       ],
       decoration: InputDecoration(

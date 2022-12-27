@@ -18,6 +18,7 @@ class ListAllPromoCodes extends StatefulWidget {
 class _ListAllPromoCodesState extends State<ListAllPromoCodes> {
   final PromoCodes _promoCodes = PromoCodes();
   String _searchValue = "";
+  final TextEditingController search = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return ScreenContainer(
@@ -45,6 +46,7 @@ class _ListAllPromoCodesState extends State<ListAllPromoCodes> {
       ),
       topLeftAction: BackIcon(),
       topCenterAction: SearchList(
+        control: search,
         onSubmitted: (value){
           setState(() {
             _searchValue = value;

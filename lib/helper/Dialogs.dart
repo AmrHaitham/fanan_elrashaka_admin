@@ -16,7 +16,8 @@ class Dialogs{
       animType: AnimType.SCALE,
       dialogType: DialogType.ERROR,
       body: Center(child: Text(text,),),
-      btnOkOnPress: btnCancelOnPress(),
+      btnCancelOnPress: btnCancelOnPress,
+      btnCancelText: "Retry"
     )..show();
   }
   warningDialog(context,String text,action,String okText){

@@ -18,6 +18,7 @@ class ListAllUsers extends StatefulWidget {
 class _ListAllUsersState extends State<ListAllUsers> {
   final Users _users = Users();
   String _searchValue = "";
+  final TextEditingController search = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return ScreenContainer(
@@ -45,6 +46,7 @@ class _ListAllUsersState extends State<ListAllUsers> {
         ),
       ),
       topCenterAction: SearchList(
+        control: search,
         onSubmitted: (value){
           setState(() {
             _searchValue = value;

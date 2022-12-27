@@ -1,5 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:fanan_elrashaka_admin/networks/NewBookingInfo.dart';
+import 'package:fanan_elrashaka_admin/screens/NewBookingInfo.dart';
 import 'package:fanan_elrashaka_admin/networks/Patients.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
 import 'package:fanan_elrashaka_admin/screens/NewBooking.dart';
@@ -22,12 +22,14 @@ class SelectDrPatient extends StatefulWidget {
 class _SelectDrPatientState extends State<SelectDrPatient> {
   final Patients _patients = Patients();
   String _searchValue = "";
+  final TextEditingController search = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return ScreenContainer(
       name: "SelectDoctorPatient".tr(),
       topLeftAction: BackIcon(),
       topCenterAction: SearchList(
+        control: search,
         onSubmitted: (value){
           setState(() {
             _searchValue = value;

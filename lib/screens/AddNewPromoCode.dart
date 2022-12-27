@@ -87,10 +87,11 @@ class _AddPromoState extends State<AddPromo> {
                   fromDate,
                   toDate,
                   clinic,
-                  max_number,
+                  max_number??"-1",
                   fee_after_code
                 );
                 if (await responseData.statusCode == 200) {
+                  print(await responseData.stream.bytesToString());
                   _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){
                     setState(() {
                       _formKey.currentState!.reset();
@@ -101,7 +102,11 @@ class _AddPromoState extends State<AddPromo> {
                 }else{
                   var response = jsonDecode(await responseData.stream.bytesToString());
                   print(response);
-                  _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                  if(await response["error"]=="714"){
+                    _dialogs.errorDialog(context, "PromoCodeAlreadyExists".tr());
+                  }else{
+                    _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                  }
                 }
                 EasyLoading.dismiss();
               }
@@ -188,12 +193,12 @@ class _AddPromoState extends State<AddPromo> {
         }
         return null;
       },
-      validator: (value) {
-        if (value=="") {
-          return LocaleKeys.ThisFieldIsRequired.tr();
-        }
-        return null;
-      },
+      // validator: (value) {
+      //   if (value=="") {
+      //     return LocaleKeys.ThisFieldIsRequired.tr();
+      //   }
+      //   return null;
+      // },
     );
   }
   SelectFormField buildSelect(){

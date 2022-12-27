@@ -133,7 +133,7 @@ class CodegenLoader extends AssetLoader{
   "FirstName": "الأسم الاول",
   "LastName": "الأسم الأخير",
   "Address": "العنوان",
-  "Birthday": "تاريخ الميلاد",
+  "Birthday": "تاريخ الميلاد*",
   "wrong_date": "تاريخ خاطئ",
   "Male": "ذكر",
   "Gender": "الجنس*",
@@ -178,7 +178,7 @@ class CodegenLoader extends AssetLoader{
   "ChangePaidStatus": "تغيير حالة الدفع",
   "CancelBook": "إلغاء الحجز",
   "AppointmentTime": "وقت الموعد",
-  "NewPayment": "دفعة جديدة",
+  "NewPayment": "الدفع",
   "DoneReschedulingBook": "تم إعادة جدولة الحجز",
   "Done": "تم",
   "Paid": "مدفوع",
@@ -262,7 +262,14 @@ class CodegenLoader extends AssetLoader{
   "BookClinic": "حجز عياده",
   "You_are_successfully_Book": "تم حجز العياده",
   "GetTime": "احصل على وقت",
-  "BookingTime": "وقت الحجز"
+  "BookingTime": "وقت الحجز",
+  "PromoCodeAlreadyExists": "الكوبون موجود بالفعل",
+  "CancelPayInCash": "الغاء الدفع نقدا",
+  "Phone": "الهاتف",
+  "SelectDay": "اختر اليوم",
+  "SmartWallet": "المحفظه الذكيه",
+  "PaidBefore": "تم الدفع مسبقاً",
+  "BankInstallment": "التقسيط البنكي"
 };
 static const Map<String,dynamic> en = {
   "Login": "Login",
@@ -329,7 +336,7 @@ static const Map<String,dynamic> en = {
   "Quantity": "Quantity",
   "PackageAmount": "Package Amount*",
   "Order": "Order*",
-  "AddPackage": "AddPackage",
+  "AddPackage": "Add Package",
   "You_are_successfully_edit_this_package": "You Are Successfully Edit This Package",
   "Profile": "Profile",
   "UpdatingProfileData": "Updating Profile Data",
@@ -356,7 +363,7 @@ static const Map<String,dynamic> en = {
   "DoneDownloadingReport": "Done Downloading Report",
   "ErrorWhileDownloadingFile": "Error While Downloading File",
   "Reports": "Reports",
-  "FullFinancialReport": "FullFinancialReport",
+  "FullFinancialReport": "Full Financial Report",
   "GetReport": "Get Report",
   "FinancialComparisonReport": "Financial Comparison Report",
   "FinancialServicesReport": "Financial Services Report",
@@ -450,7 +457,7 @@ static const Map<String,dynamic> en = {
   "PatientInfo": "Patient Informations",
   "Weight": "Weight",
   "LastVisitationDate": "Last Visitation Date",
-  "UnPenalizedThePatient": "Un Penalized The Patient",
+  "UnPenalizedThePatient": "Unpenalized The Patient",
   "PenalizedThePatient": "Penalized The Patient",
   "ChangingPenalizedStatus": "Changing Penalized Status",
   "DoneChangingPenalizedStatus": "Done Changing Penalized Status",
@@ -512,7 +519,14 @@ static const Map<String,dynamic> en = {
   "BookClinic": "Book Clinic",
   "You_are_successfully_Book": "You Are Successfully Book",
   "GetTime": "Get Time",
-  "BookingTime": "Booking Time"
+  "BookingTime": "Booking Time",
+  "PromoCodeAlreadyExists": "Promo Code Already Exists",
+  "CancelPayInCash": "Cancel Pay In Cash",
+  "Phone": "Phone",
+  "SelectDay": "Select Day",
+  "SmartWallet": "Smart Wallet",
+  "PaidBefore": "Paid Before",
+  "BankInstallment": "Bank Installment"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ar": ar, "en": en};
 }

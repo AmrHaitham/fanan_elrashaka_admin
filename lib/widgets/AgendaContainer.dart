@@ -54,6 +54,7 @@ class AgendaContainer extends StatelessWidget {
               children: [
                 if(agenda.type==1)
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         margin: const EdgeInsets.only(right: 20.0),
@@ -68,11 +69,13 @@ class AgendaContainer extends StatelessWidget {
                       ))
                     ],
                   ),
+                SizedBox(height: 8,),
                 if(agenda.type==1)
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(right: 20.0),
+                        margin: const EdgeInsets.only(right: 6.0),
                         child: Text("${"Butter".tr()}:  "
                           ,style: TextStyle(
                               color: Color(0xff484ce2)
@@ -84,7 +87,9 @@ class AgendaContainer extends StatelessWidget {
                       ))
                     ],
                   ),
+                SizedBox(height: 8,),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       margin: const EdgeInsets.only(right: 20.0),
@@ -96,7 +101,7 @@ class AgendaContainer extends StatelessWidget {
                     ),
                     Expanded(child: Text("${agenda.note}",
                       style: TextStyle(
-                          color: Color(0xff7f8b9e)
+                          // color: Color(0xff7f8b9e)
                       ),
                     ))
                   ],

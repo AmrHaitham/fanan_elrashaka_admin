@@ -117,7 +117,7 @@
   "FirstName": "الأسم الاول",
   "LastName": "الأسم الأخير",
   "Address": "العنوان",
-  "Birthday": "تاريخ الميلاد",
+  "Birthday": "تاريخ الميلاد*",
   "wrong_date": "تاريخ خاطئ",
   "Male": "ذكر",
   "Gender": "الجنس*",
@@ -162,7 +162,7 @@
   "ChangePaidStatus": "تغيير حالة الدفع",
   "CancelBook": "إلغاء الحجز",
   "AppointmentTime": "وقت الموعد",
-  "NewPayment": "دفعة جديدة",
+  "NewPayment": "الدفع",
   "DoneReschedulingBook": "تم إعادة جدولة الحجز",
   "Done": "تم",
   "Paid": "مدفوع",
@@ -246,5 +246,12 @@
   "BookClinic": "حجز عياده",
   "You_are_successfully_Book": "تم حجز العياده",
   "GetTime": "احصل على وقت",
-  "BookingTime": "وقت الحجز"
+  "BookingTime": "وقت الحجز",
+  "PromoCodeAlreadyExists": "الكوبون موجود بالفعل",
+  "CancelPayInCash": "الغاء الدفع نقدا",
+  "Phone": "الهاتف",
+  "SelectDay": "اختر اليوم",
+  "SmartWallet": "المحفظه الذكيه",
+  "PaidBefore": "تم الدفع مسبقاً",
+  "BankInstallment": "التقسيط البنكي"
 }

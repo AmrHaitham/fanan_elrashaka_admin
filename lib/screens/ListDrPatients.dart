@@ -20,6 +20,7 @@ class _ListDrPatientsState extends State<ListDrPatients> {
   final Patients _patients = Patients();
   String _searchValue = "";
   BottomSheetWidget _bottomSheetWidget = BottomSheetWidget();
+  final TextEditingController search = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return ScreenContainer(
@@ -91,6 +92,7 @@ class _ListDrPatientsState extends State<ListDrPatients> {
           ),
         ),
         topCenterAction: SearchList(
+          control: search,
           onSubmitted: (value){
               setState(() {
                 _searchValue = value;

@@ -18,6 +18,7 @@ class ListAllPatients extends StatefulWidget {
 class _ListAllPatientsState extends State<ListAllPatients> {
   final Patients _patients = Patients();
   String _searchValue = "";
+  final TextEditingController search = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return ScreenContainer(
@@ -45,6 +46,7 @@ class _ListAllPatientsState extends State<ListAllPatients> {
         ),
       ),
       topCenterAction: SearchList(
+        control: search,
         onSubmitted: (value){
           setState(() {
             _searchValue = value;

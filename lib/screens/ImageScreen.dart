@@ -14,14 +14,18 @@ class ImageScreen extends StatefulWidget {
   State<ImageScreen> createState() => _ImageScreenState();
 }
 
+
 class _ImageScreenState extends State<ImageScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
+            heroTag: "btn1",
             child: Icon(Icons.image),
             onPressed:(){
               widget.uploadButton();
@@ -29,6 +33,7 @@ class _ImageScreenState extends State<ImageScreen> {
           ),
           const SizedBox(width: 10,),
           FloatingActionButton(
+            heroTag: "btn2",
             child: Icon(Icons.camera_alt),
             onPressed:(){
               widget.takePicAndUpload();

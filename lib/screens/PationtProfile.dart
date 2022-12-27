@@ -155,12 +155,12 @@ class _PationtProfileState extends State<PationtProfile> {
                           width: 35,
                           height: 35,
                           decoration:  BoxDecoration(
-                              color: (snapshot.data['is_connected']==true)?const Color(0xffe9dfff):const Color(0xffe1daf1),
+                              color: (snapshot.data['is_connected']==true)?const Color(0xffe9dfff): Color(0xffD3D3D3),
                               borderRadius:const BorderRadius.all(Radius.circular(7))
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Image.asset("assets/connection_active.png",color: (snapshot.data['is_connected']==true)?Constants.secondColor :const Color(0xffe9dfff),),
+                            child: Image.asset("assets/connection_active.png",color: (snapshot.data['is_connected']==true)?Constants.secondColor :Colors.white,),
                           ),
                         ),
                       ),
@@ -181,6 +181,7 @@ class _PationtProfileState extends State<PationtProfile> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text("Weight".tr(),style: TextStyle(color: Constants.secondTextColor,fontWeight: FontWeight.bold),),
                                 const SizedBox(height: 2,),
@@ -188,6 +189,7 @@ class _PationtProfileState extends State<PationtProfile> {
                               ],
                             ),
                             Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text("Height".tr(),style: TextStyle(color: Constants.secondTextColor,fontWeight: FontWeight.bold),),
                                 const SizedBox(height: 2,),
@@ -195,6 +197,7 @@ class _PationtProfileState extends State<PationtProfile> {
                               ],
                             ),
                             Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text("LastVisitationDate".tr(),style: TextStyle(color: Constants.secondTextColor,fontWeight: FontWeight.bold),),
                                 const SizedBox(height: 2,),
@@ -347,26 +350,30 @@ class _PationtProfileState extends State<PationtProfile> {
                                           }
                                           EasyLoading.dismiss();
                                         },
-                                          takePicAndUpload: ()async{
-                                            var imagePicker;
-                                            imagePicker = await _picker.pickImage(source: ImageSource.camera,imageQuality: 20);
-                                            String imageLocation = imagePicker.path.toString();
-                                            EasyLoading.show(status: "UploadApplicationImage".tr());
-                                            var picResponse =await _patientDetails.uploadDietImage(
-                                                context.read<UserData>().token,
-                                                snapshot.data['pid'].toString(),
-                                                imageLocation
-                                            );
-                                            if (await picResponse.statusCode == 200) {
-                                              _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){
-                                                Navigator.pop(context);
-                                                setState(() {});
-                                              });
-                                            }else{
-                                              print(await picResponse.stream.bytesToString());
-                                              _dialogs.errorDialog(context,LocaleKeys.Error__please_check_your_internet_connection.tr());
+                                          takePicAndUpload: (ctx)async{
+                                            try{
+                                              var imagePicker;
+                                              imagePicker = await _picker.pickImage(source: ImageSource.camera,imageQuality: 20);
+                                              String imageLocation = imagePicker.path.toString();
+                                              EasyLoading.show(status: "UploadApplicationImage".tr());
+                                              var picResponse =await _patientDetails.uploadAppImage(
+                                                  context.read<UserData>().token,
+                                                  snapshot.data['pid'].toString(),
+                                                  imageLocation
+                                              );
+                                              if (await picResponse.statusCode == 200) {
+                                                EasyLoading.dismiss();
+                                                _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){
+                                                  Navigator.pop(context);
+                                                  setState(() {});
+                                                });
+                                              }else{
+                                                print(await picResponse.stream.bytesToString());
+                                                _dialogs.errorDialog(context,LocaleKeys.Error__please_check_your_internet_connection.tr());
+                                              }
+                                            }catch(v){
+                                              print(v);
                                             }
-                                            EasyLoading.dismiss();
                                           }
                                       )
                                       )
@@ -389,7 +396,7 @@ class _PationtProfileState extends State<PationtProfile> {
                                 onTap: (){
                                   _controller = TextEditingController(text: snapshot.data['pay_in_cash_until']);
                                   _bottomSheetWidget.showBottomSheetButtons(
-                                      context, 200.0, const Text(""),
+                                      context, 280.0, const Text(""),
                                     [
                                       buildDateFormField(),
                                       const SizedBox(height: 20,),
@@ -412,6 +419,33 @@ class _PationtProfileState extends State<PationtProfile> {
                                             print(data);
                                             if(response["error"] == "721"){
                                             _dialogs.errorDialog(context, "PatientIsNotConnected".tr());
+                                            }
+                                          }
+                                          EasyLoading.dismiss();
+                                        },
+                                      ),
+                                      const SizedBox(height: 10,),
+                                      DefaultButton(
+                                        text: "CancelPayInCash".tr(),
+                                        color: Colors.red,
+                                        press: ()async{
+                                          EasyLoading.show(status: "UpdatePayInCashStatus".tr());
+                                          var response = await _patientDetails.change_pay_in_cash_status(
+                                              context.read<UserData>().token,
+                                              snapshot.data['pid'].toString(),
+                                              ""
+                                          );
+                                          var data =await response.stream.bytesToString();
+                                          print(data);
+                                          if (await response.statusCode == 200) {
+                                            print(data);
+                                            EasyLoading.showSuccess("DoneUpdatingPayInCashStatus".tr());
+                                            Navigator.pop(context);
+                                            setState(() {});
+                                          }else{
+                                            print(data);
+                                            if(response["error"] == "721"){
+                                              _dialogs.errorDialog(context, "PatientIsNotConnected".tr());
                                             }
                                           }
                                           EasyLoading.dismiss();
@@ -519,7 +553,7 @@ class _PationtProfileState extends State<PationtProfile> {
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
-      readOnly: false,
+      readOnly: true,
       onTap: () {
         BottomPicker.date(
           title: "PayInCashTo".tr(),

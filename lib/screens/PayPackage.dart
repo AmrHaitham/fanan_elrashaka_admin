@@ -5,6 +5,7 @@ import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/Bookings.dart';
 import 'package:fanan_elrashaka_admin/networks/Packages.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/screens/MainScreen.dart';
 import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/EditScreenContainer.dart';
@@ -73,6 +74,9 @@ class _PayPackageState extends State<PayPackage> {
                       if (await responseData.statusCode == 200) {
                         print(await responseData.stream.bytesToString());
                         _dialogs.doneDialog(context,"You_are_successfully_Buy_package".tr(),"Ok".tr(),(){
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context) => MainScreen(selectedIndex: 2,))
+                          );
                         });
                       }else{
                         var response = jsonDecode(await responseData.stream.bytesToString());

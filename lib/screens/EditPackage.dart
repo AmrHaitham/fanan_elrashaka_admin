@@ -169,7 +169,7 @@ class _EditPackageState extends State<EditPackage> {
                               const SizedBox(height: 20),
                               buildOrderField(snapshot.data[0]["order"].toString()),
                               const SizedBox(height: 20),
-                              const Divider(height: 5,color: Colors.black,thickness: 0.8,),
+                              const Divider(height: 5,color: Colors.grey,thickness: 0.8,),
                               const SizedBox(height: 10),
                               Card(
                                 color:const Color(0xffff5d63),

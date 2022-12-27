@@ -37,6 +37,8 @@ class _BookingsScreenState extends State<BookingsScreen> {
   TextEditingController textController = TextEditingController();
   bool openSearch = false;
   String? _searchValue ;
+  String? firtsClinicId;
+  final _controller = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -52,6 +54,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
         'label':element.name.toString(),
       });
     });
+    firtsClinicId = context.read<ClinisData>().clinicsName.first.id;
     return _clinics;
   }
   @override
@@ -108,12 +111,12 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                 leading: SizedBox(
                                   height: 20,
                                   width: 20,
-                                  child: Image.asset("assets/add_patient.png"),
+                                  child: Image.asset("assets/add_new_patient.png"),
                                 ),
                                 title:Text("NewPatient".tr(),style: TextStyle(
                                     color: Constants.secondTextColor,
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.normal
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16
                                 ),),
                               ),
                               const Divider(thickness: 0.6,indent: 10,endIndent: 10,),
@@ -127,12 +130,12 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                 leading: SizedBox(
                                   height: 20,
                                   width: 20,
-                                  child: Image.asset("assets/add_patient.png"),
+                                  child: Image.asset("assets/add_existing_patinet.png"),
                                 ),
                                 title:Text("ExistingPatient".tr(),style: TextStyle(
                                     color: Constants.secondTextColor,
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.normal
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16
                                 ),),
                               ),
                             ]
@@ -160,10 +163,11 @@ class _BookingsScreenState extends State<BookingsScreen> {
                     ),
                   ),
                 ),
+                SizedBox(width: 5,),
                 Visibility(
                   visible: !openSearch,
                   child: Padding(
-                    padding:  (context.locale.toString()=="en")?EdgeInsets.only(right: 15.0):EdgeInsets.only(left: 15.0),
+                    padding:  (context.locale.toString()=="en")?EdgeInsets.only(right: 15.0):EdgeInsets.only(right: 0.0),
                     child: InkWell(
                       onTap: (){
                         _bottomSheetWidget.showBottomSheetButtons(
@@ -237,6 +241,8 @@ class _BookingsScreenState extends State<BookingsScreen> {
                     ),
                   ),
                 ),
+                if(!openSearch)
+                SizedBox(width: 10,),
                 Visibility(
                   visible: !openSearch,
                   child: InkWell(
@@ -258,7 +264,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                           padding:const EdgeInsets.all(8),
                           child: Image.asset("assets/booking_search.png"),
                         ),
-                        Text("Search".tr(),style: TextStyle(
+                        Text("Search".tr().split('.')[0],style: TextStyle(
                             color: Constants.secondTextColor,
                             fontWeight: FontWeight.bold
                         ),)
@@ -269,6 +275,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                 Visibility(
                   visible: openSearch,
                   child:SearchWithBack(
+                    controller: _controller,
                     onBack: (){
                       setState(() {
                         openSearch = !openSearch;
@@ -453,7 +460,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                     Align(
                       alignment: (context.locale.toString()=="en")?Alignment.topRight:Alignment.topLeft,
                       child: SizedBox(
-                          width: 150,
+                          width: 160,
                           height: 50,
                           child: buildSelect()
                       ),
@@ -527,7 +534,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
       type: SelectFormFieldType
           .dropdown, // or can be dialog
       items: getClinic(),
-      initialValue: context.read<ClinisData>().clinicsService.first.id,
+      initialValue: firtsClinicId,
       style: TextStyle(color: Constants.secondColor,fontWeight: FontWeight.bold,),
       textAlign: TextAlign.end,
       decoration: InputDecoration(

@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 class SearchList extends StatelessWidget {
   final onSubmitted;
   final onSearchClick;
-  SearchList({Key? key,required this.onSubmitted,required this.onSearchClick}) : super(key: key);
-  final myController = TextEditingController();
+  final control;
+  SearchList({Key? key,required this.onSubmitted,required this.onSearchClick,required this.control}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,7 +31,7 @@ class SearchList extends StatelessWidget {
               width: MediaQuery.of(context).size.width*0.76,
               padding:const EdgeInsets.only(left: 10,right: 10),
               child: TextField(
-                controller: myController,
+                controller: control,
                 onSubmitted:(value){
                   onSubmitted(value);
                 },
@@ -42,7 +43,7 @@ class SearchList extends StatelessWidget {
             ),
             InkWell(
               onTap: (){
-                onSearchClick(myController.value.text);
+                onSearchClick(control.value.text);
               },
               child: SizedBox(
                 width: 18,

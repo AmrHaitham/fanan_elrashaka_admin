@@ -24,6 +24,7 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
+  bool errorFlag = false;
 
   final UserProfile _userProfile = UserProfile();
   Services _clinics = Services();
@@ -63,7 +64,7 @@ class _LandingPageState extends State<LandingPage> {
     }catch(v){
       //context.read<ClinisData>().clinicsName
       print(v);
-      _dialog.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+      // _dialog.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
     }
 
   }
@@ -89,17 +90,12 @@ class _LandingPageState extends State<LandingPage> {
           print("type is :- ${context.read<UserData>().userType}");
         }
       }else{
-        _dialog.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+        // _dialog.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
       }
+      errorFlag = false;
     }catch(error){
-
-      _dialog.errorReDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr(),
-          (){
-            // Navigator.of(context).pushReplacement(
-            //     MaterialPageRoute(builder: (context) => LandingPage())
-            // );
-          });
-
+      errorFlag = true;
+      print("network errorss");
     }
   }
 
@@ -115,17 +111,27 @@ class _LandingPageState extends State<LandingPage> {
       try{
         await saveUserInfo();
         await getClinicsData();
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => MainScreen())
-        );
-      }catch(v){
-          print("error :- ${v}");
+        if(!errorFlag){
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => MainScreen())
+          );
+        }else{
           _dialog.errorReDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr(),
                   (){
                 Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (context) => LandingPage())
                 );
+                    print("reboot");
               });
+        }
+      }catch(v){
+          print("error network :- ${v}");
+          // _dialog.errorReDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr(),
+          //         (){
+          //       Navigator.of(context).pushReplacement(
+          //           MaterialPageRoute(builder: (context) => LandingPage())
+          //       );
+          //     });
       }
       // finally{
       //

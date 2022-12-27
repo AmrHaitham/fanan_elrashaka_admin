@@ -249,5 +249,12 @@ abstract class  LocaleKeys {
   static const You_are_successfully_Book = 'You_are_successfully_Book';
   static const GetTime = 'GetTime';
   static const BookingTime = 'BookingTime';
+  static const PromoCodeAlreadyExists = 'PromoCodeAlreadyExists';
+  static const CancelPayInCash = 'CancelPayInCash';
+  static const Phone = 'Phone';
+  static const SelectDay = 'SelectDay';
+  static const SmartWallet = 'SmartWallet';
+  static const PaidBefore = 'PaidBefore';
+  static const BankInstallment = 'BankInstallment';
 
 }

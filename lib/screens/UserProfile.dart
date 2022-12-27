@@ -168,6 +168,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                               const SizedBox(height: 20),
                               buildPhoneNumberFormField(snapshot.data['phone']),
                               const SizedBox(height: 20),
+                              const Divider(height: 5,color: Colors.grey,thickness: 0.8,),
+                              const SizedBox(height: 20),
                               changePassword(context,snapshot.data['email']),
                               const SizedBox(height: 20),
                               Card(
@@ -436,6 +438,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           BorderRadius.circular(5.0),
         ),
         hintText: "ChangePassword".tr(),
+        hintStyle: TextStyle(
+          color: Colors.black
+        ),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),

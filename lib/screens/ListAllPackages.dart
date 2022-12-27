@@ -18,6 +18,7 @@ class ListAllPackages extends StatefulWidget {
 class _ListAllPackagesState extends State<ListAllPackages> {
   final Packages _packages = Packages();
   String _searchValue = "";
+  final TextEditingController search = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return ScreenContainer(
@@ -45,6 +46,7 @@ class _ListAllPackagesState extends State<ListAllPackages> {
       ),
       topLeftAction: BackIcon(),
       topCenterAction: SearchList(
+        control: search,
         onSubmitted: (value){
           setState(() {
             _searchValue = value;

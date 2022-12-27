@@ -11,6 +11,7 @@ class FinanceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     print(snapshot);
     return ExpansionTileCard(
+      initiallyExpanded: true,
       baseColor: Colors.white,
       shadowColor: Colors.grey,
       leading: Container(
@@ -44,12 +45,19 @@ class FinanceCard extends StatelessWidget {
       trailing: Text(DateFormat("h:mm a",context.locale.toString()).format(DateTime.parse(snapshot['timestamp'])).toString(),
         style: TextStyle(
             color: Constants.secondTextColor,
-            fontSize: 17
+            fontSize: 17,
+            fontWeight: FontWeight.bold
         ),
       ),
       children: [
+        const Divider(
+          height: 4,
+          color: Colors.grey,
+          thickness: 0.2,
+        ),
+        const SizedBox(height: 10,),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(left: 19.0),
           child: Row(
             children: [
                Text("${"ClinicName".tr()}:   ",style: TextStyle(
@@ -60,9 +68,10 @@ class FinanceCard extends StatelessWidget {
             ],
           ),
         ),
+        const SizedBox(height: 3,),
         if(snapshot['notes'].toString()!="")
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(left: 19.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -78,7 +87,7 @@ class FinanceCard extends StatelessWidget {
           padding:  EdgeInsets.only(top: 15.0,bottom: 10),
           child:  Divider(
             height: 4,
-            color: Colors.black,
+            color: Colors.grey,
             thickness: 0.2,
           ),
         ),
@@ -98,7 +107,7 @@ class FinanceCard extends StatelessWidget {
                 child: Image.asset("assets/more_bookings.png"),
               ),
             ),
-            Text("${snapshot['amount'].toString().split('.').first} EGP",style: TextStyle(
+            Text("${snapshot['amount'].toString().split('.').first} EGP   ",style: TextStyle(
               fontSize: 20,
               color: Constants.secondColor,
               fontWeight: FontWeight.bold

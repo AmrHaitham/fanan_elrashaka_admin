@@ -75,6 +75,7 @@ class _SignFormState extends State<SignForm> {
                 DefaultButton(
                   text: LocaleKeys.Login.tr(),
                   loading: _isLoading,
+                  color: Constants.oldColor,
                   press: () async{
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();

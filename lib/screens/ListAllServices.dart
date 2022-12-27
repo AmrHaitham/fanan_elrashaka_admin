@@ -19,6 +19,7 @@ class ListAllServices extends StatefulWidget {
 }
 
 class _ListAllServicesState extends State<ListAllServices> {
+  final TextEditingController search = new TextEditingController();
   final Services _services = Services();
   String _searchValue = "";
   BottomSheetWidget _bottomSheetWidget = BottomSheetWidget();
@@ -43,7 +44,7 @@ class _ListAllServicesState extends State<ListAllServices> {
           setState(() {
             _searchValue = value;
           });
-        },
+        }, control: search,
       ),
       child: FutureBuilder(
           future:(_searchValue == "")? _services.getAllServicesScreen(context.read<UserData>().token): _services.getServicesSearch(context.read<UserData>().token,_searchValue),

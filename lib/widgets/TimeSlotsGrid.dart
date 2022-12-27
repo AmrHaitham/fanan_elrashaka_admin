@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/Bookings.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/screens/MainScreen.dart';
 import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/DefaultButton.dart';
 import 'package:fanan_elrashaka_admin/widgets/TimeSlotItem.dart';
@@ -58,7 +59,8 @@ class _TimeSlotsGridState extends State<TimeSlotsGrid> {
                   widget.keys[selectedIndex!]
                 );
                 if (await response.statusCode == 200) {
-                  _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){});
+                  _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){
+                  });
                 }else{
                   print(await response.stream.bytesToString());
                   _dialogs.errorDialog(context,LocaleKeys.Error__please_check_your_internet_connection.tr());
@@ -71,6 +73,11 @@ class _TimeSlotsGridState extends State<TimeSlotsGrid> {
               }finally{
                 EasyLoading.showSuccess("DoneReschedulingBook".tr());
                 Navigator.pop(context);
+                Navigator.pop(context);
+                Navigator.pop(context);
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) =>MainScreen(selectedIndex: 2,))
+                );
               }
             },
           )

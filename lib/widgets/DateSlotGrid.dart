@@ -42,9 +42,7 @@ class _DateSlotsGridState extends State<DateSlotsGrid> {
       children: [
         Container(
           height: 100,
-          child:
-              Expanded(
-                  child: ListView(
+          child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: [
                       for(int i=0;i<widget.keys.length;i++)
@@ -56,7 +54,6 @@ class _DateSlotsGridState extends State<DateSlotsGrid> {
                     ],
                   )
               ),
-        ),
         SizedBox(
           width: double.infinity,
           height: 50,
