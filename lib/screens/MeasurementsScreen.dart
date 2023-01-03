@@ -11,10 +11,12 @@ import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/BottomSheet.dart';
 import 'package:fanan_elrashaka_admin/widgets/DefaultButton.dart';
+import 'package:fanan_elrashaka_admin/widgets/ImageViwer.dart';
 import 'package:fanan_elrashaka_admin/widgets/Loading.dart';
 import 'package:fanan_elrashaka_admin/widgets/ScreenContainer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 class MeasurementsScreen extends StatefulWidget {
   final pid;
@@ -30,6 +32,8 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
   final _formKey = GlobalKey<FormState>();
   List<String?> data = ["","","","","","","",""];
   Dialogs _dialogs = Dialogs();
+  String? imageLocation ;
+  final ImagePicker _picker = ImagePicker();
   @override
   Widget build(BuildContext context) {
     print("pid is :- ${widget.pid}");
@@ -70,7 +74,17 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                         const SizedBox(height: 10,),
                         buildTextFormField(6,'Thigh'),
                         const SizedBox(height: 10,),
-                        buildNoteFormField(7)
+                        buildNoteFormField(7),
+                        const SizedBox(height: 10,),
+                        DefaultButton(
+                          text: "TakeMeasurementPicture".tr(),
+                          color: Colors.brown,
+                          press: ()async{
+                            var imagePicker;
+                            imagePicker = await _picker.pickImage(source: ImageSource.camera,imageQuality: 20);
+                            imageLocation = imagePicker.path.toString();
+                          },
+                        ),
                       ],
                       DefaultButton(
                         text: "AddNewMeasurement".tr(),
@@ -81,12 +95,14 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                             var changeProfileResponse = await _patientDetails.addMeasurement(
                                 context.read<UserData>().token,
                                 widget.pid.toString(),
-                                data
+                                data,
+                                imageLocation
                             );
                             if (await changeProfileResponse.statusCode == 200) {
                               _dialogs.doneDialog(context,"You_are_successfully_added_new_Measurement".tr(),"Ok".tr(),(){
                                 setState(() {
                                   _formKey.currentState!.reset();
+                                  imageLocation = null;
                                 });
                               });
                             }else{
@@ -102,6 +118,9 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                   },
                 ),
                 body: ScreenContainer(
+                    onRefresh: (){
+                      setState(() {});
+                    },
                     topLeftAction:const BackIcon(),
                     name: "Measurements".tr(),
                     child: Container(
@@ -139,87 +158,94 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                 ),
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
+                                    padding: const EdgeInsets.only(left: 13.0),
+                                    child: Column(
                                       children: [
-                                        Text("${"Weight"}:         ",style: TextStyle(color: Constants.secondColor),),
-                                        (snapshot.data[index]['weight'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['weight'].toString().split('.')[0]} kg",style:const TextStyle(fontWeight: FontWeight.bold),)
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        Text("Arms:             ",style: TextStyle(color: Constants.secondColor),),
-                                        (snapshot.data[index]['arms'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['arms'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        Text("Chest:            ",style: TextStyle(color: Constants.secondColor),),
-                                        (snapshot.data[index]['chest'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['chest'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        Text("Waist:            ",style: TextStyle(color: Constants.secondColor),),
-                                        (snapshot.data[index]['waist'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['waist'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        Text("High Hip:       ",style: TextStyle(color: Constants.secondColor),),
-                                        (snapshot.data[index]['high_hip'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['high_hip'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        Text("Calves:           ",style: TextStyle(color: Constants.secondColor),),
-                                        (snapshot.data[index]['calves'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['calves'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        Text("Thigh:             ",style: TextStyle(color: Constants.secondColor),),
-                                        (snapshot.data[index]['thigh'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['thigh'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        Text("BMI:                ",style: TextStyle(color: Constants.secondColor),),
-                                        (snapshot.data[index]['bmi'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['bmi'].toString().split('.')[0]}",style:const TextStyle(fontWeight: FontWeight.bold),)
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text("${"Notes"}:             ",style: TextStyle(color: Constants.secondColor),),
-                                        (snapshot.data[index]['note'].toString() == "null")?Text("---"):
-                                        Expanded(
-                                            child: Text("${snapshot.data[index]['note'].toString().split('.')[0]}",
-                                              style:const TextStyle(fontWeight: FontWeight.bold,),))
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: [
+                                              Text("${"Weight"}:         ",style: TextStyle(color: Constants.secondColor),),
+                                              (snapshot.data[index]['weight'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['weight'].toString().split('.')[0]} kg",style:const TextStyle(fontWeight: FontWeight.bold),)
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: [
+                                              Text("Arms:             ",style: TextStyle(color: Constants.secondColor),),
+                                              (snapshot.data[index]['arms'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['arms'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: [
+                                              Text("Chest:            ",style: TextStyle(color: Constants.secondColor),),
+                                              (snapshot.data[index]['chest'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['chest'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: [
+                                              Text("Waist:            ",style: TextStyle(color: Constants.secondColor),),
+                                              (snapshot.data[index]['waist'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['waist'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: [
+                                              Text("High Hip:       ",style: TextStyle(color: Constants.secondColor),),
+                                              (snapshot.data[index]['high_hip'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['high_hip'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: [
+                                              Text("Calves:           ",style: TextStyle(color: Constants.secondColor),),
+                                              (snapshot.data[index]['calves'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['calves'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: [
+                                              Text("Thigh:             ",style: TextStyle(color: Constants.secondColor),),
+                                              (snapshot.data[index]['thigh'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['thigh'].toString().split('.')[0]} cm",style:const TextStyle(fontWeight: FontWeight.bold),)
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: [
+                                              Text("BMI:                ",style: TextStyle(color: Constants.secondColor),),
+                                              (snapshot.data[index]['bmi'].toString() == "null")?Text("---"):Text("${snapshot.data[index]['bmi'].toString().split('.')[0]}",style:const TextStyle(fontWeight: FontWeight.bold),)
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text("${"Notes"}:             ",style: TextStyle(color: Constants.secondColor),),
+                                              (snapshot.data[index]['note'].toString() == "null")?Text("---"):
+                                              Expanded(
+                                                  child: Text("${snapshot.data[index]['note'].toString().split('.')[0]}",
+                                                    style:const TextStyle(fontWeight: FontWeight.bold,),))
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -259,7 +285,17 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                                   const SizedBox(height: 10,),
                                                   buildinitTextFormField(6,'Thigh',snapshot.data[index]['thigh']),
                                                   const SizedBox(height: 10,),
-                                                  buildinitNoteFormField(7,snapshot.data[index]['note'])
+                                                  buildinitNoteFormField(7,snapshot.data[index]['note']),
+                                                  const SizedBox(height: 10,),
+                                                  DefaultButton(
+                                                    text: "SelectMeasurementPicture".tr(),
+                                                    color: Colors.brown,
+                                                    press: ()async{
+                                                      var imagePicker;
+                                                      imagePicker = await _picker.pickImage(source: ImageSource.camera,imageQuality: 20);
+                                                      imageLocation = imagePicker.path.toString();
+                                                    },
+                                                  ),
                                                 ],
                                                 DefaultButton(
                                                   text: "UpdateMeasurement".tr(),
@@ -272,11 +308,13 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                                         var changeProfileResponse = await _patientDetails.updateMeasurement(
                                                             context.read<UserData>().token,
                                                             snapshot.data[index]['id'].toString(),
-                                                            data
+                                                            data,
+                                                            imageLocation
                                                         );
                                                         if (await changeProfileResponse.statusCode == 200) {
                                                           _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"ok",(){
                                                             Navigator.pop(context);
+                                                            imageLocation = null;
                                                             setState(() {});
                                                           });
                                                         }else{
@@ -295,6 +333,18 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                                             );
                                           }, icon: Icon(Icons.edit), label: Text("Edit".tr())
                                       ),
+                                      if(snapshot.data[index]['image']!=null)
+                                        ElevatedButton.icon(
+                                          style: ButtonStyle(
+                                            backgroundColor:  MaterialStateProperty.all(Colors.brown),
+                                          ),
+                                          icon: Icon(Icons.image,), label: Text("Picture".tr()),
+                                          onPressed: (){
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(builder: (context) =>ImageViwer(imageUrl: snapshot.data[index]['image']))
+                                            );
+                                          },
+                                        ),
                                       ElevatedButton.icon(
                                           style: ButtonStyle(
                                             backgroundColor:  MaterialStateProperty.all(Colors.red)

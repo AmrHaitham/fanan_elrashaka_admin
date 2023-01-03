@@ -8,6 +8,7 @@ import 'package:fanan_elrashaka_admin/networks/Patients.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
 import 'package:fanan_elrashaka_admin/screens/EditPationt.dart';
 import 'package:fanan_elrashaka_admin/screens/MainScreen.dart';
+import 'package:fanan_elrashaka_admin/screens/PationtProfile.dart';
 import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/DefaultButton.dart';
@@ -63,43 +64,98 @@ class _EditDrPationtState extends State<EditDrPationt> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: _patients.getDrPatient(context.read<UserData>().token, widget.id),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CustomLoading());
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError) {
-              // error in data
-              print(snapshot.error.toString());
-              return  Container();
-            } else if (snapshot.hasData) {
-              print(snapshot.data);
-              return EditScreenContainer(
-                  name: "EditDoctorPatient".tr(),
-                  topLeftAction: BackIcon(),
-                  topRightaction: InkWell(
-                    onTap: ()async{
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        // save data
+    return WillPopScope(
+      onWillPop: ()async{
+        Navigator.pop(context);
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => PationtProfile(pid: widget.id,))
+        );
+        return false;
+      },
+      child: FutureBuilder(
+          future: _patients.getDrPatient(context.read<UserData>().token, widget.id),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CustomLoading());
+            } else if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError) {
+                // error in data
+                print(snapshot.error.toString());
+                return  Container();
+              } else if (snapshot.hasData) {
+                print(snapshot.data);
+                return EditScreenContainer(
+                    name: "EditDoctorPatient".tr(),
+                    topLeftAction: BackIcon(
+                      overBack: (){
+                        Navigator.pop(context);
+                        Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (context) => PationtProfile(pid: widget.id,))
+                        );
+                      },
+                    ),
+                    topRightaction: InkWell(
+                      onTap: ()async{
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+                          // save data
+                          EasyLoading.show(status: "EditDoctorPatient".tr());
+                          try{
+                            var changeProfileResponse = await _patients.updateDrPatient(
+                              context.read<UserData>().token,
+                              snapshot.data['pid'].toString(),
+                              firstName,
+                              phoneNumber,
+                              height,
+                              TargetWeight,
+                              notes
+                            );
+                            if (await changeProfileResponse.statusCode == 200) {
+                              _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){});
+                              print(await changeProfileResponse.stream.bytesToString());
+                            }else{
+                              print(await changeProfileResponse.stream.bytesToString());
+                              _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                            }
+                            EasyLoading.dismiss();
+                            setState(() {});
+                          }catch(v){
+                            EasyLoading.dismiss();
+                            setState(() {});
+                          }
+
+                        }
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: 10),
+                        width: 25,
+                        height: 25,
+                        child: Image.asset("assets/Save-512.png"),
+                      ),
+                    ),
+                    topCenterAction: ProfilePic(
+                      profile: snapshot.data['image'],
+                      uploadImage: () async{
                         EasyLoading.show(status: "EditDoctorPatient".tr());
                         try{
-                          var changeProfileResponse = await _patients.updateDrPatient(
-                            context.read<UserData>().token,
-                            snapshot.data['pid'].toString(),
-                            firstName,
-                            phoneNumber,
-                            height,
-                            TargetWeight,
-                            notes
+                          var imagePicker;
+                          imagePicker = await _picker.pickImage(source: ImageSource.gallery,imageQuality: 20);
+                          String imageLocation = imagePicker.path.toString();
+                          var picResponse =await _patients.updateDrPatientImage(
+                              context.read<UserData>().token,
+                              snapshot.data['pid'],
+                              snapshot.data['name'],
+                              snapshot.data['phone'],
+                              snapshot.data['height'],
+                              snapshot.data['target_weight'],
+                              imageLocation,
+                              snapshot.data['note']
                           );
-                          if (await changeProfileResponse.statusCode == 200) {
+                          if (await picResponse.statusCode == 200) {
                             _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){});
-                            print(await changeProfileResponse.stream.bytesToString());
                           }else{
-                            print(await changeProfileResponse.stream.bytesToString());
-                            _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                            print(await picResponse.stream.bytesToString());
+                            _dialogs.errorDialog(context,LocaleKeys.Error__please_check_your_internet_connection.tr());
                           }
                           EasyLoading.dismiss();
                           setState(() {});
@@ -107,153 +163,114 @@ class _EditDrPationtState extends State<EditDrPationt> {
                           EasyLoading.dismiss();
                           setState(() {});
                         }
-
-                      }
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(right: 10),
-                      width: 25,
-                      height: 25,
-                      child: Image.asset("assets/Save-512.png"),
+                      },
                     ),
-                  ),
-                  topCenterAction: ProfilePic(
-                    profile: snapshot.data['image'],
-                    uploadImage: () async{
-                      EasyLoading.show(status: "EditDoctorPatient".tr());
-                      try{
-                        var imagePicker;
-                        imagePicker = await _picker.pickImage(source: ImageSource.gallery,imageQuality: 20);
-                        String imageLocation = imagePicker.path.toString();
-                        var picResponse =await _patients.updateDrPatientImage(
-                            context.read<UserData>().token,
-                            snapshot.data['pid'],
-                            snapshot.data['name'],
-                            snapshot.data['phone'],
-                            snapshot.data['height'],
-                            snapshot.data['target_weight'],
-                            imageLocation,
-                            snapshot.data['note']
-                        );
-                        if (await picResponse.statusCode == 200) {
-                          _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){});
-                        }else{
-                          print(await picResponse.stream.bytesToString());
-                          _dialogs.errorDialog(context,LocaleKeys.Error__please_check_your_internet_connection.tr());
-                        }
-                        EasyLoading.dismiss();
-                        setState(() {});
-                      }catch(v){
-                        EasyLoading.dismiss();
-                        setState(() {});
-                      }
-                    },
-                  ),
-                  child: Expanded(
-                    child: Padding(
-                      padding:EdgeInsets.only(right: 15,left: 15),
-                      child: Form(
-                        key: _formKey,
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 20),
-                              buildFirstNameFormField(snapshot.data['name']),
-                              const SizedBox(height: 20),
-                              buildPhoneNumberFormField(snapshot.data['phone']),
-                              const SizedBox(height: 20),
-                              buildHeightFormField(snapshot.data['height']??""),
-                              const SizedBox(height: 20),
-                              buildTargetWeightFormField(snapshot.data['target_weight']??""),
-                              const SizedBox(height: 20),
-                              buildNotesFormField(snapshot.data['note']),
-                              const SizedBox(height: 20),
-                              const Divider(height: 5,color: Colors.black,thickness: 0.1,),
-                              const SizedBox(height: 10),
-                              if(snapshot.data["patient_id"]!= null)
-                              TextField(
-                                decoration: InputDecoration(
-                                  suffixIcon: Container(
-                                    width: 10,
-                                    height: 10,
-                                    child:
-                                    Icon(Icons.arrow_forward_ios),
+                    child: Expanded(
+                      child: Padding(
+                        padding:EdgeInsets.only(right: 15,left: 15),
+                        child: Form(
+                          key: _formKey,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 20),
+                                buildFirstNameFormField(snapshot.data['name']),
+                                const SizedBox(height: 20),
+                                buildPhoneNumberFormField(snapshot.data['phone']),
+                                const SizedBox(height: 20),
+                                buildHeightFormField(snapshot.data['height']??""),
+                                const SizedBox(height: 20),
+                                buildTargetWeightFormField(snapshot.data['target_weight']??""),
+                                const SizedBox(height: 20),
+                                buildNotesFormField(snapshot.data['note']),
+                                const SizedBox(height: 20),
+                                const Divider(height: 5,color: Colors.black,thickness: 0.1,),
+                                const SizedBox(height: 10),
+                                if(snapshot.data["patient_id"]!= null)
+                                TextField(
+                                  decoration: InputDecoration(
+                                    suffixIcon: Container(
+                                      width: 10,
+                                      height: 10,
+                                      child:
+                                      Icon(Icons.arrow_forward_ios),
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(5.0),
+                                    ),
+                                    hintText: "EditPatientData".tr(),
+                                    floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto,
                                   ),
-                                  border: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(5.0),
-                                  ),
-                                  hintText: "EditPatientData".tr(),
-                                  floatingLabelBehavior:
-                                  FloatingLabelBehavior.auto,
-                                ),
-                                readOnly: true,
-                                onTap: (){
-                                  Navigator.of(context).push(
-                                      MaterialPageRoute(builder: (context) => EditPationt(id: snapshot.data["patient_id"].toString(),refreshOnBack: false,))
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: 10),
-                              Card(
-                                color:const Color(0xffff5d63),
-                                child: ListTile(
-                                  leading: SizedBox(
-                                    width: 25,
-                                    height: 25,
-                                    child: Image.asset("assets/delete.png"),
-                                  ),
-                                  title: Text("DeletePatientData".tr(),style: TextStyle(
-                                      color: Constants.mainColor,
-                                      fontWeight: FontWeight.bold
-                                  ),),
-                                  trailing: SizedBox(
-                                    width: 10,
-                                    height: 10,
-                                    child: Image.asset("assets/right-arrow_gray.png",color: Colors.white,),
-                                  ),
+                                  readOnly: true,
                                   onTap: (){
-                                    AwesomeDialog(
-                                        context: context,
-                                        animType: AnimType.SCALE,
-                                        dialogType: DialogType.WARNING,
-                                        body: Center(child: Text(
-                                          "AreYouSureYouWantToDeleteThisPatient".tr(),
-                                        ),),
-                                        btnOkOnPress: () async{
-                                          var response = await _patients.deleteDrPatient(context.read<UserData>().token, snapshot.data['pid'].toString());
-                                          if (await response.statusCode == 200) {
-                                            print(await response.stream.bytesToString());
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
-                                            Navigator.of(context).pushReplacement(
-                                                MaterialPageRoute(builder: (context) => MainScreen(selectedIndex: 1,))
-                                            );
-                                          }
-                                        },
-                                        btnCancelOnPress: (){},
-                                        btnCancelText:"Cancel".tr(),
-                                        btnOkText:"Delete".tr()
-                                    ).show();
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(builder: (context) => EditPationt(id: snapshot.data["patient_id"].toString(),refreshOnBack: false,))
+                                    );
                                   },
                                 ),
-                              )
-                            ],
+                                const SizedBox(height: 10),
+                                Card(
+                                  color:const Color(0xffff5d63),
+                                  child: ListTile(
+                                    leading: SizedBox(
+                                      width: 25,
+                                      height: 25,
+                                      child: Image.asset("assets/delete.png"),
+                                    ),
+                                    title: Text("DeletePatientData".tr(),style: TextStyle(
+                                        color: Constants.mainColor,
+                                        fontWeight: FontWeight.bold
+                                    ),),
+                                    trailing: SizedBox(
+                                      width: 10,
+                                      height: 10,
+                                      child: Image.asset("assets/right-arrow_gray.png",color: Colors.white,),
+                                    ),
+                                    onTap: (){
+                                      AwesomeDialog(
+                                          context: context,
+                                          animType: AnimType.SCALE,
+                                          dialogType: DialogType.WARNING,
+                                          body: Center(child: Text(
+                                            "AreYouSureYouWantToDeleteThisPatient".tr(),
+                                          ),),
+                                          btnOkOnPress: () async{
+                                            var response = await _patients.deleteDrPatient(context.read<UserData>().token, snapshot.data['pid'].toString());
+                                            if (await response.statusCode == 200) {
+                                              print(await response.stream.bytesToString());
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                              Navigator.of(context).pushReplacement(
+                                                  MaterialPageRoute(builder: (context) => MainScreen(selectedIndex: 1,))
+                                              );
+                                            }
+                                          },
+                                          btnCancelOnPress: (){},
+                                          btnCancelText:"Cancel".tr(),
+                                          btnOkText:"Delete".tr()
+                                      ).show();
+                                    },
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  )
-              );
+                    )
+                );
+              }else{
+                //no data
+                return Container();
+              }
             }else{
-              //no data
+              //error in connection
               return Container();
             }
-          }else{
-            //error in connection
-            return Container();
           }
-        }
+      ),
     );
   }
 

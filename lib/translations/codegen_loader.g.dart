@@ -137,7 +137,7 @@ class CodegenLoader extends AssetLoader{
   "wrong_date": "تاريخ خاطئ",
   "Male": "ذكر",
   "Gender": "الجنس*",
-  "Female": "أنثي*",
+  "Female": "أنثي",
   "AddPatient": "اضافه مريض",
   "You_are_successfully_added_new_pationt": "تم اضافه مريض جديد",
   "PatientAlreadyExists": "المريض موجود بالفعل",
@@ -269,7 +269,13 @@ class CodegenLoader extends AssetLoader{
   "SelectDay": "اختر اليوم",
   "SmartWallet": "المحفظه الذكيه",
   "PaidBefore": "تم الدفع مسبقاً",
-  "BankInstallment": "التقسيط البنكي"
+  "BankInstallment": "التقسيط البنكي",
+  "NoAvailableDates": "لا توجد مواعيد متاحه",
+  "NotSpecified": "غير محدد",
+  "TakeMeasurementPicture": "خذ صورة القياس",
+  "PleaseConnectPatientFirst": "الرجاء ربط المريض أولاً",
+  "SelectMeasurementPicture": "اختر صوره القياس",
+  "Picture": "الصوره"
 };
 static const Map<String,dynamic> en = {
   "Login": "Login",
@@ -394,7 +400,7 @@ static const Map<String,dynamic> en = {
   "wrong_date": "Wrong Date",
   "Male": "Male",
   "Gender": "Gender*",
-  "Female": "Female*",
+  "Female": "Female",
   "AddPatient": "Add Patient",
   "You_are_successfully_added_new_pationt": "You Are Successfully Added New Patient",
   "PatientAlreadyExists": "Patient Already Exists",
@@ -526,7 +532,13 @@ static const Map<String,dynamic> en = {
   "SelectDay": "Select Day",
   "SmartWallet": "Smart Wallet",
   "PaidBefore": "Paid Before",
-  "BankInstallment": "Bank Installment"
+  "BankInstallment": "Bank Installment",
+  "NoAvailableDates": "No Available Dates",
+  "NotSpecified": "Not Specified",
+  "TakeMeasurementPicture": "Take Measurement Picture",
+  "PleaseConnectPatientFirst": "Please Connect Patient First",
+  "SelectMeasurementPicture": "Select Measurement Picture",
+  "Picture": "Picture"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ar": ar, "en": en};
 }

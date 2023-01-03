@@ -52,9 +52,9 @@ class _ListDrPatientsState extends State<ListDrPatients> {
                       child: Image.asset("assets/add_new_patient.png"),
                     ),
                     title:Text("NewPatient".tr(),style: TextStyle(
-                      color: Constants.secondTextColor,
-                        fontSize: 17,
-                        fontWeight: FontWeight.normal
+                        color: Constants.secondTextColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16
                     ),),
                   ),
                   const Divider(thickness: 0.6,indent: 10,endIndent: 10,),
@@ -72,8 +72,8 @@ class _ListDrPatientsState extends State<ListDrPatients> {
                     ),
                     title:Text("ExistingPatient".tr(),style: TextStyle(
                         color: Constants.secondTextColor,
-                        fontSize: 17,
-                        fontWeight: FontWeight.normal
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16
                     ),),
                   ),
                 ]

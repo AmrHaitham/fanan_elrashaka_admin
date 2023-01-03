@@ -325,7 +325,7 @@ class _EditPackageState extends State<EditPackage> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Fee".tr(),
+        labelText: "${"Fee".tr()}*",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
       onSaved: (newValue) {

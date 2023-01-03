@@ -64,7 +64,7 @@ class FinanceCard extends StatelessWidget {
                   color: Color(0xff6a6a6c),
                   fontWeight: FontWeight.bold
               ),),
-              Text((context.locale.toString()=='en')?snapshot['clinic_name_en'].toString():snapshot['clinic_name_ar'].toString())
+              Text((context.locale.toString()=='en')?snapshot['clinic_name_en']??"NotSpecified".tr():snapshot['clinic_name_ar']??"NotSpecified".tr())
             ],
           ),
         ),

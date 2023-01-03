@@ -371,7 +371,7 @@ class _AddDrPationtState extends State<AddDrPationt> {
         },
         {
           'value': 'F',
-          'label': "Female".tr(),
+          'label': "Female".tr().split("*")[0].toString(),
         },
       ],
       decoration: InputDecoration(

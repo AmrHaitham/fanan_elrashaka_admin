@@ -50,7 +50,7 @@ class MoreScreen extends StatelessWidget {
                 child: Image.asset("assets/logo.png")
             ),
             title: Text(context.read<UserData>().name.toString()),
-            subtitle: Text("System Admin"),
+            subtitle: Text((context.read<UserData>().userType=="Admin")?"System Admin":"System Worker"),
             trailing: Container(
               padding: EdgeInsets.all(5),
               width: 35,
@@ -111,20 +111,24 @@ class MoreScreen extends StatelessWidget {
                             MaterialPageRoute(builder: (context) =>ListAllSchedule())
                         );
                       }),
+                  (context.read<UserData>().package!=false)
+                      ?(context.read<UserData>().package==true)?
                   MoreCard(title: LocaleKeys.ClinicsPackages.tr(),
                       image: "assets/package.png",
                       onTap: (){
                         Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) =>ListAllPackages())
                         );
-                      }),
+                      }):Container():Container(),
+                  (context.read<UserData>().userType!="")
+                      ?(context.read<UserData>().userType=="Admin")?
                   MoreCard(title: LocaleKeys.PromoCodes.tr(),
                       image: "assets/promo_codes.png",
                       onTap: (){
                         Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) =>ListAllPromoCodes())
                         );
-                      }),
+                      }):Container():Container(),
                   (context.read<UserData>().userType!="")
                       ?(context.read<UserData>().userType=="Admin")?
                   MoreCard(title: "Financial".tr(),

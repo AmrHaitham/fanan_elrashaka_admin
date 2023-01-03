@@ -121,7 +121,7 @@
   "wrong_date": "Wrong Date",
   "Male": "Male",
   "Gender": "Gender*",
-  "Female": "Female*",
+  "Female": "Female",
   "AddPatient": "Add Patient",
   "You_are_successfully_added_new_pationt": "You Are Successfully Added New Patient",
   "PatientAlreadyExists": "Patient Already Exists",
@@ -200,7 +200,7 @@
   "Purchases": "Purchases",
   "VisitationNotes": "Visitation Notes",
   "Until": "Until",
-  "PayInCashTo": "Pay In Cash To",
+  "PayInCashTo": "Pay Cash Until Date",
   "Meals": "Meals",
   "Butter": "Butter",
   "Walking": "Walking",
@@ -253,5 +253,11 @@
   "SelectDay": "Select Day",
   "SmartWallet": "Smart Wallet",
   "PaidBefore": "Paid Before",
-  "BankInstallment": "Bank Installment"
+  "BankInstallment": "Bank Installment",
+  "NoAvailableDates": "No Available Dates",
+  "NotSpecified": "Not Specified",
+  "TakeMeasurementPicture": "Take Measurement Picture",
+  "PleaseConnectPatientFirst": "Please Connect Patient First",
+  "SelectMeasurementPicture": "Select Measurement Picture",
+  "Picture": "Picture"
 }

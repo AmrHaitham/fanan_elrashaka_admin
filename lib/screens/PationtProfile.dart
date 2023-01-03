@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:bottom_picker/resources/arrays.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -12,6 +12,8 @@ import 'package:fanan_elrashaka_admin/screens/ImageScreen.dart';
 import 'package:fanan_elrashaka_admin/screens/MeasurementsScreen.dart';
 import 'package:fanan_elrashaka_admin/screens/PatientProfileTab.dart';
 import 'package:fanan_elrashaka_admin/screens/PurchasesScreen.dart';
+import 'package:fanan_elrashaka_admin/screens/SelectPatient.dart';
+import 'package:fanan_elrashaka_admin/screens/UploadAppImage.dart';
 import 'package:fanan_elrashaka_admin/screens/VisitationNoteScreen.dart';
 import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
@@ -134,22 +136,28 @@ class _PationtProfileState extends State<PationtProfile> {
                       ),
                       trailing: InkWell(
                         onTap: ()async{
-                          EasyLoading.show(status: "ChangingConnectStatus".tr());
-                          var response = await _patientDetails.updateConnetcStatus(
-                              context.read<UserData>().token,
-                              snapshot.data['pid'].toString(),
-                              snapshot.data['is_connected']?'0':'1'
-                          );
+                          if(snapshot.data['patient_id']!= null){
+                            EasyLoading.show(status: "ChangingConnectStatus".tr());
+                            var response = await _patientDetails.updateConnetcStatus(
+                                context.read<UserData>().token,
+                                snapshot.data['pid'].toString(),
+                                snapshot.data['is_connected']?'0':'1'
+                            );
 
-                          if (await response.statusCode == 200) {
-                            EasyLoading.showSuccess("DoneChangingConnectStatus".tr());
-                            setState(() {});
+                            if (await response.statusCode == 200) {
+                              EasyLoading.showSuccess("DoneChangingConnectStatus".tr());
+                              setState(() {});
+                            }else{
+                              print(response);
+                              // if(response["error"] == "702"){
+                              // _dialogs.errorDialog(context, "user already exists");}
+                            }
+                            EasyLoading.dismiss();
                           }else{
-                            print(response);
-                            // if(response["error"] == "702"){
-                            // _dialogs.errorDialog(context, "user already exists");}
+                            Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) =>SelectPatient(patient_id: snapshot.data['pid'].toString(),))
+                            );
                           }
-                          EasyLoading.dismiss();
                         },
                         child: Container(
                           width: 35,
@@ -265,6 +273,7 @@ class _PationtProfileState extends State<PationtProfile> {
                                 onTap: (){
                                   Navigator.of(context).push(
                                       MaterialPageRoute(builder: (context) => ImageScreen(
+                                          pid: snapshot.data['pid'].toString(),
                                           name: "DietImage".tr(), imageUrl: snapshot.data['diet_image'].toString(),
                                           uploadButton: ()async{
                                             var imagePicker;
@@ -327,55 +336,11 @@ class _PationtProfileState extends State<PationtProfile> {
                                 ),
                                 onTap: (){
                                   Navigator.of(context).push(
-                                      MaterialPageRoute(builder: (context) => ImageScreen(
-                                        name: "ApplicationImage".tr(), imageUrl: snapshot.data['application_image'].toString(),
-                                        uploadButton: ()async{
-                                          var imagePicker;
-                                          imagePicker = await _picker.pickImage(source: ImageSource.gallery,imageQuality: 20);
-                                          String imageLocation = imagePicker.path.toString();
-                                          EasyLoading.show(status: "UploadApplicationImage".tr());
-                                          var picResponse =await _patientDetails.uploadAppImage(
-                                              context.read<UserData>().token,
-                                              snapshot.data['pid'].toString(),
-                                              imageLocation
-                                          );
-                                          if (await picResponse.statusCode == 200) {
-                                            _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){
-                                              Navigator.pop(context);
-                                              setState(() {});
-                                            });
-                                          }else{
-                                            print(await picResponse.stream.bytesToString());
-                                            _dialogs.errorDialog(context,LocaleKeys.Error__please_check_your_internet_connection.tr());
-                                          }
-                                          EasyLoading.dismiss();
-                                        },
-                                          takePicAndUpload: (ctx)async{
-                                            try{
-                                              var imagePicker;
-                                              imagePicker = await _picker.pickImage(source: ImageSource.camera,imageQuality: 20);
-                                              String imageLocation = imagePicker.path.toString();
-                                              EasyLoading.show(status: "UploadApplicationImage".tr());
-                                              var picResponse =await _patientDetails.uploadAppImage(
-                                                  context.read<UserData>().token,
-                                                  snapshot.data['pid'].toString(),
-                                                  imageLocation
-                                              );
-                                              if (await picResponse.statusCode == 200) {
-                                                EasyLoading.dismiss();
-                                                _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){
-                                                  Navigator.pop(context);
-                                                  setState(() {});
-                                                });
-                                              }else{
-                                                print(await picResponse.stream.bytesToString());
-                                                _dialogs.errorDialog(context,LocaleKeys.Error__please_check_your_internet_connection.tr());
-                                              }
-                                            }catch(v){
-                                              print(v);
-                                            }
-                                          }
-                                      )
+                                      MaterialPageRoute(builder: (context) => AppImageScreen(
+                                          name: "ApplicationImage".tr(),
+                                          imageUrl:snapshot.data['application_image'].toString(),
+                                          pid: snapshot.data['pid'].toString()
+                                        )
                                       )
                                   );
                                 },
@@ -398,7 +363,7 @@ class _PationtProfileState extends State<PationtProfile> {
                                   _bottomSheetWidget.showBottomSheetButtons(
                                       context, 280.0, const Text(""),
                                     [
-                                      buildDateFormField(),
+                                      buildDateFormField(_controller!.text),
                                       const SizedBox(height: 20,),
                                       DefaultButton(
                                         text: "UpdatePayInCashStatus".tr(),
@@ -429,26 +394,29 @@ class _PationtProfileState extends State<PationtProfile> {
                                         text: "CancelPayInCash".tr(),
                                         color: Colors.red,
                                         press: ()async{
-                                          EasyLoading.show(status: "UpdatePayInCashStatus".tr());
-                                          var response = await _patientDetails.change_pay_in_cash_status(
-                                              context.read<UserData>().token,
-                                              snapshot.data['pid'].toString(),
-                                              ""
-                                          );
-                                          var data =await response.stream.bytesToString();
-                                          print(data);
-                                          if (await response.statusCode == 200) {
-                                            print(data);
-                                            EasyLoading.showSuccess("DoneUpdatingPayInCashStatus".tr());
-                                            Navigator.pop(context);
-                                            setState(() {});
-                                          }else{
-                                            print(data);
-                                            if(response["error"] == "721"){
-                                              _dialogs.errorDialog(context, "PatientIsNotConnected".tr());
+                                          try{
+                                            EasyLoading.show(status: "UpdatePayInCashStatus".tr());
+                                            var response = await _patientDetails.cancle_pay_in_cash_status(
+                                                context.read<UserData>().token,
+                                                snapshot.data['pid'].toString(),
+                                            );
+                                            // var data =await response.stream.bytesToString();
+                                            // print(data);
+                                            if (await response.statusCode == 200) {
+                                              print(response);
+                                              EasyLoading.showSuccess("DoneUpdatingPayInCashStatus".tr());
+                                              Navigator.pop(context);
+                                              setState(() {});
+                                            }else{
+                                              print(response);
+                                              // if(response["error"] == "721"){
+                                              //   _dialogs.errorDialog(context, "PatientIsNotConnected".tr());
+                                              // }
                                             }
+                                            EasyLoading.dismiss();
+                                          }catch(v){
+                                            EasyLoading.dismiss();
                                           }
-                                          EasyLoading.dismiss();
                                         },
                                       )
                                     ]
@@ -473,9 +441,20 @@ class _PationtProfileState extends State<PationtProfile> {
                                       name: "FoodAgenda".tr(),
                                       image: "food_agenda.png",
                                       onTap: (){
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(builder: (context) => FoodAgendaScreen(pid: widget.pid,))
-                                        );
+                                        if(snapshot.data['patient_id']!= null){
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(builder: (context) => FoodAgendaScreen(pid: widget.pid,))
+                                          );
+                                        }else{
+                                          AwesomeDialog(
+                                              context: context,
+                                              animType: AnimType.SCALE,
+                                              dialogType: DialogType.WARNING,
+                                              body: Center(child: Text("PleaseConnectPatientFirst".tr(),),),
+                                              btnOkText:"Ok".tr(),
+                                              btnOkOnPress: (){}
+                                          )..show();
+                                        }
                                       },
                                     ),
                                     const SizedBox(width: 5,),
@@ -502,9 +481,20 @@ class _PationtProfileState extends State<PationtProfile> {
                                       name: "Purchases".tr(),
                                       image: "cart.png",
                                       onTap: (){
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(builder: (context) => PurchasesScreen(pid: widget.pid,))
-                                        );
+                                        if(snapshot.data['patient_id']!= null){
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(builder: (context) => PurchasesScreen(pid: widget.pid,))
+                                          );
+                                        }else{
+                                          AwesomeDialog(
+                                              context: context,
+                                              animType: AnimType.SCALE,
+                                              dialogType: DialogType.WARNING,
+                                              body: Center(child: Text("PleaseConnectPatientFirst".tr(),),),
+                                              btnOkText:"Ok".tr(),
+                                              btnOkOnPress: (){}
+                                          )..show();
+                                        }
                                       },
                                     ),
                                     const SizedBox(width: 5,),
@@ -541,11 +531,12 @@ class _PationtProfileState extends State<PationtProfile> {
       ),
     );
   }
-  buildDateFormField(){
+  buildDateFormField(initData){
     return TextFormField(
       controller: _controller,
       decoration: InputDecoration(
         suffixText: "Until".tr(),
+        hintText: "PayInCashTo".tr(),
         border: OutlineInputBorder(
           borderRadius:
           BorderRadius.circular(5.0),
@@ -556,6 +547,7 @@ class _PationtProfileState extends State<PationtProfile> {
       readOnly: true,
       onTap: () {
         BottomPicker.date(
+          initialDateTime: DateTime.parse(initData),
           title: "PayInCashTo".tr(),
           dateOrder: DatePickerDateOrder.dmy,
           pickerTextStyle:const TextStyle(

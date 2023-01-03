@@ -256,5 +256,11 @@ abstract class  LocaleKeys {
   static const SmartWallet = 'SmartWallet';
   static const PaidBefore = 'PaidBefore';
   static const BankInstallment = 'BankInstallment';
+  static const NoAvailableDates = 'NoAvailableDates';
+  static const NotSpecified = 'NotSpecified';
+  static const TakeMeasurementPicture = 'TakeMeasurementPicture';
+  static const PleaseConnectPatientFirst = 'PleaseConnectPatientFirst';
+  static const SelectMeasurementPicture = 'SelectMeasurementPicture';
+  static const Picture = 'Picture';
 
 }

@@ -121,7 +121,7 @@
   "wrong_date": "تاريخ خاطئ",
   "Male": "ذكر",
   "Gender": "الجنس*",
-  "Female": "أنثي*",
+  "Female": "أنثي",
   "AddPatient": "اضافه مريض",
   "You_are_successfully_added_new_pationt": "تم اضافه مريض جديد",
   "PatientAlreadyExists": "المريض موجود بالفعل",
@@ -200,7 +200,7 @@
   "Purchases": "المشتريات",
   "VisitationNotes": "ملاحظات الزيارت",
   "Until": "حتى",
-  "PayInCashTo": "الدفع نقدًا إلى",
+  "PayInCashTo": "الدفع نقدا حتى تاريخ",
   "Meals": "وجبات",
   "Butter": "زبده",
   "Walking": "المشي",
@@ -253,5 +253,11 @@
   "SelectDay": "اختر اليوم",
   "SmartWallet": "المحفظه الذكيه",
   "PaidBefore": "تم الدفع مسبقاً",
-  "BankInstallment": "التقسيط البنكي"
+  "BankInstallment": "التقسيط البنكي",
+  "NoAvailableDates": "لا توجد مواعيد متاحه",
+  "NotSpecified": "غير محدد",
+  "TakeMeasurementPicture": "خذ صورة القياس",
+  "PleaseConnectPatientFirst": "الرجاء ربط المريض أولاً",
+  "SelectMeasurementPicture": "اختر صوره القياس",
+  "Picture": "الصوره"
 }

@@ -7,6 +7,7 @@ import 'package:fanan_elrashaka_admin/networks/Bookings.dart';
 import 'package:fanan_elrashaka_admin/networks/Packages.dart';
 import 'package:fanan_elrashaka_admin/providers/ClinicsData.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/screens/MainScreen.dart';
 import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/DateSlotGrid.dart';
@@ -55,40 +56,6 @@ class _NewBookingState extends State<NewBooking> {
     return ScreenContainer(
         name: "NewBooking".tr(),
         topLeftAction: BackIcon(),
-        // topRightaction: InkWell(
-        //   onTap: ()async{
-        //     if( booking_time != null){
-        //       EasyLoading.show(status: "Buy Package");
-        //       //token,clinic_time,clinic_service,booking_time,doctor_patient,payment_method,paid_amount
-        //       var responseData = await _bookings.newBooking(
-        //           context.read<UserData>().token,
-        //           "?",
-        //           widget.clinic,
-        //           booking_time,
-        //           widget.patient_id,
-        //           widget.payment_type,
-        //           widget.paidAmount
-        //       );
-        //       if (await responseData.statusCode == 200) {
-        //         _dialogs.doneDialog(context,"You_are_successfully_Buy_package","ok",(){
-        //         });
-        //       }else{
-        //         var response = jsonDecode(await responseData.stream.bytesToString());
-        //         print(response);
-        //         _dialogs.errorDialog(context, "Error_while_Buying_package_please_check_your_internet_connection");
-        //       }
-        //       EasyLoading.dismiss();
-        //     }else{
-        //       print("Input all fields");
-        //     }
-        //   },
-        //   child: Container(
-        //     margin: EdgeInsets.only(right: 10),
-        //     width: 25,
-        //     height: 25,
-        //     child: Image.asset("assets/Save-512.png"),
-        //   ),
-        // ),
         child: FutureBuilder(
             future: _bookings.get_clinic_calendar(context.read<UserData>().token,widget.clinic),
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -101,153 +68,176 @@ class _NewBookingState extends State<NewBooking> {
                 if (snapshot.hasError) {
                   // error in data
                   print(snapshot.error.toString());
-                  return  Container();
-                } else if (snapshot.hasData) {
-                  // print(snapshot.data);
-                  // List values = [];
-                  // List keys = [];
-                  List<SelectedListItem> _selectedItems =[];
-                  for(var row in snapshot.data){
-                    print(row);
-                    // keys.add(row['id'].toString());
-                    // values.add(row['date'].toString());
-                    _selectedItems.add(SelectedListItem(
-                      name: row['date'].toString(),
-                      value: row['id'].toString(),
-                      isSelected: false,
-                    ));
-                  }
-                  return Expanded(
-                    // width: double.infinity,
-                    // height: MediaQuery.of(context).size.height*0.715,
-                    // padding: const EdgeInsets.only(right: 15,left: 15),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 20,right: 15,left: 15),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          // DateSlotsGrid(
-                          //   keys: keys,
-                          //   values: values,
-                          //   clinic: widget.clinic,
-                          //   payment_type: widget.payment_type,
-                          //   paidAmount: widget.paidAmount,
-                          //   patient_id: widget.patient_id,
-                          // ),
-                          buildSelectDay(_selectedItems),
-                          const SizedBox(height: 20),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  height: 50,
-                                  width: MediaQuery.of(context).size.width*0.53,
-                                  child: TextFormField(
-                                    readOnly: true,
-                                    controller: _controller,
-                                    decoration: InputDecoration(
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      labelText: "BookingTime".tr(),
-                                      floatingLabelBehavior: FloatingLabelBehavior.auto,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 10,),
-                                SizedBox(
-                                  height: 50,
-                                  width: MediaQuery.of(context).size.width*0.35,
-                                  child: DefaultButton(
-                                    text: "GetTime".tr(),
-                                    press: ()async{
-                                      if( selectedDate != null) {
-                                        EasyLoading.show(status: "GetTime".tr());
-                                        //token,clinic_time,clinic_service,booking_time,doctor_patient,payment_method,paid_amount
-                                        print("${context
-                                            .read<UserData>()
-                                            .token},${context
-                                            .read<ClinisData>().timeId},${widget.clinic}");
-                                        var responseData = await _bookings
-                                            .get_next_available_time(
-                                          context
-                                              .read<UserData>()
-                                              .token,
-                                          selectedDate.toString(),
-                                          widget.clinic,
-                                        );
-                                        if (await responseData.statusCode == 200) {
-                                          var response = jsonDecode(await responseData.stream
-                                              .bytesToString());
-                                          print(response);
-                                          setState(() {
-                                            _controller.text = DateFormat("h:mm a",context.locale.toString()).format(
-                                                DateTime.parse("2020-01-02 ${response['time']
-                                                    .toString()}.000")).toString();
-                                            booking_time = response['time'].toString();
-                                          });
-                                        } else {
-                                          var response = jsonDecode(await responseData.stream
-                                              .bytesToString());
-                                          print(response);
-                                          _dialogs.errorDialog(
-                                              context, LocaleKeys.Error__please_check_your_internet_connection.tr());
-                                        }
-                                        EasyLoading.dismiss();
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 20,),
-                          DefaultButton(
-                            text: "BookClinic".tr(),
-                            press: ()async{
-                              try{
-                                if( booking_time != null){
-
-                                  EasyLoading.show(status: "BookClinic".tr());
-                                  //token,clinic_time,clinic_service,booking_time,doctor_patient,payment_method,paid_amount
-                                  var response = await _bookings.newBooking(
-                                      context.read<UserData>().token,
-                                      selectedDate.toString(),
-                                      widget.clinic,
-                                      booking_time,
-                                      widget.patient_id,
-                                      widget.payment_type,
-                                      widget.paidAmount
-                                  );
-                                  // print(await response.stream.bytesToString());
-                                  if (await response.statusCode == 200) {
-                                    print(await response.body);
-                                    _dialogs.doneDialog(context,"You_are_successfully_Book".tr(),"Ok".tr(),(){
-                                      Navigator.pop(context);
-                                      Navigator.pop(context);
-                                    });
-                                  }else{
-                                    // var response1 = jsonDecode(await response.stream.bytesToString());
-                                    print(await response.body);
-                                    _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
-                                  }
-                                  EasyLoading.dismiss();
-                                }else{
-                                  print("Input all fields");
-                                }
-                              }catch(v){
-                                print(v);
-                                // EasyLoading.showError("error while booking");
-                                EasyLoading.dismiss();
-                              }
-                            },
-                          )
-                        ],
-                      ),
+                  return  Padding(
+                    padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.3),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: Image.asset("assets/fully_booked(1).png",color: Constants.secondColor,),
+                        ),
+                        SizedBox(height: 20,),
+                        Text("NoAvailableDates".tr(),style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Constants.secondColor
+                        ),)
+                      ],
                     ),
                   );
+                } else if (snapshot.hasData ) {
+                  try{
+                    if(snapshot.data['error'] == "708"){
+                      return Padding(
+                        padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.3),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset("assets/fully_booked(1).png",color: Constants.secondColor,),
+                            ),
+                            SizedBox(height: 20,),
+                            Text("NoAvailableDates".tr(),style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Constants.secondColor
+                            ),)
+                          ],
+                        ),
+                      );
+                    }else{
+                      return Container();
+                    }
+                  }catch(v){
+                    List<SelectedListItem> _selectedItems =[];
+                    for(var row in snapshot.data){
+                      _selectedItems.add(SelectedListItem(
+                        name: row['date'].toString(),
+                        value: row['id'].toString(),
+                        isSelected: false,
+                      ));
+                    }
+                    return Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 20,right: 15,left: 15),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            buildSelectDay(_selectedItems),
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    height: 50,
+                                    width: MediaQuery.of(context).size.width*0.53,
+                                    child: TextFormField(
+                                      readOnly: true,
+                                      controller: _controller,
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        labelText: "BookingTime".tr(),
+                                        floatingLabelBehavior: FloatingLabelBehavior.auto,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10,),
+                                  SizedBox(
+                                    height: 50,
+                                    width: MediaQuery.of(context).size.width*0.35,
+                                    child: DefaultButton(
+                                      text: "GetTime".tr(),
+                                      press: ()async{
+                                        if( selectedDate != null) {
+                                          EasyLoading.show(status: "GetTime".tr());
+                                          //token,clinic_time,clinic_service,booking_time,doctor_patient,payment_method,paid_amount
+                                          print("${context
+                                              .read<UserData>()
+                                              .token},${context
+                                              .read<ClinisData>().timeId},${widget.clinic}");
+                                          var responseData = await _bookings
+                                              .get_next_available_time(
+                                            context
+                                                .read<UserData>()
+                                                .token,
+                                            selectedDate.toString(),
+                                            widget.clinic,
+                                          );
+                                          if (await responseData.statusCode == 200) {
+                                            var response = jsonDecode(await responseData.stream
+                                                .bytesToString());
+                                            print(response);
+                                            setState(() {
+                                              _controller.text = DateFormat("h:mm a",context.locale.toString()).format(
+                                                  DateTime.parse("2020-01-02 ${response['time']
+                                                      .toString()}.000")).toString();
+                                              booking_time = response['time'].toString();
+                                            });
+                                          } else {
+                                            var response = jsonDecode(await responseData.stream
+                                                .bytesToString());
+                                            print(response);
+                                            _dialogs.errorDialog(
+                                                context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                                          }
+                                          EasyLoading.dismiss();
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 20,),
+                            DefaultButton(
+                              text: "BookClinic".tr(),
+                              press: ()async{
+                                try{
+                                  if( booking_time != null){
+
+                                    EasyLoading.show(status: "BookClinic".tr());
+                                    //token,clinic_time,clinic_service,booking_time,doctor_patient,payment_method,paid_amount
+                                    var response = await _bookings.newBooking(
+                                        context.read<UserData>().token,
+                                        selectedDate.toString(),
+                                        widget.clinic,
+                                        booking_time,
+                                        widget.patient_id,
+                                        widget.payment_type,
+                                        widget.paidAmount
+                                    );
+                                    if (await response.statusCode == 200) {
+                                      print(await response.body);
+                                      _dialogs.doneDialog(context,"You_are_successfully_Book".tr(),"Ok".tr(),(){
+                                        Navigator.of(context).pushReplacement(
+                                            MaterialPageRoute(builder: (context) => MainScreen(selectedIndex: 2,))
+                                        );
+                                      });
+                                    }else{
+                                      print(await response.body);
+                                      _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                                    }
+                                    EasyLoading.dismiss();
+                                  }else{
+                                    print("Input all fields");
+                                  }
+                                }catch(v){
+                                  print(v);
+                                  EasyLoading.dismiss();
+                                }
+                              },
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  }
                 }else{
                   //no data
                   return Container();
@@ -281,16 +271,6 @@ buildSelectDay(data){
     onTap: (){
       DropDownState(
         DropDown(
-          // searchWidget: TextFormField(decoration: InputDecoration(
-          //     hoverColor: Constants.secondColor,
-          //     fillColor: Constants.secondColor,
-          //     contentPadding: EdgeInsets.all(8),
-          //     border: OutlineInputBorder(
-          //       borderRadius:
-          //       BorderRadius.circular(10),
-          //     ),
-          //     label: Text(LocaleKeys.Search.tr())
-          // ),),
           isSearchVisible: false,
           bottomSheetTitle:  Text(
             "Select".tr(),

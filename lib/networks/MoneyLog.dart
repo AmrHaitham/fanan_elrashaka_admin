@@ -26,15 +26,28 @@ class MoneyLog{
       'Authorization': 'Token ${token}'
     };
     var request = http.MultipartRequest('POST', Uri.parse("${Apis.finance}"));
-    request.fields.addAll({
-      'name': name.toString(),
-      'category_id':category_id.toString(),
-      'amount': amount.toString(),
-      'log_type': log_type.toString(),
-      'notes': notes.toString(),
-      'clinic_id': clinic_id.toString(),
-      'date':time.toString()
-    });
+    print(clinic_id);
+    if(clinic_id.toString() != "NotSpecified"){
+      request.fields.addAll({
+        'name': name.toString(),
+        'category_id':category_id.toString(),
+        'amount': amount.toString(),
+        'log_type': log_type.toString(),
+        'notes': notes.toString(),
+        'clinic_id': clinic_id.toString(),
+        'date':time.toString()
+      });
+    }else{
+      request.fields.addAll({
+        'name': name.toString(),
+        'category_id':category_id.toString(),
+        'amount': amount.toString(),
+        'log_type': log_type.toString(),
+        'notes': notes.toString(),
+        'date':time.toString()
+      });
+    }
+
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
@@ -46,10 +59,17 @@ class MoneyLog{
       'Authorization': 'Token ${token}'
     };
     var request = http.MultipartRequest('PUT', Uri.parse("${Apis.finance}"));
-    request.fields.addAll({
-      "id":id, "name":name, "category_id":category_id,
-      "amount":amount, "log_type":log_type, "notes":notes, "clinic_id":clinic_id,'date':date
-    });
+    if(clinic_id.toString() != "NotSpecified"){
+      request.fields.addAll({
+        "id":id, "name":name, "category_id":category_id,
+        "amount":amount, "log_type":log_type, "notes":notes, "clinic_id":clinic_id,'date':date
+      });
+    }else{
+      request.fields.addAll({
+        "id":id, "name":name, "category_id":category_id,
+        "amount":amount, "log_type":log_type, "notes":notes,'date':date
+      });
+    }
 
     request.headers.addAll(headers);
 

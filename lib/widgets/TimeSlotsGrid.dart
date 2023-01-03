@@ -12,8 +12,10 @@ import 'package:provider/provider.dart';
 class TimeSlotsGrid extends StatefulWidget {
   final List keys,values;
   final String id;
+  final clinic_id;
+  final selectedDay;
 
-  const TimeSlotsGrid({Key? key,required this.keys,required this.values,required this.id}) : super(key: key);
+  const TimeSlotsGrid({Key? key,required this.keys,required this.values,required this.id,required this.clinic_id,required this.selectedDay}) : super(key: key);
   @override
   _TimeSlotsGridState createState() => _TimeSlotsGridState();
 }
@@ -66,17 +68,12 @@ class _TimeSlotsGridState extends State<TimeSlotsGrid> {
                   _dialogs.errorDialog(context,LocaleKeys.Error__please_check_your_internet_connection.tr());
                 }
                 EasyLoading.dismiss();
-                setState(() {});
               }catch(v){
                 EasyLoading.dismiss();
-                setState(() {});
               }finally{
                 EasyLoading.showSuccess("DoneReschedulingBook".tr());
-                Navigator.pop(context);
-                Navigator.pop(context);
-                Navigator.pop(context);
                 Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) =>MainScreen(selectedIndex: 2,))
+                    MaterialPageRoute(builder: (context) =>MainScreen(selectedIndex: 2,selected_day: widget.selectedDay,clinic_id: widget.clinic_id,))
                 );
               }
             },

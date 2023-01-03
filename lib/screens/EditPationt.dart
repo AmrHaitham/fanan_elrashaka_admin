@@ -140,8 +140,15 @@ class _EditPationtState extends State<EditPationt> {
                           if (await changeProfileResponse.statusCode == 200) {
                             _dialogs.doneDialog(context,LocaleKeys.You_are_successfully_updated_information.tr(),"Ok".tr(),(){});
                           }else{
-                            print(await changeProfileResponse.stream.bytesToString());
-                            _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                            var error = jsonDecode(await changeProfileResponse.stream.bytesToString());
+                            if( error['error']=="715" ){
+                              print(error);
+                              _dialogs.errorDialog(context, "PhoneNumberAlreadyExists".tr());
+                            }else{
+                              print(error);
+                              _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                            }
+
                           }
                           EasyLoading.dismiss();
                           setState(() {});
@@ -157,10 +164,10 @@ class _EditPationtState extends State<EditPationt> {
                     topCenterAction: ProfilePic(
                       profile: snapshot.data['image'],
                       uploadImage: () async{
-                        EasyLoading.show(status: "UpdatingPatientImage".tr());
                         var imagePicker;
                         imagePicker = await _picker.pickImage(source: ImageSource.gallery,imageQuality: 20);
                         String imageLocation = imagePicker.path.toString();
+                        EasyLoading.show(status: "UpdatingPatientImage".tr());
                         var picResponse =await _patients.updatePatientImage(
                           context.read<UserData>().token,
                             snapshot.data['email'],
@@ -411,7 +418,7 @@ class _EditPationtState extends State<EditPationt> {
             borderRadius:
             BorderRadius.circular(5.0),
           ),
-          labelText:"${"Birthday".tr()}*",
+          labelText:"${"Birthday".tr()}",
           floatingLabelBehavior:
           FloatingLabelBehavior.auto,
         ),
@@ -616,6 +623,9 @@ class _EditPationtState extends State<EditPationt> {
           BorderRadius.circular(5.0),
         ),
         hintText: "ChangePassword".tr(),
+        hintStyle: TextStyle(
+          color: Colors.black
+        ),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),

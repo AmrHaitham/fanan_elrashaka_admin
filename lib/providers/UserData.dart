@@ -53,4 +53,13 @@ class UserData with ChangeNotifier{
     _userType = userType;
     notifyListeners();
   }
+
+  bool _package = false;
+
+  bool get package => _package;
+
+  void setPackage(bool package){
+    _package = package;
+    notifyListeners();
+  }
 }

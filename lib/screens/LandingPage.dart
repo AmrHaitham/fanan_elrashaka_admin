@@ -85,6 +85,8 @@ class _LandingPageState extends State<LandingPage> {
           context.read<UserData>().setUserPhone(response['phone']);
           context.read<UserData>().setUserName(response['name']);
           context.read<UserData>().setUserType(response['groups'][0]);
+          context.read<UserData>().setUserName(response['name']);
+          context.read<UserData>().setPackage(response['packages']);
           print("name is :- ${context.read<UserData>().name}");
           print("phone is :- ${context.read<UserData>().phone}");
           print("type is :- ${context.read<UserData>().userType}");

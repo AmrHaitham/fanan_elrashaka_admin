@@ -42,8 +42,8 @@ class _EditMoneyLogState extends State<EditMoneyLog> {
       });
     });
     _clinics.add({
-      'value':" ",
-      'label':"Not Specified",
+      'value':"NotSpecified",
+      'label':"NotSpecified".tr(),
     });
     return _clinics;
   }
@@ -286,7 +286,7 @@ class _EditMoneyLogState extends State<EditMoneyLog> {
 
   SelectFormField buildClinicSelect(initData){
     return SelectFormField(
-      initialValue: initData,
+      initialValue: (initData=="null")?"NotSpecified":initData,
       type: SelectFormFieldType
           .dropdown, // or can be dialog
       labelText: "Clinic".tr(),

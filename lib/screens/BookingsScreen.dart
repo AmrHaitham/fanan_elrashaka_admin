@@ -20,16 +20,18 @@ import 'package:provider/provider.dart';
 import 'package:select_form_field/select_form_field.dart';
 import 'package:table_calendar/table_calendar.dart';
 class BookingsScreen extends StatefulWidget {
+  final day;
+  final initClinic;
 
-  const BookingsScreen({Key? key,}) : super(key: key);
+  const BookingsScreen({Key? key, this.day , this.initClinic,}) : super(key: key);
   @override
   _BookingsScreenState createState() => _BookingsScreenState();
 }
 
 class _BookingsScreenState extends State<BookingsScreen> {
   CalendarFormat _calendarFormat = CalendarFormat.week;
-  DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay = DateTime.now();
+  DateTime? _focusedDay ;
+  DateTime? _selectedDay;
   String? fromDate , toDate;
   Bookings _bookings = Bookings();
   String? clinic;
@@ -43,8 +45,9 @@ class _BookingsScreenState extends State<BookingsScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    clinic = context.read<ClinisData>().clinicsName.first.id;
-
+    clinic = widget.initClinic ??context.read<ClinisData>().clinicsName.first.id;
+    _selectedDay = widget.day ?? DateTime.now();
+    _focusedDay = widget.day ?? DateTime.now();
   }
   getClinic(){
     List<Map<String,dynamic>> _clinics = [];
@@ -54,8 +57,17 @@ class _BookingsScreenState extends State<BookingsScreen> {
         'label':element.name.toString(),
       });
     });
-    firtsClinicId = context.read<ClinisData>().clinicsName.first.id;
+    firtsClinicId = widget.initClinic ?? context.read<ClinisData>().clinicsName.first.id;
     return _clinics;
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    clinic = null;
+    _selectedDay = null;
+    _focusedDay = null;
+    firtsClinicId = null;
   }
   @override
   Widget build(BuildContext context) {
@@ -318,7 +330,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                   color:Constants.secondColor
                               ),
                               titleTextFormatter: (datetime, data) {
-                                return DateFormat("MMMM, y").format(_focusedDay);
+                                return DateFormat("MMMM, y").format(_focusedDay!);
                               }),
                           onHeaderTapped: (date) {
                             setState(() {
@@ -426,7 +438,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                               )),
                           firstDay: kFirstDay,
                           lastDay: kLastDay,
-                          focusedDay: _focusedDay,
+                          focusedDay: _focusedDay!,
                           calendarFormat: _calendarFormat,
                           selectedDayPredicate: (day) {
                             return isSameDay(_selectedDay, day);
@@ -494,6 +506,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                         child:BookingCard(
                                           clinic_id:clinic.toString(),
                                           snapshot: snapshot.data[index],
+                                          day: _selectedDay,
                                         )
                                     );
                                   }

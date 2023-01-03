@@ -101,7 +101,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
                               fromDate,
                               toDate,
                               clinic,
-                              max_number??"-1",
+                              (max_number == "" || max_number == null || max_number == " ")?"-1":max_number,
                               fee_after_code
                           );
                           if (await responseData.statusCode == 200) {
@@ -137,7 +137,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
                               const SizedBox(height: 10,),
                               buildCodeFormField(snapshot.data['code']),
                               const SizedBox(height: 20,),
-                              buildMaxFormField(snapshot.data['max_number']),
+                              buildMaxFormField((snapshot.data['max_number'].toString()=="-1")?"":snapshot.data['max_number']),
                               const SizedBox(height: 20,),
                               buildSelect(snapshot.data['clinic_service_id']),
                               const SizedBox(height: 20,),
@@ -332,7 +332,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
         BottomPicker.date(
           // maxDateTime: DateTime.now(),
           title: "FromDate".tr(),
-          initialDateTime: fromDateI??DateTime.now(),
+          initialDateTime: fromDateI??DateTime.parse(initData),
           dateOrder: DatePickerDateOrder.dmy,
           pickerTextStyle:const TextStyle(
             color: Colors.blue,
@@ -391,7 +391,7 @@ class _EditPromoCodeState extends State<EditPromoCode> {
         BottomPicker.date(
           // maxDateTime: DateTime.now(),
           title: "ToDate".tr(),
-          initialDateTime: toDateI??DateTime.now(),
+          initialDateTime: toDateI??DateTime.parse(initData),
           dateOrder: DatePickerDateOrder.dmy,
           pickerTextStyle:const TextStyle(
             color: Colors.blue,

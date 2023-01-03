@@ -12,6 +12,9 @@ import 'package:fanan_elrashaka_admin/widgets/UserCard.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 class SelectPatient extends StatefulWidget {
+  final patient_id;
+
+  const SelectPatient({Key? key, this.patient_id = null}) : super(key: key);
   @override
   _SelectPatientState createState() => _SelectPatientState();
 }
@@ -62,6 +65,7 @@ class _SelectPatientState extends State<SelectPatient> {
                             child:SelectPatientCard(
                               snapshot: snapshot,
                               index: index,
+                              patient_id: widget.patient_id,
                             )
                         );
                       }

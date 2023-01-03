@@ -80,6 +80,9 @@ class _VisitationNoteScreenState extends State<VisitationNoteScreen> {
                   },
                 ),
                 body: ScreenContainer(
+                    onRefresh: (){
+                      setState(() {});
+                    },
                     topLeftAction:const BackIcon(),
                     name: LocaleKeys.VisitationNotes.tr(),
                     child: Container(

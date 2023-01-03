@@ -87,7 +87,7 @@ class _AddPromoState extends State<AddPromo> {
                   fromDate,
                   toDate,
                   clinic,
-                  max_number??"-1",
+                  (max_number == "" || max_number == null || max_number == " ")?"-1":max_number,
                   fee_after_code
                 );
                 if (await responseData.statusCode == 200) {

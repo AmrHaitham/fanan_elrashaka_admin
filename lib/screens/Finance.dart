@@ -35,6 +35,7 @@ import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_file/open_file.dart';
+import 'package:permission_handler/permission_handler.dart';
 class Finance extends StatefulWidget {
   final token ;
 
@@ -88,9 +89,22 @@ class _FinanceState extends State<Finance> {
   }
 
   Reports _reports = Reports();
+  Future<bool> askPermission() async{
+    PermissionStatus status = await Permission.storage.status;
+    if(status.isDenied == true)
+    {
+      askPermission();
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+  }
 
   downloadReport(api)async{
     try{
+      askPermission();
       EasyLoading.show(status: "GettingReport".tr());
       var response =await api;
       var data = jsonDecode(await response.stream.bytesToString());

@@ -9,6 +9,7 @@ class PatientDetails{
       'Authorization': 'Token ${token}'
     };
     var response =await http.get(Uri.parse("${Apis.patient_details}$id/"),headers: headers);
+    print(response.body);
     return jsonDecode(utf8.decode(response.bodyBytes));
   }
 
@@ -21,6 +22,26 @@ class PatientDetails{
     request.fields.addAll({
       'pid': pid,
       'connected': connect
+    });
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    return response;
+
+  }
+
+  connectUnKnownPatient(token,patient_id,pid)async{
+    var headers = {
+      'Authorization': 'Token ${token}'
+    };
+
+    var request = http.MultipartRequest('PUT', Uri.parse(Apis.change_IsConnected_status));
+    request.fields.addAll({
+      'pid': pid,
+      'connected': '1',
+      'patient_id': patient_id
     });
 
     request.headers.addAll(headers);
@@ -97,6 +118,26 @@ class PatientDetails{
       'pid': pid,
       'pay_in_cash': '1',
       'pay_in_cash_until': pay_in_cash_until
+    });
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    return response;
+
+  }
+
+  cancle_pay_in_cash_status(token,pid)async{
+    var headers = {
+      'Authorization': 'Token ${token}'
+    };
+
+    var request = http.MultipartRequest('PUT', Uri.parse(Apis.change_pay_in_cash_status));
+    request.fields.addAll({
+      'pid': pid,
+      'pay_in_cash': '0',
+      // 'pay_in_cash_until': pay_in_cash_until
     });
 
     request.headers.addAll(headers);
@@ -212,7 +253,7 @@ class PatientDetails{
     return jsonDecode(utf8.decode(response.bodyBytes));
   }
 
-  addMeasurement(token,pid,data)async{
+  addMeasurement(token,pid,data,image)async{
     var headers = {
       'Authorization': 'Token ${token}'
     };
@@ -229,7 +270,9 @@ class PatientDetails{
       'thigh': data[6],
       'note': data[7]
     });
-
+    if(image!=null){
+      request.files.add(await http.MultipartFile.fromPath('image', image));
+    }
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
@@ -237,7 +280,7 @@ class PatientDetails{
     return response;
 
   }
-  updateMeasurement(token,id,data)async{
+  updateMeasurement(token,id,data,image)async{
     var headers = {
       'Authorization': 'Token ${token}'
     };
@@ -254,7 +297,9 @@ class PatientDetails{
       'thigh': data[6],
       'note': data[7]
     });
-
+    if(image!=null){
+      request.files.add(await http.MultipartFile.fromPath('image', image));
+    }
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();

@@ -32,6 +32,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
   PatientDetails _patientDetails = PatientDetails();
   BottomSheetWidget _bottomSheetWidget = BottomSheetWidget();
   Dialogs _dialogs = Dialogs();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -47,6 +48,9 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
             } else if (snapshot.hasData) {
               print(snapshot.data);
               return ScreenContainer(
+                  onRefresh: (){
+                    setState(() {});
+                  },
                   name: "Purchases".tr(),
                   topLeftAction:const BackIcon(),
                   child: Container(
@@ -78,7 +82,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                                   _bottomSheetWidget.showBottomSheetButtons(
                                       context, 200.0, const Text(""),
                                       [
-                                        buildDateFormField(),
+                                        buildDateFormField(DateTime.parse(snapshot.data[index]['used_amount'])),
                                         const SizedBox(height: 20,),
                                         DefaultButton(
                                           text: "UpdatePackageEndDate".tr(),
@@ -108,44 +112,102 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                                   );
                                 }else if(snapshot.data[index]['package_unit'].toString() == "2"){
                                   print("update used amount");
-                                  _bottomSheetWidget.showBottomSheetButtons(
-                                      context, 200.0, const Text(""),
-                                      [
-                                        buildMaxFormField(snapshot.data[index]['used_amount'].toString(),snapshot.data[index]['package_amount'].toString()),
-                                        const SizedBox(height: 20,),
-                                        DefaultButton(
-                                          text: "UpdateUsedAmount".tr(),
-                                          press: ()async{
-                                            try{
-                                              if(int.parse(usedAmount.toString()) <= snapshot.data[index]['package_amount']){
-                                                EasyLoading.show(status: "UpdateUsedAmount".tr());
-                                                var response = await _patientDetails.updatePatientPurchases(
-                                                    context.read<UserData>().token,
-                                                    snapshot.data[index]['id'].toString(),
-                                                    usedAmount
-                                                );
-                                                var data = jsonDecode(await response.stream.bytesToString());
-                                                if (await response.statusCode == 200) {
-                                                  print(data);
-                                                  EasyLoading.showSuccess(LocaleKeys.You_are_successfully_updated_information.tr());
-                                                  Navigator.pop(context);
-                                                  setState(() {});
-                                                }else{
-                                                  print(data);
-                                                  if(response["error"] == "721"){
-                                                    _dialogs.errorDialog(context, LocaleKeys.PatientIsNotConnected.tr());
-                                                  }
-                                                }
-                                                EasyLoading.dismiss();
-                                              }
-                                            }catch(e){
-                                              print(e);
-                                            }
+                                  showModalBottomSheet(
+                                      isScrollControlled: true,
+                                      context: context,
+                                      backgroundColor: Colors.transparent,
+                                      enableDrag: true,
+                                      builder: (BuildContext context) {
+                                        return Padding(
+                                            padding: EdgeInsets.only(
+                                                bottom: MediaQuery.of(context).viewInsets.bottom),
+                                            child: SingleChildScrollView(
+                                                child: Container(
+                                                    padding: const EdgeInsets.only(top: 20,left: 20,right: 20),
+                                                    height: 200.0,
+                                                    decoration: const BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.only(
+                                                            topLeft: Radius.circular(15),
+                                                            topRight: Radius.circular(15))),
+                                                    child: ListView(children: [
+                                                      SizedBox(height: 10,),
+                                                      Column(children: [
+                                                        SizedBox(height: 20,),
+                                                        buildMaxFormField(snapshot.data[index]['used_amount'].toString(),snapshot.data[index]['package_amount'].toString()),
+                                                        const SizedBox(height: 20,),
+                                                        DefaultButton(
+                                                          text: "UpdateUsedAmount".tr(),
+                                                          press: ()async{
+                                                            try{
+                                                              if(int.parse(usedAmount.toString()) <= snapshot.data[index]['package_amount']){
+                                                                EasyLoading.show(status: "UpdateUsedAmount".tr());
+                                                                var response = await _patientDetails.updatePatientPurchases(
+                                                                    context.read<UserData>().token,
+                                                                    snapshot.data[index]['id'].toString(),
+                                                                    usedAmount
+                                                                );
+                                                                var data = jsonDecode(await response.stream.bytesToString());
+                                                                if (await response.statusCode == 200) {
+                                                                  print(data);
+                                                                  EasyLoading.showSuccess(LocaleKeys.You_are_successfully_updated_information.tr());
+                                                                  Navigator.pop(context);
+                                                                  setState(() {});
+                                                                }else{
+                                                                  print(data);
+                                                                  if(response["error"] == "721"){
+                                                                    _dialogs.errorDialog(context, LocaleKeys.PatientIsNotConnected.tr());
+                                                                  }
+                                                                }
+                                                                EasyLoading.dismiss();
+                                                              }
+                                                            }catch(e){
+                                                              print(e);
+                                                            }
 
-                                          },
-                                        )
-                                      ]
-                                  );
+                                                          },
+                                                        )
+                                                      ]),
+                                                    ]))));
+                                      });
+                                  // _bottomSheetWidget.showBottomSheetButtons(
+                                  //     context, 200.0, const Text(""),
+                                  //     [
+                                  //       buildMaxFormField(snapshot.data[index]['used_amount'].toString(),snapshot.data[index]['package_amount'].toString()),
+                                  //       const SizedBox(height: 20,),
+                                  //       DefaultButton(
+                                  //         text: "UpdateUsedAmount".tr(),
+                                  //         press: ()async{
+                                  //           try{
+                                  //             if(int.parse(usedAmount.toString()) <= snapshot.data[index]['package_amount']){
+                                  //               EasyLoading.show(status: "UpdateUsedAmount".tr());
+                                  //               var response = await _patientDetails.updatePatientPurchases(
+                                  //                   context.read<UserData>().token,
+                                  //                   snapshot.data[index]['id'].toString(),
+                                  //                   usedAmount
+                                  //               );
+                                  //               var data = jsonDecode(await response.stream.bytesToString());
+                                  //               if (await response.statusCode == 200) {
+                                  //                 print(data);
+                                  //                 EasyLoading.showSuccess(LocaleKeys.You_are_successfully_updated_information.tr());
+                                  //                 Navigator.pop(context);
+                                  //                 setState(() {});
+                                  //               }else{
+                                  //                 print(data);
+                                  //                 if(response["error"] == "721"){
+                                  //                   _dialogs.errorDialog(context, LocaleKeys.PatientIsNotConnected.tr());
+                                  //                 }
+                                  //               }
+                                  //               EasyLoading.dismiss();
+                                  //             }
+                                  //           }catch(e){
+                                  //             print(e);
+                                  //           }
+                                  //
+                                  //         },
+                                  //       )
+                                  //     ]
+                                  // );
                                 }
                             },
                           );
@@ -165,7 +227,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
     );
   }
 
-  buildDateFormField(){
+  buildDateFormField(initData){
     return TextFormField(
       controller: _controller,
       decoration: InputDecoration(
@@ -179,6 +241,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
       readOnly: true,
       onTap: () {
         BottomPicker.date(
+          initialDateTime: initData,
           title: "UpdatePackageEndDate".tr(),
           dateOrder: DatePickerDateOrder.dmy,
           pickerTextStyle:const TextStyle(
@@ -217,6 +280,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
     );
   }
   TextFormField buildMaxFormField(initData,maxUse) {
+    usedAmount = initData;
     return TextFormField(
       initialValue: initData,
       keyboardType: TextInputType.number,

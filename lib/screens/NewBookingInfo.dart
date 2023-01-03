@@ -28,6 +28,7 @@ class NewBookingInfo extends StatefulWidget {
 class _NewBookingInfoState extends State<NewBookingInfo> {
 
   String? paidAmount ,payment_type , clinic ;
+  bool paidAmountFlag = true;
 
   getClinic(){
     List<Map<String,dynamic>> _clinics = [];
@@ -57,8 +58,14 @@ class _NewBookingInfoState extends State<NewBookingInfo> {
             buildSelect(),
             const SizedBox(height: 20),
             buildPaymentType(),
-            const SizedBox(height: 20),
-            buildFeeFormField(),
+            Visibility(
+                visible: paidAmountFlag,
+                child: SizedBox(height: 20)
+            ),
+            Visibility(
+                visible: paidAmountFlag,
+                child: buildFeeFormField()
+            ),
             const SizedBox(height: 20),
             DefaultButton(
               text: "ChooseDayAndTime".tr(),
@@ -179,12 +186,25 @@ class _NewBookingInfoState extends State<NewBookingInfo> {
         FloatingLabelBehavior.auto,
       ),
       onSaved: (newValue){
-        payment_type= newValue;
+        setState(() {
+          payment_type = newValue;
+          if(payment_type == "5"){
+            paidAmountFlag = false;
+          }else{
+            paidAmountFlag = true;
+          }
+        });
       },
       onChanged: (value) {
         if (value.isNotEmpty) {
-          payment_type = value;
-          print(payment_type);
+          setState(() {
+            payment_type = value;
+            if(payment_type == "5"){
+              paidAmountFlag = false;
+            }else{
+              paidAmountFlag = true;
+            }
+          });
         }
         return null;
       },

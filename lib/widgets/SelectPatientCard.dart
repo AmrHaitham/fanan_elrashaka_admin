@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fanan_elrashaka_admin/Constants.dart';
+import 'package:fanan_elrashaka_admin/networks/PatientDetails.dart';
 import 'package:fanan_elrashaka_admin/networks/Patients.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
 import 'package:fanan_elrashaka_admin/screens/PationtProfile.dart';
@@ -10,15 +11,30 @@ import 'package:provider/provider.dart';
 class SelectPatientCard extends StatelessWidget {
   final snapshot;
   final index;
-  const SelectPatientCard({Key? key,required this.snapshot,required this.index}) : super(key: key);
+  final patient_id;
+  const SelectPatientCard({Key? key,required this.snapshot,required this.index, this.patient_id = null}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    print(snapshot.data[index]);
     return  ListTile(
       onTap: ()async{
-        Patients _patients = Patients();
-        var response = await _patients.connectPatient(context.read<UserData>().token, snapshot.data[index]['id'].toString());
-        var data = jsonDecode(response.body);
+        var response;
+        var data;
+        if(patient_id==null){
+          Patients _patients = Patients();
+          response = await _patients.connectPatient(context.read<UserData>().token, snapshot.data[index]['id'].toString());
+          data = jsonDecode(response.body);
+        }else{
+          print("Connect unknown patient");
+          PatientDetails _patientDetails = PatientDetails();
+          response = await _patientDetails.connectUnKnownPatient(context.read<UserData>().token, snapshot.data[index]['id'].toString(),patient_id.toString());
+          data = jsonDecode(await response.stream.bytesToString());
+          print(data);
+        }
         if( response.statusCode == 200){
+          if(patient_id!=null){
+            Navigator.pop(context);
+          }
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => PationtProfile(pid: data["pid"].toString()))
           );
@@ -41,7 +57,7 @@ class SelectPatientCard extends StatelessWidget {
         ),
       ),
       subtitle: Text(
-        "${snapshot.data[index]['id']}  |  ${(snapshot.data[index]['phone']==null)?"":snapshot.data[index]['phone']+","} ${(snapshot.data[index]['gender']=="M")?"Male":"Female"}",
+        "${snapshot.data[index]['id']}  |  ${(snapshot.data[index]['phone']==null)?"":"${snapshot.data[index]['phone_country_code']}${snapshot.data[index]['phone']}"+","} ${(snapshot.data[index]['gender']=="M")?"Male".tr():"Female".tr().split("*")[0]}",
         style:const TextStyle(
             fontWeight: FontWeight.bold
         ),

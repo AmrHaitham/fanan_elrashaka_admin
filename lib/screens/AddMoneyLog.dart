@@ -31,15 +31,15 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
 
   getClinic(){
     List<Map<String,dynamic>> _clinics = [];
-    context.read<ClinisData>().clinicsService.forEach((element) {
+    context.read<ClinisData>().clinicsName.forEach((element) {
       _clinics.add({
         'value':element.id.toString(),
         'label':element.name.toString(),
       });
     });
     _clinics.add({
-      'value':" ",
-      'label':"Not Specified",
+      'value':"NotSpecified",
+      'label':"NotSpecified".tr(),
     });
     return _clinics;
   }
@@ -79,24 +79,29 @@ class _AddMoneyLogState extends State<AddMoneyLog> {
             onTap: ()async{
               if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  EasyLoading.show(status: "AddMoneyLog".tr());
-                  var responseData = await _moneyLog.addMoneyLog(
-                      context.read<UserData>().token,
-                      name, category_id, amount, log_type, notes, clinic_id,widget.date
-                  );
-                  print(await responseData.stream.bytesToString());
-                  if (await responseData.statusCode == 200) {
-                    _dialogs.doneDialog(context,"You_are_successfully_Add_Money_Log".tr(),"Ok".tr(),(){
-                      setState(() {
-                        _formKey.currentState!.reset();
+                  try{
+                    EasyLoading.show(status: "AddMoneyLog".tr());
+                    var responseData = await _moneyLog.addMoneyLog(
+                        context.read<UserData>().token,
+                        name, category_id, amount, log_type, notes, clinic_id,widget.date
+                    );
+                    print(await responseData.stream.bytesToString());
+                    if (await responseData.statusCode == 200) {
+                      _dialogs.doneDialog(context,"You_are_successfully_Add_Money_Log".tr(),"Ok".tr(),(){
+                        setState(() {
+                          _formKey.currentState!.reset();
+                        });
                       });
-                    });
-                  }else{
-                    var response = jsonDecode(await responseData.stream.bytesToString());
-                    print(response);
-                    _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                    }else{
+                      var response = jsonDecode(await responseData.stream.bytesToString());
+                      print(response);
+                      _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                    }
+                    EasyLoading.dismiss();
+                  }catch(v){
+                    print(v);
+                    EasyLoading.dismiss();
                   }
-                  EasyLoading.dismiss();
               }
             },
             child: Container(

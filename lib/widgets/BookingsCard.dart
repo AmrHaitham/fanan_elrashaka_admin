@@ -15,7 +15,8 @@ import 'package:provider/provider.dart';
 class BookingCard extends StatefulWidget {
   final snapshot;
   final String clinic_id;
-  BookingCard({Key? key, this.snapshot,required this.clinic_id}) : super(key: key);
+  final day;
+  BookingCard({Key? key, this.snapshot,required this.clinic_id,required this.day}) : super(key: key);
 
   @override
   State<BookingCard> createState() => _BookingCardState();
@@ -85,38 +86,45 @@ class _BookingCardState extends State<BookingCard> {
           thickness: 0.2,
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
+          padding: const EdgeInsets.only(left: 10.0),
+          child: Column(
             children: [
-               Text("${"Email".tr()}:       ",style: TextStyle(
-                  color: Color(0xff6a6a6c),
-                  fontWeight: FontWeight.bold
-              ),),
-              Text(widget.snapshot['email'].toString(),style: TextStyle(fontWeight: FontWeight.bold),)
-            ],
-          ),
-        ),
-        Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                 Text("${"Phone".tr()}:     ",style: TextStyle(
-                    color: Color(0xff6a6a6c),
-                    fontWeight: FontWeight.bold
-                ),),
-                Text(widget.snapshot['phone'].toString(),style: TextStyle(fontWeight: FontWeight.bold),)
-              ],
-            ),
-          ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-               Text("${"Gender".tr().split("*")[0]}:   ",style: TextStyle(
-                  color: Color(0xff6a6a6c),
-                  fontWeight: FontWeight.bold
-              ),),
-              Expanded(child: Text((widget.snapshot['gender'].toString() == 'F')?"Female":"Male",style: TextStyle(fontWeight: FontWeight.bold),))
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text("${"Email".tr()}:       ",style: TextStyle(
+                        color: Color(0xff6a6a6c),
+                        fontWeight: FontWeight.bold
+                    ),),
+                    Text(widget.snapshot['email'].toString(),style: TextStyle(fontWeight: FontWeight.bold),)
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text("${"Phone".tr()}:     ",style: TextStyle(
+                        color: Color(0xff6a6a6c),
+                        fontWeight: FontWeight.bold
+                    ),),
+                    Text(widget.snapshot['phone'].toString(),style: TextStyle(fontWeight: FontWeight.bold),)
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text("${"Gender".tr().split("*")[0]}:   ",style: TextStyle(
+                        color: Color(0xff6a6a6c),
+                        fontWeight: FontWeight.bold
+                    ),),
+                    Expanded(child: Text((widget.snapshot['gender'].toString() == 'F')?"Female":"Male",style: TextStyle(fontWeight: FontWeight.bold),))
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -162,7 +170,7 @@ class _BookingCardState extends State<BookingCard> {
                                       } else if (snapshot.hasData) {
                                         List values = snapshot.data.values.toList();
                                         List keys = snapshot.data.keys.toList();
-                                        return TimeSlotsGrid(keys: keys, values: values,id:this.widget.snapshot['id'].toString());
+                                        return TimeSlotsGrid(keys: keys, values: values,id:this.widget.snapshot['id'].toString(),selectedDay: widget.day,clinic_id: widget.clinic_id,);
                                       }else{
                                         //no data
                                         return Container();

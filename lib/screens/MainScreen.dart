@@ -18,23 +18,26 @@ import 'package:provider/provider.dart';
 import '../helper/Dialogs.dart';
 class MainScreen extends StatefulWidget {
   final int selectedIndex ;
+  final clinic_id;
+  final selected_day;
 
-  const MainScreen({Key? key, this.selectedIndex =0}) : super(key: key);
+  const MainScreen({Key? key, this.selectedIndex =0, this.clinic_id, this.selected_day}) : super(key: key);
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedScreenIndex  = 0;
-  final List _screens = [
-    DashBoard(),
-    ListDrPatients(),
-    const BookingsScreen(),
-    MoreScreen()
-  ];
+  List _screens = [];
   void _selectScreen(int index) {
     setState(() {
       _selectedScreenIndex = index;
+      _screens = [
+        DashBoard(),
+        ListDrPatients(),
+        BookingsScreen(),
+        MoreScreen()
+      ];
     });
 
   }
@@ -44,6 +47,12 @@ class _MainScreenState extends State<MainScreen> {
     // TODO: implement initState
     super.initState();
     _selectedScreenIndex =widget.selectedIndex;
+    _screens = [
+      DashBoard(),
+      ListDrPatients(),
+      BookingsScreen(day: widget.selected_day, initClinic: widget.clinic_id,),
+      MoreScreen()
+    ];
   }
 
   @override
@@ -61,23 +70,12 @@ class _MainScreenState extends State<MainScreen> {
             onTap: _selectScreen,
             selectedItemColor: Constants.secondColor,
             unselectedItemColor: Constants.secondTextColor,
-            items: (context.read<UserData>().userType!="")
-                ?(context.read<UserData>().userType=="Admin")?[
+            items: [
               BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/dashboard.png",color:(_selectedScreenIndex==0)?Constants.secondColor:Colors.black,)), label: "Dashboard".tr()),
               BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/patient.png",color:(_selectedScreenIndex==1)?Constants.secondColor:Colors.black,)), label: "Patients".tr()),
               BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/bookings.png",color:(_selectedScreenIndex==2)?Constants.secondColor:Colors.black,)), label: "Bookings".tr()),
               BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/more.png",color:(_selectedScreenIndex==3)?Constants.secondColor:Colors.black,)), label: "More".tr())
             ]
-                :[
-              BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/dashboard.png",color:(_selectedScreenIndex==0)?Constants.secondColor:Colors.black,)), label: "Dashboard".tr()),
-              BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/patient.png",color:(_selectedScreenIndex==1)?Constants.secondColor:Colors.black,)), label: "Patients".tr()),
-              BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/more.png",color:(_selectedScreenIndex==3)?Constants.secondColor:Colors.black,)), label: "More".tr())
-            ]
-                :[
-              BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/dashboard.png",color:(_selectedScreenIndex==0)?Constants.secondColor:Colors.black,)), label: "Dashboard".tr()),
-              BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/patient.png",color:(_selectedScreenIndex==1)?Constants.secondColor:Colors.black,)), label: "Patients".tr()),
-              BottomNavigationBarItem(icon: SizedBox(width:30,height:40,child: Image.asset("assets/more.png",color:(_selectedScreenIndex==3)?Constants.secondColor:Colors.black,)), label: "More".tr())
-            ],
           ),
       ),
     );

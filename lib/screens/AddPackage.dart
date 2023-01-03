@@ -205,12 +205,12 @@ class _AddPackageState extends State<AddPackage> {
         }
         return null;
       },
-      validator: (value) {
-        if (value=="") {
-          return LocaleKeys.ThisFieldIsRequired.tr();
-        }
-        return null;
-      },
+      // validator: (value) {
+      //   if (value=="") {
+      //     return LocaleKeys.ThisFieldIsRequired.tr();
+      //   }
+      //   return null;
+      // },
     );
   }
 
@@ -221,7 +221,7 @@ class _AddPackageState extends State<AddPackage> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        labelText: "Fee".tr(),
+        labelText:  "${"Fee".tr()}*",
         // hintText:"Enter_Fee*",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),

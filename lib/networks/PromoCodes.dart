@@ -45,7 +45,7 @@ class PromoCodes {
       'from_date': from_date,
       'to_date': to_date,
       'clinic_service': clinic_service,
-      'max_number': max_number,
+      'max_number': max_number.toString(),
       'fee_after_code': fee_after_code,
     });
 

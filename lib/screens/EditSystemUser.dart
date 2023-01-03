@@ -184,10 +184,10 @@ class _EditUserState extends State<EditUser> {
                     topCenterAction: ProfilePic(
                       profile: snapshot.data[0]['image'],
                       uploadImage: () async{
-                        EasyLoading.show(status: "UpdatingSystemUserImage".tr());
                         var imagePicker;
                         imagePicker = await _picker.pickImage(source: ImageSource.gallery,imageQuality: 20);
                         String imageLocation = imagePicker.path.toString();
+                        EasyLoading.show(status: "UpdatingSystemUserImage".tr());
                         var picResponse =await _users.updateSystemUserImage(
                             context.read<UserData>().token,
                             snapshot.data[0]["email"],
@@ -471,6 +471,9 @@ class _EditUserState extends State<EditUser> {
           BorderRadius.circular(5.0),
         ),
         hintText: "ChangePassword".tr(),
+        hintStyle: TextStyle(
+            color: Colors.black
+        ),
         floatingLabelBehavior:
         FloatingLabelBehavior.auto,
       ),
