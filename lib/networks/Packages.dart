@@ -32,15 +32,18 @@ class Packages{
       'Authorization': 'Token ${token}'
     };
     var request = http.MultipartRequest('POST', Uri.parse("${Apis.packages}"));
-    request.fields.addAll({
+    Map<String, String> items = {
       'name_ar': name_ar,
       'name_en': name_en,
       'fee': fee,
       'order': order,
-      'old_fee': old_fee,
       'package_amount': package_amount,
       'package_unit': package_unit
-    });
+    };
+    if(old_fee!=""){
+       items['old_fee'] = old_fee;
+    }
+    request.fields.addAll(items);
     if(image != ""){
       request.files.add(await http.MultipartFile.fromPath('image', image));
     }
@@ -50,6 +53,7 @@ class Packages{
 
     return response;
   }
+
   addPackageCopy(token,id,name_ar,name_en,fee,order,old_fee,package_amount,package_unit,image)async{
     var headers = {
       'Authorization': 'Token ${token}'

@@ -50,7 +50,7 @@ class MoreScreen extends StatelessWidget {
                 child: Image.asset("assets/logo.png")
             ),
             title: Text(context.read<UserData>().name.toString()),
-            subtitle: Text((context.read<UserData>().userType=="Admin")?"System Admin":"System Worker"),
+            subtitle: Text((context.read<UserData>().userType=="Admin")?"SystemAdmin".tr():"SystemWorker".tr()),
             trailing: Container(
               padding: EdgeInsets.all(5),
               width: 35,

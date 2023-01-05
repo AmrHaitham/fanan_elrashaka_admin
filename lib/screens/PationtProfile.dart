@@ -242,19 +242,30 @@ class _PationtProfileState extends State<PationtProfile> {
                                   ),
                                 ),
                                 onTap: ()async{
-                                  EasyLoading.show(status: "ChangingPenalizedStatus".tr());
-                                  var response = await _patientDetails.updateIsPenalized_status(
+                                  if(snapshot.data['patient_id']!= null){
+                                    EasyLoading.show(status: "ChangingPenalizedStatus".tr());
+                                    var response = await _patientDetails.updateIsPenalized_status(
                                       context.read<UserData>().token,
                                       snapshot.data['pid'].toString(),
-                                  );
+                                    );
 
-                                  if (await response.statusCode == 200) {
-                                    EasyLoading.showSuccess("DoneChangingPenalizedStatus".tr());
-                                    setState(() {});
+                                    if (await response.statusCode == 200) {
+                                      EasyLoading.showSuccess("DoneChangingPenalizedStatus".tr());
+                                      setState(() {});
+                                    }else{
+                                      print(response);
+                                    }
+                                    EasyLoading.dismiss();
                                   }else{
-                                    print(response);
+                                    AwesomeDialog(
+                                        context: context,
+                                        animType: AnimType.SCALE,
+                                        dialogType: DialogType.WARNING,
+                                        body: Center(child: Text("PleaseConnectPatientFirst".tr(),),),
+                                        btnOkText:"Ok".tr(),
+                                        btnOkOnPress: (){}
+                                    )..show();
                                   }
-                                  EasyLoading.dismiss();
                                 },
                               ),
                               InkWell(
@@ -359,68 +370,81 @@ class _PationtProfileState extends State<PationtProfile> {
                                   ),
                                 ),
                                 onTap: (){
-                                  _controller = TextEditingController(text: snapshot.data['pay_in_cash_until']);
-                                  _bottomSheetWidget.showBottomSheetButtons(
-                                      context, 280.0, const Text(""),
-                                    [
-                                      buildDateFormField(_controller!.text),
-                                      const SizedBox(height: 20,),
-                                      DefaultButton(
-                                        text: "UpdatePayInCashStatus".tr(),
-                                        press: ()async{
-                                          EasyLoading.show(status: "UpdatePayInCashStatus".tr());
-                                          var response = await _patientDetails.change_pay_in_cash_status(
-                                              context.read<UserData>().token,
-                                              snapshot.data['pid'].toString(),
-                                              (_controller!.text=="")?"":_controller!.text
-                                          );
-                                          var data = jsonDecode(await response.stream.bytesToString());
-                                          if (await response.statusCode == 200) {
-                                            print(data);
-                                            EasyLoading.showSuccess("DoneUpdatingPayInCashStatus".tr());
-                                            Navigator.pop(context);
-                                            setState(() {});
-                                          }else{
-                                            print(data);
-                                            if(response["error"] == "721"){
-                                            _dialogs.errorDialog(context, "PatientIsNotConnected".tr());
-                                            }
-                                          }
-                                          EasyLoading.dismiss();
-                                        },
-                                      ),
-                                      const SizedBox(height: 10,),
-                                      DefaultButton(
-                                        text: "CancelPayInCash".tr(),
-                                        color: Colors.red,
-                                        press: ()async{
-                                          try{
-                                            EasyLoading.show(status: "UpdatePayInCashStatus".tr());
-                                            var response = await _patientDetails.cancle_pay_in_cash_status(
-                                                context.read<UserData>().token,
-                                                snapshot.data['pid'].toString(),
-                                            );
-                                            // var data =await response.stream.bytesToString();
-                                            // print(data);
-                                            if (await response.statusCode == 200) {
-                                              print(response);
-                                              EasyLoading.showSuccess("DoneUpdatingPayInCashStatus".tr());
-                                              Navigator.pop(context);
-                                              setState(() {});
-                                            }else{
-                                              print(response);
-                                              // if(response["error"] == "721"){
-                                              //   _dialogs.errorDialog(context, "PatientIsNotConnected".tr());
-                                              // }
-                                            }
-                                            EasyLoading.dismiss();
-                                          }catch(v){
-                                            EasyLoading.dismiss();
-                                          }
-                                        },
-                                      )
-                                    ]
-                                  );
+                                  if(snapshot.data['patient_id']!= null){
+                                    _controller = TextEditingController(text: snapshot.data['pay_in_cash_until']);
+                                    _bottomSheetWidget.showBottomSheetButtons(
+                                        context, 280.0, const Text(""),
+                                        [
+                                          buildDateFormField(_controller!.text),
+                                          const SizedBox(height: 20,),
+                                          DefaultButton(
+                                            text: "UpdatePayInCashStatus".tr(),
+                                            press: ()async{
+                                              if(_controller!.text != ""){
+                                                EasyLoading.show(status: "UpdatePayInCashStatus".tr());
+                                                var response = await _patientDetails.change_pay_in_cash_status(
+                                                    context.read<UserData>().token,
+                                                    snapshot.data['pid'].toString(),
+                                                    (_controller!.text=="")?"":_controller!.text
+                                                );
+                                                var data = jsonDecode(await response.stream.bytesToString());
+                                                if (await response.statusCode == 200) {
+                                                  print(data);
+                                                  EasyLoading.showSuccess("DoneUpdatingPayInCashStatus".tr());
+                                                  Navigator.pop(context);
+                                                  setState(() {});
+                                                }else{
+                                                  print(data);
+                                                  if(response["error"] == "721"){
+                                                    _dialogs.errorDialog(context, "PatientIsNotConnected".tr());
+                                                  }
+                                                }
+                                                EasyLoading.dismiss();
+                                              }
+                                            },
+                                          ),
+                                          const SizedBox(height: 10,),
+                                          DefaultButton(
+                                            text: "CancelPayInCash".tr(),
+                                            color: Colors.red,
+                                            press: ()async{
+                                              try{
+                                                EasyLoading.show(status: "UpdatePayInCashStatus".tr());
+                                                var response = await _patientDetails.cancle_pay_in_cash_status(
+                                                  context.read<UserData>().token,
+                                                  snapshot.data['pid'].toString(),
+                                                );
+                                                // var data =await response.stream.bytesToString();
+                                                // print(data);
+                                                if (await response.statusCode == 200) {
+                                                  print(response);
+                                                  EasyLoading.showSuccess("DoneUpdatingPayInCashStatus".tr());
+                                                  Navigator.pop(context);
+                                                  setState(() {});
+                                                }else{
+                                                  print(response);
+                                                  // if(response["error"] == "721"){
+                                                  //   _dialogs.errorDialog(context, "PatientIsNotConnected".tr());
+                                                  // }
+                                                }
+                                                EasyLoading.dismiss();
+                                              }catch(v){
+                                                EasyLoading.dismiss();
+                                              }
+                                            },
+                                          )
+                                        ]
+                                    );
+                                  }else{
+                                    AwesomeDialog(
+                                        context: context,
+                                        animType: AnimType.SCALE,
+                                        dialogType: DialogType.WARNING,
+                                        body: Center(child: Text("PleaseConnectPatientFirst".tr(),),),
+                                        btnOkText:"Ok".tr(),
+                                        btnOkOnPress: (){}
+                                    )..show();
+                                  }
                                 },
                               ),
                             ],
@@ -547,7 +571,7 @@ class _PationtProfileState extends State<PationtProfile> {
       readOnly: true,
       onTap: () {
         BottomPicker.date(
-          initialDateTime: DateTime.parse(initData),
+          initialDateTime: (initData!="")?DateTime.parse(initData):DateTime.now(),
           title: "PayInCashTo".tr(),
           dateOrder: DatePickerDateOrder.dmy,
           pickerTextStyle:const TextStyle(

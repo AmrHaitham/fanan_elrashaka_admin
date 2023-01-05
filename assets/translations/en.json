@@ -35,7 +35,7 @@
   "RepeatedToDate": "Repeated To Date*",
   "FromHour": "From Hour*",
   "ToHour": "To Hour*",
-  "Search": "Search..",
+  "Search": "Search...",
   "UpdateClinicAvailability": "Update Clinic Availability",
   "AvailabilityUpdated": "Availability Updated",
   "Ok": "Ok",
@@ -258,6 +258,9 @@
   "NotSpecified": "Not Specified",
   "TakeMeasurementPicture": "Take Measurement Picture",
   "PleaseConnectPatientFirst": "Please Connect Patient First",
-  "SelectMeasurementPicture": "Select Measurement Picture",
-  "Picture": "Picture"
+  "SelectMeasurementPicture": "Update Measurement Picture",
+  "Picture": "Picture",
+  "EnterThePatientHeightFirst": "Enter The Patient Height First",
+  "SystemAdmin": "System Admin",
+  "SystemWorker": "System Worker"
 }

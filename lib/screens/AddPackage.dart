@@ -76,8 +76,13 @@ class _AddPackageState extends State<AddPackage> {
                     });
                   });
                 }else{
-                  var response = jsonDecode(await responseData.stream.bytesToString());
-                  print(response);
+                  print(responseData.statusCode);
+                  // try{
+                  //   var response = jsonDecode(await responseData.stream.bytesToString());
+                  //   print(response);
+                  // }catch(v){
+                  //   print(await responseData.stream.bytesToString());
+                  // }
                   _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
                 }
                 EasyLoading.dismiss();

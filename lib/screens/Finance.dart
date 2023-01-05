@@ -227,7 +227,7 @@ class _FinanceState extends State<Finance> {
                         [
                           SizedBox(height: 20,),
                           Align(
-                            alignment: Alignment.centerLeft,
+                            alignment: (context.locale.toString() == "en")?Alignment.centerLeft:Alignment.centerRight,
                             child: InkWell(
                                 onTap: (){
                                   _bottomSheetWidget.showBottomSheetButtons(
@@ -267,7 +267,7 @@ class _FinanceState extends State<Finance> {
                           const Divider(thickness: 0.6,indent: 10,endIndent: 10,),
                           const SizedBox(height: 5,),
                           Align(
-                            alignment: Alignment.centerLeft,
+                            alignment: (context.locale.toString() == "en")?Alignment.centerLeft:Alignment.centerRight,
                             child: InkWell(
                                 onTap: (){
                                   _bottomSheetWidget.showBottomSheetButtons(
@@ -308,7 +308,7 @@ class _FinanceState extends State<Finance> {
                           const Divider(thickness: 0.6,indent: 10,endIndent: 10,),
                           const SizedBox(height: 5,),
                           Align(
-                            alignment: Alignment.centerLeft,
+                            alignment: (context.locale.toString() == "en")?Alignment.centerLeft:Alignment.centerRight,
                             child: InkWell(
                                 onTap: (){
                                   _bottomSheetWidget.showBottomSheetButtons(

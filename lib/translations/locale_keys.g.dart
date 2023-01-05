@@ -262,5 +262,8 @@ abstract class  LocaleKeys {
   static const PleaseConnectPatientFirst = 'PleaseConnectPatientFirst';
   static const SelectMeasurementPicture = 'SelectMeasurementPicture';
   static const Picture = 'Picture';
+  static const EnterThePatientHeightFirst = 'EnterThePatientHeightFirst';
+  static const SystemAdmin = 'SystemAdmin';
+  static const SystemWorker = 'SystemWorker';
 
 }

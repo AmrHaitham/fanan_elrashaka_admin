@@ -108,7 +108,11 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                             }else{
                               var response = jsonDecode(await changeProfileResponse.stream.bytesToString());
                               print(response);
-                              _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                              if(response['error'] == "719"){
+                                _dialogs.errorDialog(context, "EnterThePatientHeightFirst".tr());
+                              }else{
+                                _dialogs.errorDialog(context, LocaleKeys.Error__please_check_your_internet_connection.tr());
+                              }
                             }
                           EasyLoading.dismiss();
                           }

@@ -200,6 +200,9 @@ class _EditDrPationtState extends State<EditDrPationt> {
                                       BorderRadius.circular(5.0),
                                     ),
                                     hintText: "EditPatientData".tr(),
+                                    hintStyle: TextStyle(
+                                      color: Colors.black
+                                    ),
                                     floatingLabelBehavior:
                                     FloatingLabelBehavior.auto,
                                   ),
