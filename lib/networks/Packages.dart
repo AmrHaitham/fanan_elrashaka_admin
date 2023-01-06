@@ -98,17 +98,30 @@ class Packages{
       'Authorization': 'Token ${token}'
     };
     var request = http.MultipartRequest('PUT', Uri.parse("${Apis.packages}"));
-    request.fields.addAll({
+    // request.fields.addAll({
+    //   'id' : id.toString(),
+    //   'name_ar': name_ar.toString(),
+    //   'name_en': name_en.toString(),
+    //   'fee': fee.toString(),
+    //   'order': order.toString(),
+    //   'old_fee': old_fee.toString(),
+    //   'package_amount': package_amount.toString(),
+    //   'package_unit': package_unit.toString()
+    // });
+
+    Map<String, String> items = {
       'id' : id.toString(),
       'name_ar': name_ar.toString(),
       'name_en': name_en.toString(),
       'fee': fee.toString(),
       'order': order.toString(),
-      'old_fee': old_fee.toString(),
       'package_amount': package_amount.toString(),
       'package_unit': package_unit.toString()
-    });
-
+    };
+    if(old_fee!=null){
+      items['old_fee'] = old_fee;
+    }
+    request.fields.addAll(items);
     request.files.add(await http.MultipartFile.fromPath('image', image));
 
     request.headers.addAll(headers);

@@ -200,7 +200,7 @@ class CodegenLoader extends AssetLoader{
   "PatientInfo": "معلومات المريض",
   "Weight": "الوزن",
   "LastVisitationDate": "موعد اخر زياره",
-  "UnPenalizedThePatient": "إنهاء المريض",
+  "UnPenalizedThePatient": "إنهاء حظر المريض",
   "PenalizedThePatient": "حظر المريض",
   "ChangingPenalizedStatus": "تغيير حاله السماح للمريض",
   "DoneChangingPenalizedStatus": "تم تغيير حاله السماح للمريض",
