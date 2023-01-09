@@ -278,7 +278,11 @@ class CodegenLoader extends AssetLoader{
   "Picture": "الصوره",
   "EnterThePatientHeightFirst": "ادخل طول المريض اولاً",
   "SystemAdmin": "ادمن النظام",
-  "SystemWorker": "عامل النظام"
+  "SystemWorker": "عامل النظام",
+  "ConnectingPatient": "ربط المريض",
+  "DoneConnectingPatient": "تم ربط المريض",
+  "ConnectToNewDoctorPatient": "ربط بمريض الطبيب ",
+  "ConnectToExistingDoctorPatient": "ربط بمريض طبيب موجود"
 };
 static const Map<String,dynamic> en = {
   "Login": "Login",
@@ -544,7 +548,11 @@ static const Map<String,dynamic> en = {
   "Picture": "Picture",
   "EnterThePatientHeightFirst": "Enter The Patient Height First",
   "SystemAdmin": "System Admin",
-  "SystemWorker": "System Worker"
+  "SystemWorker": "System Worker",
+  "ConnectingPatient": "Connecting Patient",
+  "DoneConnectingPatient": "Done Connecting Patient",
+  "ConnectToNewDoctorPatient": "Connect To New Doctor Patient",
+  "ConnectToExistingDoctorPatient": "Connect To Existing Doctor Patient"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ar": ar, "en": en};
 }

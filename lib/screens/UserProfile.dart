@@ -156,7 +156,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     ),
                     child: Expanded(
                       child: Padding(
-                        padding:EdgeInsets.only(right: 15,left: 15,bottom: MediaQuery.of(context).viewInsets.bottom),
+                        //bottom: MediaQuery.of(context).viewInsets.bottom
+                        padding:EdgeInsets.only(right: 15,left: 15,),
                         child: Form(
                           key: _formKey,
                           child: ListView(

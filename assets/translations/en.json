@@ -262,5 +262,9 @@
   "Picture": "Picture",
   "EnterThePatientHeightFirst": "Enter The Patient Height First",
   "SystemAdmin": "System Admin",
-  "SystemWorker": "System Worker"
+  "SystemWorker": "System Worker",
+  "ConnectingPatient": "Connecting Patient",
+  "DoneConnectingPatient": "Done Connecting Patient",
+  "ConnectToNewDoctorPatient": "Connect To New Doctor Patient",
+  "ConnectToExistingDoctorPatient": "Connect To Existing Doctor Patient"
 }

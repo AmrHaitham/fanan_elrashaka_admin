@@ -262,5 +262,9 @@
   "Picture": "الصوره",
   "EnterThePatientHeightFirst": "ادخل طول المريض اولاً",
   "SystemAdmin": "ادمن النظام",
-  "SystemWorker": "عامل النظام"
+  "SystemWorker": "عامل النظام",
+  "ConnectingPatient": "ربط المريض",
+  "DoneConnectingPatient": "تم ربط المريض",
+  "ConnectToNewDoctorPatient": "ربط بمريض الطبيب ",
+  "ConnectToExistingDoctorPatient": "ربط بمريض طبيب موجود"
 }
