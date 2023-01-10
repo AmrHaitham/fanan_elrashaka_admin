@@ -269,5 +269,6 @@ abstract class  LocaleKeys {
   static const DoneConnectingPatient = 'DoneConnectingPatient';
   static const ConnectToNewDoctorPatient = 'ConnectToNewDoctorPatient';
   static const ConnectToExistingDoctorPatient = 'ConnectToExistingDoctorPatient';
+  static const Used = 'Used';
 
 }

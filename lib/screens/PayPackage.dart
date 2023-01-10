@@ -16,8 +16,9 @@ import 'package:provider/provider.dart';
 import 'package:select_form_field/select_form_field.dart';
 class PayPackage extends StatefulWidget {
   final String patient_name , patient_id;
+  final bool backToBookings ;
 
-  PayPackage({Key? key,required this.patient_name,required this.patient_id}) : super(key: key);
+  PayPackage({Key? key,required this.patient_name,required this.patient_id, this.backToBookings = true}) : super(key: key);
 
   @override
   State<PayPackage> createState() => _PayPackageState();
@@ -74,9 +75,15 @@ class _PayPackageState extends State<PayPackage> {
                       if (await responseData.statusCode == 200) {
                         print(await responseData.stream.bytesToString());
                         _dialogs.doneDialog(context,"You_are_successfully_Buy_package".tr(),"Ok".tr(),(){
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (context) => MainScreen(selectedIndex: 2,))
-                          );
+                          if(widget.backToBookings){
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(builder: (context) => MainScreen(selectedIndex: 2,))
+                            );
+                          }else{
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          }
+
                         });
                       }else{
                         var response = jsonDecode(await responseData.stream.bytesToString());

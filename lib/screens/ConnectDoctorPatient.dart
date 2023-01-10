@@ -102,7 +102,7 @@ class _ConnectDrPatientState extends State<ConnectDrPatient> {
                                     );
                                   }else{
                                     Navigator.of(context).push(
-                                        MaterialPageRoute(builder: (context) => PurchasesScreen(pid:  new_data['pid'].toString(),))
+                                        MaterialPageRoute(builder: (context) => PurchasesScreen(pid:  new_data['pid'].toString(),patient_name: "${snapshot.data[index]['first_name']} ${snapshot.data[index]['last_name']}",))
                                     );
                                   }
                                 }else{

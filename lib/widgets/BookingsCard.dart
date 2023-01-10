@@ -66,7 +66,7 @@ class _BookingCardState extends State<BookingCard> {
                   );
                 }else{
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => PurchasesScreen(pid:  new_data['pid'].toString(),))
+                      MaterialPageRoute(builder: (context) => PurchasesScreen(pid:  new_data['pid'].toString(),patient_name: "${widget.snapshot['first_name']} ${widget.snapshot['last_name']}",))
                   );
                 }
               }else{
@@ -113,6 +113,8 @@ class _BookingCardState extends State<BookingCard> {
   Widget build(BuildContext context) {
     print(widget.snapshot);
     return (widget.snapshot["id"] != "")?ExpansionTileCard(
+      elevation: 5,
+      initialElevation: 1,
       baseColor: Colors.white,
       shadowColor: Colors.grey,
       title: Text("${widget.snapshot['first_name']} ${widget.snapshot['last_name']}",style:
@@ -120,20 +122,33 @@ class _BookingCardState extends State<BookingCard> {
           fontWeight: FontWeight.bold,
           color: Colors.black,
           fontSize: 20
+        ),
       ),
-      ),
-      subtitle: Text((context.locale.toString()=="en")?widget.snapshot['clinic_service_en']:widget.snapshot['clinic_service_ar'],style: TextStyle(
-          color: Color(0xff6a6a6c),
-          fontWeight: FontWeight.bold
-      ),
+      subtitle: Row(
+        children: [
+          Text((context.locale.toString()=="en")?widget.snapshot['clinic_service_en']:widget.snapshot['clinic_service_ar'],style: TextStyle(
+              color: Color(0xff6a6a6c),
+              fontWeight: FontWeight.bold
+          ),),
+          Text(" | ",style: TextStyle(
+              color: Color(0xff6a6a6c),
+              fontWeight: FontWeight.bold
+          ),),
+          Text(DateFormat("h:mm a",context.locale.toString()).format(DateTime.parse("2020-01-02 ${widget.snapshot['time']}.000")).toString(),
+              style: TextStyle(
+                  color: Color(0xff6a6a6c),
+                  fontWeight: FontWeight.bold
+              ),
+          )
+        ],
       ),
       trailing: Container(
-        width: 150,
+        width: 138,
         height: 50,
         child: Row(
           children: [
           Container(
-            width: 70,
+            width: 65,
             height: 30,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
@@ -144,9 +159,9 @@ class _BookingCardState extends State<BookingCard> {
                 color: (widget.snapshot['paid'])?Constants.secondColor:Color(0xff9e9e9e)
             ),)),
           ),
-          SizedBox(width: 10,),
+          SizedBox(width: 5,),
           Container(
-            width: 70,
+            width: 65,
             height: 30,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -183,14 +198,7 @@ class _BookingCardState extends State<BookingCard> {
                     ],
                   ),
                   onTap: (){
-                    if(widget.snapshot['pid'].toString() != "null"){
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => PationtProfile(pid: widget.snapshot['pid'].toString(),))
-                      );
-                    }else{
-                      print("not connected");
-                      connectDrPatient(widget.snapshot['patient_id'].toString(),true);
-                    }
+
                   },
 
                 ),
@@ -208,11 +216,7 @@ class _BookingCardState extends State<BookingCard> {
                     ],
                   ),
                   onTap: ()async{
-                    final Uri launchUri = Uri(
-                      scheme: 'tel',
-                      path: widget.snapshot['phone'].toString(),
-                    );
-                    await launchUrl(launchUri);
+
                   },
                 ),
               ),
@@ -426,7 +430,7 @@ class _BookingCardState extends State<BookingCard> {
 
                   },
                   child: Container(
-                    margin:const EdgeInsets.only(left: 10,right: 10),
+                    margin:const EdgeInsets.only(left: 10),
                     width: 30,
                     height: 30,
                     child: Image.asset("assets/more_bookings.png"),
@@ -442,11 +446,44 @@ class _BookingCardState extends State<BookingCard> {
                   onTap: (){
                     if(widget.snapshot['pid'].toString() != "null"){
                       Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => PurchasesScreen(pid: widget.snapshot['pid'].toString(),))
+                          MaterialPageRoute(builder: (context) => PurchasesScreen(pid: widget.snapshot['pid'].toString(),patient_name: "${widget.snapshot['first_name']} ${widget.snapshot['last_name']}",))
                       );
                     }else{
                       print("not connected");
                       connectDrPatient(widget.snapshot['patient_id'].toString(),false);
+                    }
+                  },
+                ),
+                SizedBox(width: 20,),
+                InkWell(
+                  child: SizedBox(
+                    width: 25,
+                    height: 25,
+                    child: Icon(Icons.call,color: Constants.secondColor,),
+                  ),
+                  onTap: ()async{
+                    final Uri launchUri = Uri(
+                      scheme: 'tel',
+                      path: widget.snapshot['phone'].toString(),
+                    );
+                    await launchUrl(launchUri);
+                  },
+                ),
+                SizedBox(width: 20,),
+                InkWell(
+                  child: SizedBox(
+                    width: 25,
+                    height: 25,
+                    child: Icon(Icons.manage_accounts,color: Constants.secondColor,),
+                  ),
+                  onTap: (){
+                    if(widget.snapshot['pid'].toString() != "null"){
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => PationtProfile(pid: widget.snapshot['pid'].toString(),))
+                      );
+                    }else{
+                      print("not connected");
+                      connectDrPatient(widget.snapshot['patient_id'].toString(),true);
                     }
                   },
                 ),

@@ -507,7 +507,7 @@ class _PationtProfileState extends State<PationtProfile> {
                                       onTap: (){
                                         if(snapshot.data['patient_id']!= null){
                                           Navigator.of(context).push(
-                                              MaterialPageRoute(builder: (context) => PurchasesScreen(pid: widget.pid,))
+                                              MaterialPageRoute(builder: (context) => PurchasesScreen(pid: widget.pid,patient_name: "${snapshot.data['name']}",))
                                           );
                                         }else{
                                           AwesomeDialog(

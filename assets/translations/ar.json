@@ -266,5 +266,6 @@
   "ConnectingPatient": "ربط المريض",
   "DoneConnectingPatient": "تم ربط المريض",
   "ConnectToNewDoctorPatient": "ربط بمريض الطبيب ",
-  "ConnectToExistingDoctorPatient": "ربط بمريض طبيب موجود"
+  "ConnectToExistingDoctorPatient": "ربط بمريض طبيب موجود",
+  "Used": "مستخدم"
 }

@@ -266,5 +266,6 @@
   "ConnectingPatient": "Connecting Patient",
   "DoneConnectingPatient": "Done Connecting Patient",
   "ConnectToNewDoctorPatient": "Connect To New Doctor Patient",
-  "ConnectToExistingDoctorPatient": "Connect To Existing Doctor Patient"
+  "ConnectToExistingDoctorPatient": "Connect To Existing Doctor Patient",
+  "Used": "Used"
 }

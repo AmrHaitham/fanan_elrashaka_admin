@@ -216,7 +216,7 @@ class _NewBookingState extends State<NewBooking> {
                                       print(await response.body);
                                       _dialogs.doneDialog(context,"You_are_successfully_Book".tr(),"Ok".tr(),(){
                                         Navigator.of(context).pushReplacement(
-                                            MaterialPageRoute(builder: (context) => MainScreen(selectedIndex: 2,))
+                                            MaterialPageRoute(builder: (context) => MainScreen(selectedIndex: 2,clinic_id: widget.clinic,selected_day: DateTime.parse(_controllerDay.text),))
                                         );
                                       });
                                     }else{

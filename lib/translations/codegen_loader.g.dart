@@ -282,7 +282,8 @@ class CodegenLoader extends AssetLoader{
   "ConnectingPatient": "ربط المريض",
   "DoneConnectingPatient": "تم ربط المريض",
   "ConnectToNewDoctorPatient": "ربط بمريض الطبيب ",
-  "ConnectToExistingDoctorPatient": "ربط بمريض طبيب موجود"
+  "ConnectToExistingDoctorPatient": "ربط بمريض طبيب موجود",
+  "Used": "مستخدم"
 };
 static const Map<String,dynamic> en = {
   "Login": "Login",
@@ -552,7 +553,8 @@ static const Map<String,dynamic> en = {
   "ConnectingPatient": "Connecting Patient",
   "DoneConnectingPatient": "Done Connecting Patient",
   "ConnectToNewDoctorPatient": "Connect To New Doctor Patient",
-  "ConnectToExistingDoctorPatient": "Connect To Existing Doctor Patient"
+  "ConnectToExistingDoctorPatient": "Connect To Existing Doctor Patient",
+  "Used": "Used"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ar": ar, "en": en};
 }

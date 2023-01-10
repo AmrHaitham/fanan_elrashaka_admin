@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:bottom_picker/resources/arrays.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fanan_elrashaka_admin/Constants.dart';
 import 'package:fanan_elrashaka_admin/helper/Dialogs.dart';
 import 'package:fanan_elrashaka_admin/networks/PatientDetails.dart';
 import 'package:fanan_elrashaka_admin/providers/UserData.dart';
+import 'package:fanan_elrashaka_admin/screens/NewBookingInfo.dart';
+import 'package:fanan_elrashaka_admin/screens/PayPackage.dart';
 import 'package:fanan_elrashaka_admin/translations/locale_keys.g.dart';
 import 'package:fanan_elrashaka_admin/widgets/BackIcon.dart';
 import 'package:fanan_elrashaka_admin/widgets/BottomSheet.dart';
@@ -19,8 +22,8 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 class PurchasesScreen extends StatefulWidget {
   final pid;
-
-  const PurchasesScreen({Key? key,required this.pid}) : super(key: key);
+  final patient_name;
+  const PurchasesScreen({Key? key,required this.pid,required this.patient_name}) : super(key: key);
   @override
   _PurchasesScreenState createState() => _PurchasesScreenState();
 }
@@ -28,6 +31,7 @@ class PurchasesScreen extends StatefulWidget {
 class _PurchasesScreenState extends State<PurchasesScreen> {
   String? date ;
   String? usedAmount;
+  String? maxAmount;
   TextEditingController? _controller;
   PatientDetails _patientDetails = PatientDetails();
   BottomSheetWidget _bottomSheetWidget = BottomSheetWidget();
@@ -52,6 +56,79 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                     setState(() {});
                   },
                   name: "Purchases".tr(),
+                  topRightaction: InkWell(
+                    onTap: (){
+                      _bottomSheetWidget.showBottomSheetButtons(
+                          context,
+                          180.0,
+                          Text("MakeNewPayment".tr(),style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                          ),),
+                          [
+                            ListTile(
+                              onTap: (){
+                                // Navigator.of(context).push(
+                                //     MaterialPageRoute(builder: (context) =>SelectDrPatient(is_new_booking: true,))
+                                // );
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (context) =>NewBookingInfo(
+                                        patient_name: widget.patient_name,
+                                        patient_id:widget.pid.toString()
+                                    ))
+                                );
+                              },
+                              dense: true,
+                              leading: SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: Image.asset("assets/bookings_active.png"),
+                              ),
+                              title:Text("NewBooking".tr(),style: TextStyle(
+                                  color: Constants.secondTextColor,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold
+                              ),),
+                            ),
+                            const Divider(thickness: 0.6,indent: 10,endIndent: 10,),
+                            ListTile(
+                              onTap: (){
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (context) =>PayPackage(
+                                        patient_name: widget.patient_name,
+                                        patient_id:widget.pid.toString(),
+                                        backToBookings: false,
+                                    ))
+                                );
+                              },
+                              dense: true,
+                              leading: SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: Image.asset("assets/package.png"),
+                              ),
+                              title:Text("PackagePurchase".tr(),style: TextStyle(
+                                  color: Constants.secondTextColor,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold
+                              ),),
+                            ),
+                          ]
+                      );
+                    },
+                    child: Container(
+                      // padding:const EdgeInsets.all(8),
+                      margin:const EdgeInsets.all(8),
+                      decoration:  BoxDecoration(
+                          color: Constants.mainColor,
+                          borderRadius: BorderRadius.all(Radius.circular(7))
+                      ),
+                      width: 35,
+                      height: 35,
+                      child: Icon(Icons.add,color: Constants.secondColor,),
+                    ),
+                  ),
                   topLeftAction:const BackIcon(),
                   child: Container(
                     width: double.infinity,
@@ -124,7 +201,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                                             child: SingleChildScrollView(
                                                 child: Container(
                                                     padding: const EdgeInsets.only(top: 20,left: 20,right: 20),
-                                                    height: 200.0,
+                                                    height: 280.0,
                                                     decoration: const BoxDecoration(
                                                         color: Colors.white,
                                                         borderRadius: BorderRadius.only(
@@ -132,42 +209,50 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                                                             topRight: Radius.circular(15))),
                                                     child: ListView(children: [
                                                       SizedBox(height: 10,),
-                                                      Column(children: [
-                                                        SizedBox(height: 20,),
-                                                        buildMaxFormField(snapshot.data[index]['used_amount'].toString(),snapshot.data[index]['package_amount'].toString()),
-                                                        const SizedBox(height: 20,),
-                                                        DefaultButton(
-                                                          text: "UpdateUsedAmount".tr(),
-                                                          press: ()async{
-                                                            try{
-                                                              if(int.parse(usedAmount.toString()) <= snapshot.data[index]['package_amount']){
-                                                                EasyLoading.show(status: "UpdateUsedAmount".tr());
-                                                                var response = await _patientDetails.updatePatientPurchases(
-                                                                    context.read<UserData>().token,
-                                                                    snapshot.data[index]['id'].toString(),
-                                                                    usedAmount
-                                                                );
-                                                                var data = jsonDecode(await response.stream.bytesToString());
-                                                                if (await response.statusCode == 200) {
-                                                                  print(data);
-                                                                  EasyLoading.showSuccess(LocaleKeys.You_are_successfully_updated_information.tr());
-                                                                  Navigator.pop(context);
-                                                                  setState(() {});
-                                                                }else{
-                                                                  print(data);
-                                                                  if(response["error"] == "721"){
-                                                                    _dialogs.errorDialog(context, LocaleKeys.PatientIsNotConnected.tr());
+                                                      SizedBox(
+                                                        width: double.infinity,
+                                                        height: 270,
+                                                        child: Column(children: [
+                                                          SizedBox(height: 20,),
+                                                          buildUsedFormField(snapshot.data[index]['used_amount'].toString(),),
+                                                          const SizedBox(height: 20,),
+                                                          buildMaxFormField(snapshot.data[index]['package_amount'].toString()),
+                                                          const SizedBox(height: 20,),
+                                                          DefaultButton(
+                                                            text: "UpdateUsedAmount".tr(),
+                                                            press: ()async{
+                                                              try{
+                                                                if(int.parse(usedAmount.toString()) <= int.parse(maxAmount.toString())){
+                                                                  EasyLoading.show(status: "UpdateUsedAmount".tr());
+                                                                  var response = await _patientDetails.updatePatientPurchasesUsedQuantaty(
+                                                                      context.read<UserData>().token,
+                                                                      snapshot.data[index]['id'].toString(),
+                                                                      usedAmount,
+                                                                      maxAmount
+                                                                  );
+                                                                  if (await response.statusCode == 200) {
+                                                                    var data = jsonDecode(await response.stream.bytesToString());
+                                                                    print(data);
+                                                                    EasyLoading.showSuccess(LocaleKeys.You_are_successfully_updated_information.tr());
+                                                                    Navigator.pop(context);
+                                                                    setState(() {});
+                                                                  }else{
+                                                                    print(await response.stream.bytesToString());
+                                                                    if(response["error"] == "721"){
+                                                                      _dialogs.errorDialog(context, LocaleKeys.PatientIsNotConnected.tr());
+                                                                    }
                                                                   }
+                                                                  EasyLoading.dismiss();
                                                                 }
+                                                              }catch(e){
+                                                                print(e);
                                                                 EasyLoading.dismiss();
                                                               }
-                                                            }catch(e){
-                                                              print(e);
-                                                            }
 
-                                                          },
-                                                        )
-                                                      ]),
+                                                            },
+                                                          )
+                                                        ]),
+                                                      ),
                                                     ]))));
                                       });
                                   // _bottomSheetWidget.showBottomSheetButtons(
@@ -279,13 +364,13 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
       },
     );
   }
-  TextFormField buildMaxFormField(initData,maxUse) {
+  TextFormField buildUsedFormField(initData) {
     usedAmount = initData;
     return TextFormField(
       initialValue: initData,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
-        suffixText: "${"From".tr()} ${maxUse}",
+        prefixText: "${"Used".tr()}   ",
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
@@ -297,6 +382,35 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
       onChanged: (value) {
         if (value != "") {
           usedAmount = value;
+        }
+        return null;
+      },
+      validator: (value) {
+        if (value=="") {
+          return LocaleKeys.ThisFieldIsRequired.tr();
+        }
+        return null;
+      },
+    );
+  }
+  TextFormField buildMaxFormField(initData) {
+    maxAmount = initData;
+    return TextFormField(
+      initialValue: initData,
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        prefixText:"${"From".tr()}   ",
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+      ),
+      onSaved: (newValue) {
+        maxAmount = newValue;
+      } ,
+      onChanged: (value) {
+        if (value != "") {
+          maxAmount = value;
         }
         return null;
       },

@@ -174,6 +174,25 @@ class PatientDetails{
     return response;
 
   }
+  updatePatientPurchasesUsedQuantaty(token,pid,used_amount,package_amount)async{
+    var headers = {
+      'Authorization': 'Token ${token}'
+    };
+
+    var request = http.MultipartRequest('PUT', Uri.parse(Apis.patient_purchases));
+    request.fields.addAll({
+      'id': pid.toString(),
+      'used_amount': used_amount.toString(),
+      'package_amount' :package_amount.toString()
+    });
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    return response;
+
+  }
 
   getAllVisitation_notes(token,id)async{
     var headers ={
